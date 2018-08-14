@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <title>South Bay Supercontest</title>
+    <link rel="stylesheet" media="screen" href ="static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/bootstrap-theme.min.css">
+    <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <div class="container">
+      <h2>South Bay Supercontest Pick Form: Week {{ week }}</h2>
+      <form action="" method="post" role="form" id="pickform">
+        {{ form.csrf }}
+        <div class="form-group">
+          <select name="name" form="pickform" style="width: 30%">
+            <option selected disabled>Who are you?</option>
+            {% for participant in participants %}
+              <option value="{{ participant }}">{{ participant }}</option>
+            {% endfor %}
+          </select>
+          <br><br>
+          <select name="pick" form="pickform" style="width: 30%">
+            <option selected disabled>Choose team</option>
+            {% for team in teams %}
+              <option value="{{ team }}">{{ team }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-success">Submit</button>
+      </form>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for message in messages %}
+            {% if "Error" not in message[1]: %}
+              <div class="alert alert-info">
+                <strong>Success! </strong> {{ message[1] }}
+              </div>
+            {% endif %}
+            {% if "Error" in message[1]: %}
+              <div class="alert alert-warning">
+                {{ message[1] }}
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <br>
+    </div>
+  </body>
+</html>
