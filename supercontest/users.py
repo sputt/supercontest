@@ -11,14 +11,13 @@ def read_from_users_list():
     return users
 
 
-def create_all_user_rows():
+def instantiate_rows_for_users():
     users = read_from_users_list()
     user_rows = [User(name=user) for user in users]
     return user_rows
 
 
-def add_all_user_rows():
+def commit_users():
     with session_scope() as session:
-        user_rows = create_all_user_rows()
-        for user in user_rows:
-            session.add(user)
+        user_rows = instantiate_rows_for_users()
+        session.add_all(user_rows)

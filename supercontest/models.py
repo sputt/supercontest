@@ -26,9 +26,11 @@ class Pick(Base):
 class Matchup(Base):
     __tablename__ = 'matchups'
     id = Column(Integer, primary_key=True)
+    week = Column(Integer, nullable=False)
     favored_team = Column(String, nullable=False)
     unfavored_team = Column(String, nullable=False)
     datetime = Column(String, nullable=False)
     line = Column(Float, nullable=False)
-    score_delta = Column(Float)
+    favored_team_score = Column(Integer)
+    unfavored_team_score = Column(Integer)
     status = Column(String)  # quarter, "F"inal, etc

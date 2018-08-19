@@ -1,5 +1,6 @@
 # Supercontest stuff
 supercontest.db
+*.swp
 
 # Mac stuff
 .DS_Store

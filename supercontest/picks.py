@@ -2,7 +2,7 @@ from models import Pick, User
 from backend import session_scope
 
 
-def add_pick(name, week, team):
+def commit_pick(name, week, team):
     """Contains logic to:
         * Reject a pick if a user already picked that team that week.
         * FIFO if the user has already picked 5 teams that week.

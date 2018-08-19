@@ -1,3 +1,33 @@
+BACKEND FEATURES
+
+* Write matchup.py, which contains the logic to query the database. It first calculates the delta with
+  favored_score-unfavored_score, then compares to the line, then compares the winner to the user picks.
+  compare_scores_to_lines and compare_results_to_picks should probably be wrapped by one function
+  since you'll always want to run them together. Do a final end-to-end with test.py.
+* picks.add_pick should not allow the pick for a team if the matchups table shows it has begun.
+
+FRONTEND FEATURES
+
+* Integrate the frontend. One view for everything. Default to current week, dropdown for previous.
+* Add leaderboard page and hyperlink it from the main view.
+* Account login and authentication. Probably basic flask auth in the session.
+* There is python in render_lines_with_scores which compares and renders the scores/picks,
+  coloring them green etc. Convert that to javascript.
+
+TIMING FEATURES
+
+* Separate the database creation, service start, update calls, etc. Finish app.py and backend.py's
+  relationship. It obviously must be able to restart the service and retain the same info.
+  Remove the clause in backend.py which deletes the db if it exists.
+* Figure out how it flushes week to week. Probably will have a separate route for each week, so
+  people can reference back. This flush will also call fetch_lines, and will swap over once they're
+  available. This can probably be manual for now, done by me on wed nights.
+
+FINAL RELEASE STUFF
+
+* Hosting the service publicly.
+* tox lint and flake8, no pytest yet.
+
 AFTER RELEASE FOLLOWUPS
 
 * Port to a mobile app.
@@ -7,28 +37,4 @@ AFTER RELEASE FOLLOWUPS
 * Add a random question at the end.
 * Set up packaging.
 * Add tests.
-
-REQUIRED FEATURES
-
-* Commit to my personal github. Track in VCS.
-* Full verification of the backend. Get matchup.py ready (Using test.py as necessary).
-  Enter some records for users, picks, lines, scores, and calculate point results.
-* Integrate the frontend. One view for everything. Default to current week, dropdown for previous.
-* Add leaderboard page and hyperlink it from the main view.
-* Add a makefile with targets for creating the db, starting the app (those are different), etc.
-* app.py will contain all the controller logic. It will connect to an already-existing db, always.
-* The app should contact westgate on wednesday (or whenever they usually post), and then
-  retry every hour until they lines are up.
-* Scores should be fetched upon refresh (don't need to implement timer).
-* Look up basic flask auth, add user knowledge to the session.
-* There is python in render_lines_with_scores which compares and renders the scores/picks,
-  coloring them green etc. Convert that to javascript.
-* Disable the pick for a team if the game has started. You might have to add some functionality
-  to the fifo behavior to handle the cases where they've already picked a view and they're still
-  picking.
-
-FINAL RELEASE STUFF
-
-* Hosting the service publicly.
-* Make sure 49ers works for everything, it's weird because it starts with a number.
-* tox lint and flake8, no pytest yet.
+* Add pretty readme.
