@@ -55,7 +55,7 @@ def commit_scores(week, scores):
     with session_scope() as session:
         matchups = session.query(Matchup).filter_by(week=week).all()
         for game in scores:
-            # intentionally using visiting team to avoid * matching (home team)
+            # could use home or visiting team, this is an arbitrary binary
             visiting_team = game['visiting_team']
             for matchup in matchups:
                 if visiting_team == matchup.favored_team:

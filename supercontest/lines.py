@@ -10,9 +10,6 @@ def fetch_lines():
     Example Westgate return:
         [[u'1 SEAHAWKS', u'2 CARDINALS*', u'+6', u'THURSDAY, NOVEMBER 9, 2017 5:25 PM'],
          [u'23 GIANTS', u'24 49ERS*', u'+2.5', u'SUNDAY, NOVEMBER 12, 2017 1:25 PM'],...]
-
-    Returns:
-        [
     """
     url = ('https://www.westgatedestinations.com/nevada/las-vegas/westgate-las-vegas-'
            'hotel-casino/casino/supercontest-weekly-card')
@@ -69,13 +66,28 @@ def spoof_lines():
 
 
 def instantiate_rows_for_matchups(week, lines):
+    """This function strips the asterisks (if any) from the team names
+    so that they're pure before committing to the table. It adds that
+    respective team to the home_team column.
+    """
     matchups = []
     for line in lines:
+        favored_team = line[0]
+        unfavored_team = line[1]
+        if '*' in favored_team:
+            favored_team = favored_team.replace('*', '')
+            home_team = favored_team
+        elif '*' in unfavored_team:
+            unfavored_team = unfavored_team.replace('*', '')
+            home_team = unfavored_team
+        else:
+            home_team = None
         matchup = Matchup(week=week,
-                          favored_team=line[0],
-                          unfavored_team=line[1],
+                          favored_team=favored_team,
+                          unfavored_team=unfavored_team,
                           datetime=line[2],
-                          line=float(line[3]))
+                          line=float(line[3]),
+                          home_team=home_team)
         matchups.append(matchup)
 
     return matchups

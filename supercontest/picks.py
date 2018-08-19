@@ -1,4 +1,4 @@
-from models import Pick, User
+from models import User, Pick, Matchup
 from backend import session_scope
 
 
@@ -10,6 +10,14 @@ def commit_pick(name, week, team):
     with session_scope() as session:
         user = session.query(User).filter_by(name=name).first()
         picks = session.query(Pick).filter_by(user=user, week=week).all()
+        matchups = session.query(Matchup).filter_by(week=week).all()
+        for _matchup in matchups:
+            if team in [_matchup.favored_team, _matchup.unfavored_team]:
+                # TODO: this should change to whatever letter denotes an unstarted game
+                if _matchup.status != 'NOTSTARTEDYET':
+                    msg = ('The {} game has already started for Week {}, '
+                           '{} cannot pick it'.format(team, week, name))
+                    return msg
         teams_already_picked = [_pick.team for _pick in picks]
         if team in teams_already_picked:
             msg = '{} already picked the {} for Week {}'.format(name, team, week)

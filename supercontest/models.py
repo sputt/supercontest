@@ -20,7 +20,7 @@ class Pick(Base):
     team = Column(String, nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship('User', back_populates='picks')
-    points = Column(Integer)
+    points = Column(Float)
 
 
 class Matchup(Base):
@@ -31,6 +31,7 @@ class Matchup(Base):
     unfavored_team = Column(String, nullable=False)
     datetime = Column(String, nullable=False)
     line = Column(Float, nullable=False)
+    home_team = Column(String)
     favored_team_score = Column(Integer)
     unfavored_team_score = Column(Integer)
     status = Column(String)  # quarter, "F"inal, etc

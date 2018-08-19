@@ -1,29 +1,7 @@
-from flask import Flask, render_template, flash, request
-from frontend import PickForm
+from flask import Flask, render_template
 
 
 APP = Flask(__name__)
-
-
-@APP.route('/pick', methods=['GET', 'POST'])
-def pick():
-    """Present the users with the ability to choose teams.
-    This automatically accounts for the teams on bye weeks, and does
-    not prevent them to the user as dropdown choices.
-    """
-    week, scores, statuses, teams = fetch_scores()
-    form = PickForm(request.form)
-    if request.method == 'POST':
-        if form.validate():
-             name = request.form['name']
-             pick = request.form['pick']
-             msg = add_pick(name, week, pick)
-             flash(msg)
-        else:
-             flash('Error: All the form fields are required')
-
-    return render_template('pick.html',
-                           form=form, week=str(week), teams=teams, participants=participants)
 
 
 @APP.route('/')

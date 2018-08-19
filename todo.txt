@@ -1,14 +1,8 @@
-BACKEND FEATURES
-
-* Write matchup.py, which contains the logic to query the database. It first calculates the delta with
-  favored_score-unfavored_score, then compares to the line, then compares the winner to the user picks.
-  compare_scores_to_lines and compare_results_to_picks should probably be wrapped by one function
-  since you'll always want to run them together. Do a final end-to-end with test.py.
-* picks.add_pick should not allow the pick for a team if the matchups table shows it has begun.
-
 FRONTEND FEATURES
 
-* Integrate the frontend. One view for everything. Default to current week, dropdown for previous.
+* Integrate the frontend. One view for everything. It's all in app.py right now,
+  render_scores_with_lines(). Default to current week, dropdown for previous.
+* Main page should colorize for in-progress games. It should also add the asterisk back to home team.
 * Add leaderboard page and hyperlink it from the main view.
 * Account login and authentication. Probably basic flask auth in the session.
 * There is python in render_lines_with_scores which compares and renders the scores/picks,
