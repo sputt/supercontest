@@ -60,11 +60,11 @@ def commit_scores(week, scores):
             for matchup in matchups:
                 if visiting_team == matchup.favored_team:
                     matchup.favored_team_score = game['visiting_team_score']
-                    matchup.unfavored_team_score = game['home_team_score']
+                    matchup.underdog_team_score = game['home_team_score']
                     matchup.status = game['status']
                     break
-                elif visiting_team == matchup.unfavored_team:
-                    matchup.unfavored_team_score = game['visiting_team_score']
+                elif visiting_team == matchup.underdog_team:
+                    matchup.underdog_team_score = game['visiting_team_score']
                     matchup.favored_team_score = game['home_team_score']
                     matchup.status = game['status']
                     break

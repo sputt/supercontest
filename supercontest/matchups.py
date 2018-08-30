@@ -27,17 +27,17 @@ def compare_scores_to_lines(week):
         matchups = session.query(Matchup).filter_by(week=week).all()
         results = {}
         for matchup in matchups:
-            delta = float(matchup.favored_team_score - matchup.unfavored_team_score)
+            delta = float(matchup.favored_team_score - matchup.underdog_team_score)
             line = matchup.line
             if delta > line:
                 results[matchup.favored_team] = POINT_MAP['correct']
-                results[matchup.unfavored_team] = POINT_MAP['incorrect']
+                results[matchup.underdog_team] = POINT_MAP['incorrect']
             elif delta == line:
                 results[matchup.favored_team] = POINT_MAP['push']
-                results[matchup.unfavored_team] = POINT_MAP['push']
+                results[matchup.underdog_team] = POINT_MAP['push']
             else:
                 results[matchup.favored_team] = POINT_MAP['incorrect']
-                results[matchup.unfavored_team] = POINT_MAP['correct']
+                results[matchup.underdog_team] = POINT_MAP['correct']
 
     return results
 

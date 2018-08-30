@@ -5,7 +5,7 @@ from backend import session_scope
 
 def fetch_lines():
     """Hits the official Westgate site and returns its line table as an html string,
-    then coerces it into the following format: [FAVORED_TEAM, UNFAVORED_TEAM, DATETIME, LINE]
+    then coerces it into the following format: [FAVORED_TEAM, UNDERDOG_TEAM, DATETIME, LINE]
 
     Example Westgate return:
         [[u'1 SEAHAWKS', u'2 CARDINALS*', u'+6', u'THURSDAY, NOVEMBER 9, 2017 5:25 PM'],
@@ -73,18 +73,18 @@ def instantiate_rows_for_matchups(week, lines):
     matchups = []
     for line in lines:
         favored_team = line[0]
-        unfavored_team = line[1]
+        underdog_team = line[1]
         if '*' in favored_team:
             favored_team = favored_team.replace('*', '')
             home_team = favored_team
-        elif '*' in unfavored_team:
-            unfavored_team = unfavored_team.replace('*', '')
-            home_team = unfavored_team
+        elif '*' in underdog_team:
+            underdog_team = underdog_team.replace('*', '')
+            home_team = underdog_team
         else:
             home_team = None
         matchup = Matchup(week=week,
                           favored_team=favored_team,
-                          unfavored_team=unfavored_team,
+                          underdog_team=underdog_team,
                           datetime=line[2],
                           line=float(line[3]),
                           home_team=home_team)
