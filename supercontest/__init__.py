@@ -1,26 +1,19 @@
-import os
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 from flask import Flask
-
-from supercontest import models, lines, matchups, picks, scores, users, utilities, views
-
-
-APP = Flask(__name__)
-DB_NAME = 'supercontest.db'
-DB_DIR = os.path.dirname(__file__)
-DB_PATH = os.path.join(DB_DIR, DB_NAME)
-engine = create_engine('sqlite:///' + DB_PATH, echo=True)
-Session = sessionmaker(bind=engine)
-models.Base.metadata.create_all(engine)
+from flask_sqlalchemy import SQLAlchemy
 
 
-def main():
-    # Start fresh, everytime (just for now)
-    if os.path.exists(DB_PATH):
-        os.remove(DB_PATH)
-    APP.run(host='0.0.0.0', debug=True)
+app = Flask(__name__, instance_relative_config=True)
+
+app.config.from_object('config.default')
+app.config.from_pyfile('config.py')
+app.config.from_envvar('APP_CONFIG_FILE')
+
+db = SQLAlchemy(app)
 
 
-if __name__ == '__main__':
-    main()
+def create_db():
+    db.create_all()
+
+
+def run_app():
+    app.run(host='0.0.0.0')

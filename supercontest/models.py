@@ -1,37 +1,32 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+from . import db
 
 
-Base = declarative_base()
-
-
-class User(Base):
+class User(db.Model):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    picks = relationship('Pick', back_populates='user')
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    picks = db.relationship('Pick', back_populates='user')
 
 
-class Pick(Base):
+class Pick(db.Model):
     __tablename__ = 'picks'
-    id = Column(Integer, primary_key=True)
-    week = Column(Integer, nullable=False)
-    team = Column(String, nullable=False)
-    user_id = Column(Integer, ForeignKey('users.id'))
-    user = relationship('User', back_populates='picks')
-    points = Column(Float)
+    id = db.Column(db.Integer, primary_key=True)
+    week = db.Column(db.Integer, nullable=False)
+    team = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship('User', back_populates='picks')
+    points = db.Column(db.Float)
 
 
-class Matchup(Base):
+class Matchup(db.Model):
     __tablename__ = 'matchups'
-    id = Column(Integer, primary_key=True)
-    week = Column(Integer, nullable=False)
-    favored_team = Column(String, nullable=False)
-    underdog_team = Column(String, nullable=False)
-    datetime = Column(String, nullable=False)
-    line = Column(Float, nullable=False)
-    home_team = Column(String)
-    favored_team_score = Column(Integer)
-    underdog_team_score = Column(Integer)
-    status = Column(String)  # quarter, "F"inal, etc
+    id = db.Column(db.Integer, primary_key=True)
+    week = db.Column(db.Integer, nullable=False)
+    favored_team = db.Column(db.String, nullable=False)
+    underdog_team = db.Column(db.String, nullable=False)
+    datetime = db.Column(db.String, nullable=False)
+    line = db.Column(db.Float, nullable=False)
+    home_team = db.Column(db.String)
+    favored_team_score = db.Column(db.Integer)
+    underdog_team_score = db.Column(db.Integer)
+    status = db.Column(db.String)  # quarter, "F"inal, etc
