@@ -1,5 +1,7 @@
 requests
 bs4
 flask
-flask_sqlalchemy
+flask-sqlalchemy
+flask-login
+flask-wtf
 wtforms

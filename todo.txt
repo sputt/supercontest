@@ -1,6 +1,6 @@
 RIGHT NOW
 
-* Get the pick form working with flask-wtf http://exploreflask.com/en/latest/forms.html.
+* Get the jinja form to extend the main layout template properly. Make it work with picks.
 * Account login and authentication. Probably basic flask auth in the session.
   http://exploreflask.com/en/latest/users.html
   http://exploreflask.com/en/latest/views.html
@@ -26,11 +26,14 @@ TIMING FEATURES
 FINAL RELEASE STUFF
 
 * tox lint and flake8, no pytest yet.
-* Add config.py http://exploreflask.com/en/latest/configuration.html
 * Use flask-bcrypt http://exploreflask.com/en/latest/configuration.html
 * Use flask-cache if the app is slow: http://exploreflask.com/en/latest/views.html
 * Use flask-assets to bundle jsmin and jquerymin and stuff http://exploreflask.com/en/latest/static.html
 * Use alembic for migrations http://exploreflask.com/en/latest/storing.html
+* Make custom validators for stuff like "is this value unique"
+  http://exploreflask.com/en/latest/forms.html#custom-validators
+* Use blueprints http://exploreflask.com/en/latest/blueprints.html
+* Read flask documentation.
 * Port to python 3.
 
 AFTER RELEASE FOLLOWUPS
