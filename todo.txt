@@ -1,26 +1,41 @@
+RIGHT NOW
+
+* Get the pick form working with flask-wtf http://exploreflask.com/en/latest/forms.html.
+* Account login and authentication. Probably basic flask auth in the session.
+  http://exploreflask.com/en/latest/users.html
+  http://exploreflask.com/en/latest/views.html
+* Separate the database creation, service start, update calls, etc. Finish app.py and backend.py's
+  relationship. It obviously must be able to restart the service and retain the same info.
+  Look at http://exploreflask.com/en/latest/storing.html. Add the instance configuration.
+  Remove the clause in backend.py which deletes the db if it exists.
+* Host the service publicly on https://www.pythonanywhere.com/ (or AWS EC2 if the other sucks).
+  Make sure there's a db backup scheme in place, even if simple.
+  http://exploreflask.com/en/latest/deployment.html
+
 FRONTEND FEATURES
 
-* Integrate the frontend. One view for everything. It's all in app.py right now,
-  render_scores_with_lines(). Default to current week, dropdown for previous.
+* Integrate the frontend. One view for everything. Play with rendering for current spoofed db. Use flask_table.
+* Default to current week, dropdown for previous.
 * Main page should colorize for in-progress games. It should also add the asterisk back to home team.
 * Add leaderboard page and hyperlink it from the main view.
-* Account login and authentication. Probably basic flask auth in the session.
 * There is python in render_lines_with_scores which compares and renders the scores/picks,
   coloring them green etc. Convert that to javascript.
 
 TIMING FEATURES
 
-* Separate the database creation, service start, update calls, etc. Finish app.py and backend.py's
-  relationship. It obviously must be able to restart the service and retain the same info.
-  Remove the clause in backend.py which deletes the db if it exists.
 * Figure out how it flushes week to week. Probably will have a separate route for each week, so
   people can reference back. This flush will also call fetch_lines, and will swap over once they're
   available. This can probably be manual for now, done by me on wed nights.
 
 FINAL RELEASE STUFF
 
-* Hosting the service publicly.
 * tox lint and flake8, no pytest yet.
+* Add config.py http://exploreflask.com/en/latest/configuration.html
+* Use flask-bcrypt http://exploreflask.com/en/latest/configuration.html
+* Use flask-cache if the app is slow: http://exploreflask.com/en/latest/views.html
+* Use flask-assets to bundle jsmin and jquerymin and stuff http://exploreflask.com/en/latest/static.html
+* Use alembic for migrations http://exploreflask.com/en/latest/storing.html
+* Port to python 3.
 
 AFTER RELEASE FOLLOWUPS
 

@@ -1,5 +1,5 @@
-from models import User, Pick, Matchup
-from backend import session_scope
+from supercontest.models import User, Pick, Matchup
+from supercontest.utilities import session_scope
 
 
 def commit_pick(name, week, team):

@@ -1,6 +1,5 @@
-from utilities import get_soup_from_url
-from models import Matchup
-from backend import session_scope
+from supercontest.utilities import get_soup_from_url, get_session_scope
+from supercontest.models import Matchup
 
 
 def fetch_lines():

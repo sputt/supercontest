@@ -1,6 +1,6 @@
-from utilities import get_soup_from_url
-from models import Matchup
-from backend import session_scope
+from supercontest.utilities import get_soup_from_url
+from supercontest.models import Matchup
+from supercontest.backend import session_scope
 
 
 def fetch_scores():

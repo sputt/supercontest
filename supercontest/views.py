@@ -1,13 +1,9 @@
-from flask import Flask, render_template
-
-
-APP = Flask(__name__)
+from flask import render_template
+from supercontest import APP
 
 
 @APP.route('/')
-def render_lines_with_scores():
-    """Formats our results (list of lists) into an HTML table.
-    """
+def home():
     week, results = compare_scores_to_lines()
     trs_list = []
     for result in results:
@@ -25,8 +21,4 @@ def render_lines_with_scores():
         trs_list.append('<tr>{}</tr>'.format(tds_str))
     trs_str = ''.join(trs_list)
 
-    return render_template('results.html', week=week, trs=trs_str)
-
-
-if __name__ == '__main__':
-    APP.run(host='0.0.0.0', debug=True)
+    return render_template('home.html', week=week, trs=trs_str)

@@ -1,5 +1,5 @@
-from models import User
-from backend import session_scope
+from supercontest.models import User
+from supercontest.utilities import session_scope
 
 
 USERS_FNAME = 'users.txt'

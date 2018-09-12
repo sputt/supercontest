@@ -1,5 +1,5 @@
-from models import Pick, Matchup
-from backend import session_scope
+from supercontest.models import Pick, Matchup
+from supercontest.backend import session_scope
 
 
 POINT_MAP = {
