@@ -1,6 +1,5 @@
 import requests
 import bs4
-from contextlib import contextmanager
 
 
 def get_soup_from_url(url):
@@ -12,16 +11,3 @@ def get_soup_from_url(url):
     soup = bs4.BeautifulSoup(html, 'html.parser')
 
     return soup
-
-
-@contextmanager
-def session_scope():
-    session = Session()
-    try:
-        yield session
-        session.commit()
-    except:
-        session.rollback()
-        raise
-    finally:
-       session.close()

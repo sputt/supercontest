@@ -4,7 +4,6 @@ virtualenv venv && . venv/bin/activate
 pip install -r requirements.txt
 ```
 
-
 To create the database for the first time:
 ```bash
 python create.py development
@@ -25,3 +24,5 @@ To run the application:
 python run.py development
 python run.py production
 ```
+
+Scores are usually updated within ~30 seconds.

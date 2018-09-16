@@ -22,6 +22,9 @@ TIMING FEATURES
 * Figure out how it flushes week to week. Probably will have a separate route for each week, so
   people can reference back. This flush will also call fetch_lines, and will swap over once they're
   available. This can probably be manual for now, done by me on wed nights.
+* Westgate doesn't html the lines anymore. A browser must run the javascript. You may use Selenium with
+  PhantomJS or another browser (preferably headless, for speed).
+  https://stackoverflow.com/questions/8049520/web-scraping-javascript-page-with-python
 
 FINAL RELEASE STUFF
 
@@ -29,20 +32,15 @@ FINAL RELEASE STUFF
 * Use flask-bcrypt http://exploreflask.com/en/latest/configuration.html
 * Use flask-cache if the app is slow: http://exploreflask.com/en/latest/views.html
 * Use flask-assets to bundle jsmin and jquerymin and stuff http://exploreflask.com/en/latest/static.html
-* Use alembic for migrations http://exploreflask.com/en/latest/storing.html
+* Use alembic for migrations http://exploreflask.com/en/latest/storing.html. Read all alembic docs.
 * Make custom validators for stuff like "is this value unique"
   http://exploreflask.com/en/latest/forms.html#custom-validators
 * Use blueprints http://exploreflask.com/en/latest/blueprints.html
-* Read flask documentation.
 * Port to python 3.
 
 AFTER RELEASE FOLLOWUPS
 
 * Port to a mobile app.
-* Add cross checking and voting against multiple sources, becoming robust against external api
-  change.
-* Client key creation and verification.
 * Add a random question at the end.
-* Set up packaging.
 * Add tests.
 * Add pretty readme.
