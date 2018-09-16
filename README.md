@@ -26,8 +26,3 @@ python run.py production
 ```
 
 Scores are usually updated within ~30 seconds.
-
-This app is hosted on digital ocean.
-```bash
-ssh -i ~/.ssh/digitalocean root@159.65.79.208
-```
