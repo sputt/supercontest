@@ -26,3 +26,7 @@ python run.py production
 ```
 
 Scores are usually updated within ~30 seconds.
+
+Must have nginx installed (sudo apt install nginx)
+
+Must have phantomjs etc installed (sudo apt install <full_list>)

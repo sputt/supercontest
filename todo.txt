@@ -1,9 +1,8 @@
 RIGHT NOW
 
-* Get the jinja form to extend the main layout template properly. Make it work with picks.
-* Account login and authentication. Probably basic flask auth in the session.
-  http://exploreflask.com/en/latest/users.html
-  http://exploreflask.com/en/latest/views.html
+* Westgate doesn't html the lines anymore. A browser must run the javascript. You may use Selenium with
+  PhantomJS or another browser (preferably headless, for speed).
+  https://stackoverflow.com/questions/8049520/web-scraping-javascript-page-with-python
 
 FRONTEND FEATURES
 
@@ -14,18 +13,19 @@ FRONTEND FEATURES
 * There is python in render_lines_with_scores which compares and renders the scores/picks,
   coloring them green etc. Convert that to javascript.
 
-TIMING FEATURES
+PICK FORM
+
+* Get the jinja form to extend the main layout template properly. Make it work with picks.
+* Account login and authentication. Probably basic flask auth in the session.
+  http://exploreflask.com/en/latest/users.html
+  http://exploreflask.com/en/latest/views.html
+
+MEDIUM TERM
 
 * Figure out how it flushes week to week. Probably will have a separate route for each week, so
   people can reference back. This flush will also call fetch_lines, and will swap over once they're
   available. This can probably be manual for now, done by me on wed nights.
-* Westgate doesn't html the lines anymore. A browser must run the javascript. You may use Selenium with
-  PhantomJS or another browser (preferably headless, for speed).
-  https://stackoverflow.com/questions/8049520/web-scraping-javascript-page-with-python
-* database backup scheme
-
-FINAL RELEASE STUFF
-
+* Database backup scheme.
 * tox lint and flake8, no pytest yet.
 * Use flask-bcrypt http://exploreflask.com/en/latest/configuration.html
 * Use flask-cache if the app is slow: http://exploreflask.com/en/latest/views.html
@@ -34,11 +34,10 @@ FINAL RELEASE STUFF
 * Make custom validators for stuff like "is this value unique"
   http://exploreflask.com/en/latest/forms.html#custom-validators
 * Use blueprints http://exploreflask.com/en/latest/blueprints.html
+* Add pretty readme.
 
-AFTER RELEASE FOLLOWUPS
+LONG TERM
 
 * Port to a mobile app.
 * Port to python 3.
-* Add a random question at the end.
 * Add tests.
-* Add pretty readme.
