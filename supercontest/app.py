@@ -1,8 +1,14 @@
-from flask import render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, current_user
-
-from supercontest import app
 from supercontest.forms import EmailPasswordForm
+
+app = Flask(__name__)
+app.config.from_pyfile('config.py')
+db = SQLAlchemy(app)
+
+# Must be after db definition and before creation.
+from supercontest import models
 
 
 @app.route('/')
@@ -37,5 +43,17 @@ def login():
 #         tds_str = ''.join(tds_list)
 #         trs_list.append('<tr>{}</tr>'.format(tds_str))
 #     trs_str = ''.join(trs_list)
-# 
+#
 #     return render_template('home.html', week=week, trs=trs_str)
+
+
+def create_db():
+    db.create_all()
+
+
+def run_app():
+    app.run(host='0.0.0.0')
+
+
+if __name__ == '__main__':
+    run_app()

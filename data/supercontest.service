@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve supercontest
+After=network.target
+
+[Service]
+User=bmahlstedt
+Group=www-data
+WorkingDirectory=/home/bmahlstedt/code/supercontest
+Environment="PATH=/home/bmahlstedt/code/supercontest/venv/bin
+ExecStart=/home/bmahlstedt/code/supercontest/venv/bin/uwsgi --ini myproject.ini
+
+[Install]
+WantedBy=multi-user.target

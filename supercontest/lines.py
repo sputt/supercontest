@@ -1,6 +1,6 @@
-from .utilities import get_soup_from_url
-from .models import Matchup
-from . import db
+from supercontest.utilities import get_soup_from_url
+from supercontest.models import Matchup
+from supercontest.app import db
 
 
 def fetch_lines():
