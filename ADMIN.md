@@ -6,11 +6,17 @@ pip install -e .
 
 To create the database for the first time:
 ```python
-from supercontest import create_db
+from supercontest.app import create_db
 create_db()
 ```
 
-You must install nginx:
+To fetch lines, we need a webdriver. You'll
+have to install chromedriver. I think this can be done with:
+```bash
+sudo apt install chromedriver
+```
+
+You must install nginx to serve the application:
 ```
 sudo apt install nginx
 ```
@@ -36,4 +42,9 @@ sudo certbot --nginx -d southbaysupercontest.com -d www.southbaysupercontest.com
 To renew certs:
 ```bash
 certbot renew
+```
+
+To kill leftover chrome processes from line fetches:
+```bash
+killall chromedriver /opt/google/chrome/chrome
 ```

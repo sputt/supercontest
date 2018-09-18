@@ -1,9 +1,3 @@
-RIGHT NOW
-
-* Westgate doesn't html the lines anymore. A browser must run the javascript. You may use Selenium with
-  PhantomJS or another browser (preferably headless, for speed).
-  https://stackoverflow.com/questions/8049520/web-scraping-javascript-page-with-python
-
 FRONTEND FEATURES
 
 * Integrate the frontend. One view for everything. Play with rendering for current spoofed db. Use flask_table.

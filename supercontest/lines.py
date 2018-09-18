@@ -1,7 +1,18 @@
-from supercontest.utilities import get_soup_from_url
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from supercontest.models import Matchup
 from supercontest.app import db
 
+
+def get_chrome_headless_driver():
+    """Instantiates and returns a selenium webdriver for Chrome (headless).
+    """
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    driver = webdriver.Chrome(chrome_options=chrome_options)
+    driver.implicitly_wait(30)
+
+    return driver
 
 def fetch_lines():
     """Hits the official Westgate site and returns its line table as an html string,
@@ -11,32 +22,44 @@ def fetch_lines():
         [[u'1 SEAHAWKS', u'2 CARDINALS*', u'+6', u'THURSDAY, NOVEMBER 9, 2017 5:25 PM'],
          [u'23 GIANTS', u'24 49ERS*', u'+2.5', u'SUNDAY, NOVEMBER 12, 2017 1:25 PM'],...]
     """
-    # url = 'https://www.westgatedestinations.com/nevada/las-vegas/westgate-las-vegas-hotel-casino/casino/supercontest-weekly-card'
-    # url = 'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/supercontest-weekly-card/'
-    url = 'https://westgate-production-4cb87.firebaseapp.com/super-contests/weekly-card/embed'
-    soup = get_soup_from_url(url)
-    table = soup.find('table')
-    date = ''
-    lines = []
-    for _tr in table.find_all('tr'):
-        tds = _tr.find_all('td')
-        # if only the first cell is populated, it's just a date row,
-        # which is concatenated for subsequent iterations until it changes
-        if len([td for td in tds if td.text]) == 1:
-            date = tds[0].text
-        else:
-            line = [td.text for td in tds]
-            date_time = date + ' ' + line.pop(1)  # remove the time and add to date
-            line.append(date_time)
-            if line[2] == 'PK':  # if it's a draw pick, set the line to zero for math
-                line[2] = '+0'
-            line.append(line.pop(2))  # move the line to the end
-            # remove the team number and whitespace, we only care about name
-            for cell_index in [0, 1]:
-                line[cell_index] = line[cell_index].split(None, 1)[-1].strip()
-            # strip the + in the predicted line, it's always positive for the first col winner
-            line[-1] = line[-1].replace('+', '')
-            lines.append(line)
+    # Fetch the lines as WebElements
+    url = 'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/supercontest-weekly-card/'
+    driver = get_chrome_headless_driver()
+    try:
+        driver.get(url)
+        iframe = driver.find_element_by_css_selector('iframe')
+        driver.switch_to_frame(iframe)
+        table = driver.find_element_by_css_selector('table')
+        rows = table.find_elements_by_css_selector('tr')
+        # Extract the text into Python objects
+        date = ''
+        lines = []
+        for row in rows:
+            cells  = row.find_elements_by_css_selector('td')
+            data = [cell.text for cell in cells if cell.text != '']
+            # if only the first cell is populated, it's just a date row,
+            # which is concatenated for subsequent iterations until it changes
+            if len(data) == 1:
+                date = cells[0].text
+            # if the row has 4 values, it's a line - extract the info
+            elif len(data) == 4:
+                line = [cell.text for cell in cells]
+                date_time = date + ' ' + line.pop(1)  # remove the time and add to date
+                line.append(date_time)
+                if line[2] == 'PK':  # if it's a draw pick, set the line to zero for math
+                    line[2] = u'+0'
+                line.append(line.pop(2))  # move the line to the end
+                # remove the team number and whitespace, we only care about name
+                for cell_index in [0, 1]:
+                    line[cell_index] = line[cell_index].split(None, 1)[-1].strip()
+                # strip the + in the predicted line, it's always positive for the first col winner
+                line[-1] = line[-1].replace('+', '')
+                lines.append(line)
+            # sometimes westgate will return empty rows in the table - ignore them
+            else:
+                continue
+    finally:
+        driver.quit()
 
     return lines
 
