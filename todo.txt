@@ -1,9 +1,10 @@
 FRONTEND FEATURES
 
-* Integrate the frontend. One view for everything. Play with rendering for current spoofed db. Use flask_table.
+* Run commit_lines and commit_scores to push everything to the db from week 2, then scp the db to the mac for
+  local dev.
+* Integrate the frontend. One view for everything. Use flask_table.
 * Default to current week, dropdown for previous.
 * Main page should colorize for in-progress games. It should also add the asterisk back to home team.
-* Add leaderboard page and hyperlink it from the main view.
 * There is python in render_lines_with_scores which compares and renders the scores/picks,
   coloring them green etc. Convert that to javascript.
 
@@ -19,6 +20,7 @@ MEDIUM TERM
 * Figure out how it flushes week to week. Probably will have a separate route for each week, so
   people can reference back. This flush will also call fetch_lines, and will swap over once they're
   available. This can probably be manual for now, done by me on wed nights.
+* Add leaderboard page and hyperlink it from the main view.
 * Database backup scheme.
 * tox lint and flake8, no pytest yet.
 * Use flask-bcrypt http://exploreflask.com/en/latest/configuration.html

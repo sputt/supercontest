@@ -10,8 +10,8 @@ from supercontest.app import create_db
 create_db()
 ```
 
-To fetch lines, we need a webdriver. You'll
-have to install chromedriver. I think this can be done with:
+To fetch lines, we need a webdriver. You'll need chrome and
+the chromedriver. I think this can be done with:
 ```bash
 sudo apt install chromedriver
 ```
