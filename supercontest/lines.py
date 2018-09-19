@@ -1,10 +1,11 @@
+import sys
 from supercontest.models import Matchup
 from supercontest.app import db
 from supercontest.utilities import with_webdriver
 
 
 @with_webdriver
-def fetch_lines(driver):
+def fetch_lines(driver=None):  # driver is passed by decorator
     """Hits the official Westgate site and returns its line table as an html string,
     then coerces it into the following format: [FAVORED_TEAM, UNDERDOG_TEAM, DATETIME, LINE]
 
@@ -78,7 +79,7 @@ def instantiate_rows_for_matchups(week, lines):
     return matchups
 
 
-def commit_lines(week, lines):
+def _commit_lines(week, lines):
     """This is always done before commit_scores(). This function
     creates the rows for the matchups and adds the lines, then
     commit_scores() updates them later as the games are played.
@@ -86,3 +87,11 @@ def commit_lines(week, lines):
     matchups = instantiate_rows_for_matchups(week=week, lines=lines)
     db.session.add_all(matchups)
     db.session.commit()
+
+
+def commit_lines():
+    """Console entry point. Just pass it the week.
+    """
+    week = sys.argv[1]
+    lines = fetch_lines()
+    _commit_lines(week=week, lines=lines)

@@ -48,3 +48,16 @@ To kill leftover chrome processes from line fetches:
 ```bash
 killall chromedriver /opt/google/chrome/chrome
 ```
+
+To manually commit lines, do the following. This is typically done
+on Wednesday nights, after Westgate posts the lines. This must
+be done before scores are committed, because it creates the matchup rows.
+```bash
+commit-lines <weeknum>
+```
+
+To manually commit scores, do the following. This should never need to
+be done manually, but it's exposed as a development convenience.
+```bash
+commit-scores <weeknum>
+```

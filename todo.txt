@@ -1,7 +1,5 @@
 FRONTEND FEATURES
 
-* Run commit_lines and commit_scores to push everything to the db from week 2, then scp the db to the mac for
-  local dev.
 * Integrate the frontend. One view for everything. Use flask_table.
 * Default to current week, dropdown for previous.
 * Main page should colorize for in-progress games. It should also add the asterisk back to home team.
@@ -14,6 +12,7 @@ PICK FORM
 * Account login and authentication. Probably basic flask auth in the session.
   http://exploreflask.com/en/latest/users.html
   http://exploreflask.com/en/latest/views.html
+* Email after pick form submission.
 
 MEDIUM TERM
 
@@ -31,6 +30,7 @@ MEDIUM TERM
   http://exploreflask.com/en/latest/forms.html#custom-validators
 * Use blueprints http://exploreflask.com/en/latest/blueprints.html
 * Add pretty readme.
+* Add a chat client.
 
 LONG TERM
 

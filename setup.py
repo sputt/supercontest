@@ -18,4 +18,10 @@ setup(
     packages=find_packages(),
     install_requires=reqs,
     include_package_data=True,
+    entry_points = {
+        'console_scripts': [
+            'commit-lines=supercontest.lines:commit_lines',
+            'commit-scores=supercontest.scores:commit_scores',
+        ]
+    }
 )

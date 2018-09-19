@@ -1,3 +1,4 @@
+import sys
 from supercontest.utilities import get_soup_from_url
 from supercontest.models import Matchup
 from supercontest.app import db
@@ -26,7 +27,7 @@ def fetch_scores():
     return scores
 
 
-def commit_scores(week, scores):
+def _commit_scores(week, scores):
     matchups = Matchup.query.filter_by(week=week).all()
     for game in scores:
         # could use home or visiting team, this is an arbitrary binary
@@ -43,3 +44,11 @@ def commit_scores(week, scores):
                 matchup.status = game['status']
                 break
     db.session.commit()
+
+
+def commit_scores():
+    """Console entry point. Just pass it the week.
+    """
+    week = sys.argv[1]
+    scores = fetch_scores()
+    _commit_scores(week=week, scores=scores)
