@@ -1,0 +1,32 @@
+body {
+  margin: 0 auto;
+  padding: 0;
+}
+
+h1 {
+    align: center;
+}
+
+table {  
+    color: #333; /* lighter font color */
+    font-family: Helvetica, Arial, sans-serif;
+    width: 100%; 
+    border-collapse: 
+    collapse; border-spacing: 0; 
+}
+
+th, td {
+    border: 1px solid #CCC;
+    height: 30px; /* slightly taller cells */
+    font-size: 14px;
+}
+
+th {  
+    background: #F3F3F3; /* light grey */
+    font-weight: bold;
+}
+
+td {  
+    background: #FAFAFA; /* light grey */
+    text-align: center;
+}

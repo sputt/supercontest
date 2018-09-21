@@ -1,27 +1,30 @@
 FRONTEND FEATURES
 
-* Integrate the frontend. One view for everything.
-* Default to current week, dropdown for previous.
-* Main page should colorize for in-progress games. It should also add the asterisk back to home team.
-* There is python in render_lines_with_scores which compares and renders the scores/picks,
-  coloring them green etc. Convert that to javascript.
+* Integrate CCS into the app. Add table borders. Padding from the left.
+* Integrate JS into the app. Add the asterisk back for the home team.
+* Color green/red/yellow for current lines vs scores. This should not show until the game
+  has started (anything but status='P').
+* Default to current week. Add a dropdown for all the previous weeks.
 
 PICK FORM
 
-* Get the jinja form to extend the main layout template properly. Make it work with picks.
 * Account login and authentication. Probably basic flask auth in the session.
   http://exploreflask.com/en/latest/users.html
   http://exploreflask.com/en/latest/views.html
-* add checkbox for "i am playing this week under protest"
-* Email after pick form submission.
+* Once they can login, they can click inside matchups to select. 5 max. You have to unclick
+  one to click another.
+* Set a cutoff time. Show it on the frontend.
+* Email the person after the picks are cutoff.
+* Delete all the other flask login and pick form stuff that was already in the app.
 
 MEDIUM TERM
 
 * Figure out how it flushes week to week. Probably will have a separate route for each week, so
   people can reference back. This flush will also call fetch_lines, and will swap over once they're
   available. This can probably be manual for now, done by me on wed nights.
-* Add text field to pick form which says "what would make this app better?" and types "petty's mom"
+* Add text field on frontend somewherewhich says "what would make this app better?" and types "petty's mom"
   over and over no matter what keystrokes you enter.
+* Add checkbox somewhere which says "I am playing this week under protest."
 * Add leaderboard page and hyperlink it from the main view.
 * Database backup scheme.
 * tox lint and flake8, no pytest yet.

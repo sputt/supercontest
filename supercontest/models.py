@@ -25,4 +25,10 @@ class Matchup(db.Model):
     home_team = db.Column(db.String)
     favored_team_score = db.Column(db.Integer)
     underdog_team_score = db.Column(db.Integer)
-    status = db.Column(db.String)  # quarter, "F"inal, etc
+    status = db.Column(db.String)
+    # P = has not started
+    # F = game is over
+
+    # Not sure about these yet:
+    # 1/2/3/4 = quarter
+    # OT = overtime

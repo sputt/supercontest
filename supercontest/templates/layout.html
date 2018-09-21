@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-        <title>
-        {% block title %}
-        {% endblock %}
-        </title>
-    </head>
-    <body>
-    {% block body %}
+  <head>
+    <title>South Bay Supercontest</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  </head>
+  <body>
+    <h1>Week {{ week }}</h1>
+    {% block table %}
     {% endblock %}
-    </body>
+  </body>
 </html>
