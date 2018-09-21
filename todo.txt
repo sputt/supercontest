@@ -1,8 +1,7 @@
 FRONTEND FEATURES
 
-* Integrate CCS into the app. Add table borders. Padding from the left.
-* Integrate JS into the app. Add the asterisk back for the home team.
-* Color green/red/yellow for current lines vs scores. This should not show until the game
+* Jinja to iterate over the table and color the team cells
+  green/red/yellow for current lines vs scores. This should not show until the game
   has started (anything but status='P').
 * Default to current week. Add a dropdown for all the previous weeks.
 
@@ -19,6 +18,7 @@ PICK FORM
 
 MEDIUM TERM
 
+* Rewrite the jinja logic in javascript?
 * Figure out how it flushes week to week. Probably will have a separate route for each week, so
   people can reference back. This flush will also call fetch_lines, and will swap over once they're
   available. This can probably be manual for now, done by me on wed nights.

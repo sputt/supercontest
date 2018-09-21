@@ -18,9 +18,21 @@
     <tr>
       <td id=datetime>{{ matchup.datetime }}</td>
       <td id=line>{{ matchup.line }}</td>
-      <td id=favored_team>{{ matchup.favored_team }}</td>
+      <td id=favored_team>
+        {% if matchup.home_team == matchup.favored_team %}
+          {{ matchup.favored_team + '*' }}
+        {% else %}
+          {{ matchup.favored_team }}
+        {% endif %}
+      </td>
       <td id=favored_team_score>{{ matchup.favored_team_score }}</td>
-      <td id=underdog_team>{{ matchup.underdog_team }}</td>
+      <td id=underdog_team>
+        {% if matchup.home_team == matchup.underdog_team %}
+          {{ matchup.underdog_team + '*' }}
+        {% else %}
+          {{ matchup.underdog_team }}
+        {% endif %}
+      </td>
       <td id=underdog_team_score>{{ matchup.underdog_team_score }}</td>
       <td id=status>{{ matchup.status }}</td>
     </tr>

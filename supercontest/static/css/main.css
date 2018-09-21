@@ -1,32 +1,72 @@
+html {
+  background: linear-gradient(white, black) no-repeat center center fixed;
+  background-size: cover;
+}
+
 body {
-  margin: 0 auto;
-  padding: 0;
+  margin: auto;
+  padding: 10px;
+}
+
+h1, table {
+    width: 700px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 h1 {
-    align: center;
+    font-family: Helvetica, Arial, sans-serif;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 6px;
+    padding: 5px 0 5px 0;
+    border: 0 none;
+    border-radius: 5px;
+    background: linear-gradient(#333 0%, #444 100%);
+    color: #FFF;
 }
 
 table {  
-    color: #333; /* lighter font color */
+    color: #333;
     font-family: Helvetica, Arial, sans-serif;
-    width: 100%; 
-    border-collapse: 
-    collapse; border-spacing: 0; 
+    border-collapse: collapse;
+    border-spacing: 0;
+    border-radius: 5px;
 }
 
 th, td {
-    border: 1px solid #CCC;
-    height: 30px; /* slightly taller cells */
-    font-size: 14px;
+    border: 0 none;
+    font-size: 13px;
+    transition: all 0.3s;
 }
 
 th {  
-    background: #F3F3F3; /* light grey */
+    background: linear-gradient(#333 0%, #444 100%);
+    color: #FFF;
     font-weight: bold;
+    height: 40px;
 }
 
 td {  
-    background: #FAFAFA; /* light grey */
+    background: #FAFAFA;
     text-align: center;
+    height: 30px;
+}
+
+tr:nth-child(even) td {
+    background: #EEE;
+}
+tr:nth-child(odd) td {
+    background: #FDFDFD;
+}
+
+tr td:hover {
+    background: #666; color: #FFF;
+}
+
+tr:first-child th:first-child {
+    border-radius: 5px 0 0 0;
+}
+tr:first-child th:last-child {
+    border-radius: 0 5px 0 0;
 }
