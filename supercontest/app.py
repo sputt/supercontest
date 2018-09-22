@@ -8,13 +8,15 @@ app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
 
 # Must be after db definition and before creation.
-from supercontest import models
+from supercontest import models, scores
 
 
-@app.route('/')
-def index():
-    # default to the latest week
-    week = db.session.query(db.func.max(models.Matchup.week)).scalar()
+@app.route('/', defaults={'week': None})
+@app.route('/week<week>')
+def home(week=None):
+    # default to the latest week if nothing is passed
+    week = week or db.session.query(db.func.max(models.Matchup.week)).scalar()
+    scores.commit_scores(week=week)
     matchups = models.Matchup.query.filter_by(week=week).all()
     return render_template('table.html', week=week, matchups=matchups)
 

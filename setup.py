@@ -20,8 +20,8 @@ setup(
     include_package_data=True,
     entry_points = {
         'console_scripts': [
-            'commit-lines=supercontest.lines:commit_lines',
-            'commit-scores=supercontest.scores:commit_scores',
+            'commit-lines=supercontest.lines:main',
+            'commit-scores=supercontest.scores:main',
         ]
     }
 )

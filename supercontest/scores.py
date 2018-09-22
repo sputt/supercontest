@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 from supercontest.utilities import get_soup_from_url
 from supercontest.models import Matchup
@@ -24,7 +25,7 @@ def fetch_scores():
         score[u'status'] = game['q']
         scores.append(score)
 
-    return scores
+    return scores, week
 
 
 def _commit_scores(week, scores):
@@ -46,9 +47,21 @@ def _commit_scores(week, scores):
     db.session.commit()
 
 
-def commit_scores():
-    """Console entry point. Just pass it the week.
+def commit_scores(week):
+    """Python wrapper for all score committing. Requires
+    that the week be passed through Python.
+    """
+    scores, week_from_nfl = fetch_scores()
+    if week != week_from_nfl:
+        print('You are requested scores for week {} but the NFL is '
+              'returning scores for week {}.'.format(week, week_from_nfl))
+        return
+    _commit_scores(week=week, scores=scores)
+
+
+def main():
+    """Command line entry point for all score committing. Requires
+    that the week be passed through the CLI.
     """
     week = sys.argv[1]
-    scores = fetch_scores()
-    _commit_scores(week=week, scores=scores)
+    commit_scores(week=week)

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import sys
 from supercontest.models import Matchup
 from supercontest.app import db
@@ -29,7 +30,11 @@ def fetch_lines(driver=None):  # driver is passed by decorator
         # if only the first cell is populated, it's just a date row,
         # which is concatenated for subsequent iterations until it changes
         if len(data) == 1:
-            date = cells[0].text
+            content = cells[0].text
+            if 'WEEK' in content:
+                week = content
+            else:
+                date = content  # reuse for next rows until overwritten with new date
         # if the row has 4 values, it's a line - extract the info
         elif len(data) == 4:
             line = [cell.text for cell in cells]
@@ -48,7 +53,7 @@ def fetch_lines(driver=None):  # driver is passed by decorator
         else:
             continue
 
-    return lines
+    return lines, week
 
 
 def instantiate_rows_for_matchups(week, lines):
@@ -89,9 +94,21 @@ def _commit_lines(week, lines):
     db.session.commit()
 
 
-def commit_lines():
-    """Console entry point. Just pass it the week.
+def commit_lines(week):
+    """Python wrapper for all line committing. Requires
+    that the week be passed through Python.
+    """
+    lines, week_from_westgate = fetch_lines()
+    if week != week_from_westgate:
+        print('You are requesting lines for week {} but westgate is '
+              'returning lines for week {}.'.format(week, week_from_westgate))
+        return
+    _commit_lines(week=week, lines=lines)
+
+
+def main()
+    """Command line entry point for all line committing. Requires
+    that the week be passed through the CLI.
     """
     week = sys.argv[1]
-    lines = fetch_lines()
-    _commit_lines(week=week, lines=lines)
+    commit_lines(week=week)

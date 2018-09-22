@@ -1,9 +1,3 @@
-FRONTEND FEATURES
-
-* Add a dropdown for all the previous weeks. Default to the latest.
-* Backfill data from week 1.
-* Fetch the lines for week 3.
-
 PICK FORM
 
 * Account login and authentication. Probably basic flask auth in the session.
@@ -17,6 +11,7 @@ PICK FORM
 
 MEDIUM TERM
 
+* Move the routes out of app.py and into a views.py module.
 * Rewrite the jinja logic in javascript? Yes.
 * Figure out how it flushes week to week. Probably will have a separate route for each week, so
   people can reference back. This flush will also call fetch_lines, and will swap over once they're
