@@ -11,6 +11,7 @@ PICK FORM
 
 MEDIUM TERM
 
+* Statistical analyses. Underdog vs favorite. Wins by team.
 * Move the routes out of app.py and into a views.py module.
 * Rewrite the jinja logic in javascript? Yes.
 * Figure out how it flushes week to week. Probably will have a separate route for each week, so
