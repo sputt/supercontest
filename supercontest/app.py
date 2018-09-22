@@ -13,7 +13,8 @@ from supercontest import models
 
 @app.route('/')
 def index():
-    week = 2
+    # default to the latest week
+    week = db.session.query(db.func.max(models.Matchup.week)).scalar()
     matchups = models.Matchup.query.filter_by(week=week).all()
     return render_template('table.html', week=week, matchups=matchups)
 
