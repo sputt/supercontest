@@ -1,5 +1,5 @@
 html {
-  background: linear-gradient(white, black) no-repeat center center fixed;
+  background: radial-gradient(white, grey) no-repeat center center fixed;
   background-size: cover;
 }
 

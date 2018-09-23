@@ -1,4 +1,4 @@
-PICK FORM
+NOW
 
 * Account login and authentication. Probably basic flask auth in the session.
   http://exploreflask.com/en/latest/users.html
@@ -9,14 +9,13 @@ PICK FORM
 * Email the person after the picks are cutoff.
 * Delete all the other flask login and pick form stuff that was already in the app.
 
-MEDIUM TERM
+LATER
 
 * Statistical analyses. Underdog vs favorite. Wins by team.
 * Move the routes out of app.py and into a views.py module.
 * Rewrite the jinja logic in javascript? Yes.
-* Figure out how it flushes week to week. Probably will have a separate route for each week, so
-  people can reference back. This flush will also call fetch_lines, and will swap over once they're
-  available. This can probably be manual for now, done by me on wed nights.
+* Cron jobs for fetch_lines (currently manual) and fetch_scores (currently on refresh).
+  The latter must be cached as the app scales.
 * Add text field on frontend somewherewhich says "what would make this app better?" and types "petty's mom"
   over and over no matter what keystrokes you enter.
 * Add checkbox somewhere which says "I am playing this week under protest."
@@ -31,10 +30,7 @@ MEDIUM TERM
   http://exploreflask.com/en/latest/forms.html#custom-validators
 * Use blueprints http://exploreflask.com/en/latest/blueprints.html
 * Add pretty readme.
-* Add a chat client.
-
-LONG TERM
-
 * Port to a mobile app.
 * Port to python 3.
 * Add tests.
+* Add a chat client.
