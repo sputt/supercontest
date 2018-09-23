@@ -1,5 +1,6 @@
 NOW
 
+* Finish dropdown for previous available weeks.
 * Account login and authentication. Probably basic flask auth in the session.
   http://exploreflask.com/en/latest/users.html
   http://exploreflask.com/en/latest/views.html

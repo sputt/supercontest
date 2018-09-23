@@ -52,8 +52,10 @@ def commit_scores(week):
     that the week be passed through Python.
     """
     scores, week_from_nfl = fetch_scores()
+    week = str(week)
+    week_from_nfl = str(week_from_nfl)
     if week != week_from_nfl:
-        print('You are requested scores for week {} but the NFL is '
+        print('You are requesting scores for week {} but the NFL is '
               'returning scores for week {}.'.format(week, week_from_nfl))
         return
     _commit_scores(week=week, scores=scores)

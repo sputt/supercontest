@@ -99,6 +99,8 @@ def commit_lines(week):
     that the week be passed through Python.
     """
     lines, week_from_westgate = fetch_lines()
+    week = str(week)
+    week_from_westgate = str(week_from_westgate)
     if week != week_from_westgate:
         print('You are requesting lines for week {} but westgate is '
               'returning lines for week {}.'.format(week, week_from_westgate))
