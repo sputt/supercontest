@@ -17,7 +17,7 @@ LATER
 * Move the routes out of app.py and into a views.py module.
 * Rewrite the jinja logic in javascript? Yes.
 * Cron jobs for fetch_lines (currently manual) and fetch_scores (currently on refresh).
-  The latter must be cached as the app scales.
+  The latter must be cached as the app scales. The main view should update async.
 * Add text field on frontend somewherewhich says "what would make this app better?" and types "petty's mom"
   over and over no matter what keystrokes you enter.
 * Add checkbox somewhere which says "I am playing this week under protest."
