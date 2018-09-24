@@ -14,8 +14,7 @@ from supercontest import models, scores
 @app.route('/', defaults={'week': None})
 @app.route('/week<week>')
 def home(week=None):
-    # default to the latest week if nothing is passed
-    week = week or db.session.query(db.func.max(models.Matchup.week)).scalar()
+    week = week or '3'
     scores.commit_scores(week=week)
     matchups = models.Matchup.query.filter_by(week=week).all()
     return render_template('table.html', week=week, matchups=matchups)
