@@ -32,6 +32,12 @@ sudo ln -s /etc/nginx/sites-available/supercontest /etc/nginx/sites-enabled
 sudo systemctl restart nginx
 ```
 
+If you ever need to restart the service (necessary after you modify the app, change
+routes, git pull in a new db update, etc):
+```bash
+sudo systemctl restart supercontest
+```
+
 To certify (do once):
 ```bash
 sudo add-apt-repository ppa:certbot/certbot
