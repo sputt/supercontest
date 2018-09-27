@@ -58,6 +58,8 @@ killall chromedriver /opt/google/chrome/chrome
 To manually commit lines, do the following. This is typically done
 on Wednesday nights, after Westgate posts the lines. This must
 be done before scores are committed, because it creates the matchup rows.
+After you run this, you typically have to restart the service to ingest the
+new changes. This should be fixed by proper session scoping.
 ```bash
 commit-lines <weeknum>
 ```
@@ -66,4 +68,17 @@ To manually commit scores, do the following. This should never need to
 be done manually, but it's exposed as a development convenience.
 ```bash
 commit-scores <weeknum>
+```
+
+For a simple query to the database, use:
+```python
+from supercontest.models import Matchup
+Matchup.query.all()[0].favored_team
+```
+
+For queries that require more sqlalchemy scope (sessions, etc):
+```python
+from supercontest.app import db
+from supercontest.models import Matchup
+db.session.query(db.func.max(Matchup.week)).scalar()
 ```

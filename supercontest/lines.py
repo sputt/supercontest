@@ -8,11 +8,15 @@ from supercontest.utilities import with_webdriver
 @with_webdriver
 def fetch_lines(driver=None):  # driver is passed by decorator
     """Hits the official Westgate site and returns its line table as an html string,
-    then coerces it into the following format: [FAVORED_TEAM, UNDERDOG_TEAM, DATETIME, LINE]
+    then coerces it into the proper format..
 
     Example Westgate return:
         [[u'1 SEAHAWKS', u'2 CARDINALS*', u'+6', u'THURSDAY, NOVEMBER 9, 2017 5:25 PM'],
          [u'23 GIANTS', u'24 49ERS*', u'+2.5', u'SUNDAY, NOVEMBER 12, 2017 1:25 PM'],...]
+
+    Returns:
+        lines (list): [FAVORED_TEAM, UNDERDOG_TEAM, DATETIME, LINE]
+        week (int): As returned by Westgate
     """
     # Fetch the lines as WebElements
     url = 'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/supercontest-weekly-card/'
@@ -32,7 +36,7 @@ def fetch_lines(driver=None):  # driver is passed by decorator
         if len(data) == 1:
             content = cells[0].text
             if 'WEEK' in content:
-                week = content
+                week = int(content.split()[-1])  # it looks like WEEK 4
             else:
                 date = content  # reuse for next rows until overwritten with new date
         # if the row has 4 values, it's a line - extract the info
@@ -60,6 +64,13 @@ def instantiate_rows_for_matchups(week, lines):
     """This function strips the asterisks (if any) from the team names
     so that they're pure before committing to the table. It adds that
     respective team to the home_team column.
+
+    Args:
+        week (int)
+        lines (list): from fetch_lines() return, [FAV, UNDERDOG, DATETIME, LINE]
+
+    Returns:
+        matchups (list): Each is a database row object for the Matchup table
     """
     matchups = []
     for line in lines:
@@ -97,10 +108,11 @@ def _commit_lines(week, lines):
 def commit_lines(week):
     """Python wrapper for all line committing. Requires
     that the week be passed through Python.
+
+    Args:
+        week (int)
     """
     lines, week_from_westgate = fetch_lines()
-    week = str(week)
-    week_from_westgate = str(week_from_westgate)
     if week != week_from_westgate:
         print('You are requesting lines for week {} but westgate is '
               'returning lines for week {}.'.format(week, week_from_westgate))
@@ -108,9 +120,9 @@ def commit_lines(week):
     _commit_lines(week=week, lines=lines)
 
 
-def main()
+def main():
     """Command line entry point for all line committing. Requires
     that the week be passed through the CLI.
     """
-    week = sys.argv[1]
+    week = int(sys.argv[1])
     commit_lines(week=week)

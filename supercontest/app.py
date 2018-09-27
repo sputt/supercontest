@@ -1,7 +1,6 @@
 from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, current_user
-from supercontest.forms import EmailPasswordForm
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -14,19 +13,15 @@ from supercontest import models, scores
 @app.route('/', defaults={'week': None})
 @app.route('/week<week>')
 def home(week=None):
-    week = week or '3'
+    if week is not None:
+        # Use the week requested in the route, but cast str to int.
+        week = int(week)
+    else:
+        # Look up the most recent week in the db (already an int).
+        week = db.session.query(db.func.max(models.Matchup.week)).scalar()
     scores.commit_scores(week=week)
     matchups = models.Matchup.query.filter_by(week=week).all()
     return render_template('table.html', week=week, matchups=matchups)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = EmailPasswordForm()
-    # if form.validate_on_submit():
-    #    # check password here later
-    #    return redirect(url_for('index'))
-    return render_template('login.html', form=form)
 
 
 def create_db():

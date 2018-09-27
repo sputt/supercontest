@@ -8,10 +8,15 @@ from supercontest.app import db
 def fetch_scores():
     """Hits the NFL API for live score updates and the time status
     of the game (quarter, final, etc).
+
+    Returns:
+        scores (list of dicts): Each score dict has home_team, home_team_score,
+            visiting_team, visiting_team_score, status
+        week (int)
     """
     url = 'http://www.nfl.com/liveupdate/scorestrip/ss.xml'
     soup = get_soup_from_url(url)
-    week = soup.gms['w']
+    week = int(soup.gms['w'])
     games = soup.gms.find_all('g')
     scores = []
     for game in games:
@@ -29,6 +34,12 @@ def fetch_scores():
 
 
 def _commit_scores(week, scores):
+    """Commits the scores to the database.
+
+    Args:
+        week (int)
+        scores (list of dicts): As returned from fetch_scores()
+    """
     matchups = Matchup.query.filter_by(week=week).all()
     for game in scores:
         # could use home or visiting team, this is an arbitrary binary
@@ -50,10 +61,11 @@ def _commit_scores(week, scores):
 def commit_scores(week):
     """Python wrapper for all score committing. Requires
     that the week be passed through Python.
+
+    Args:
+        week (int)
     """
     scores, week_from_nfl = fetch_scores()
-    week = str(week)
-    week_from_nfl = str(week_from_nfl)
     if week != week_from_nfl:
         print('You are requesting scores for week {} but the NFL is '
               'returning scores for week {}.'.format(week, week_from_nfl))
@@ -65,5 +77,5 @@ def main():
     """Command line entry point for all score committing. Requires
     that the week be passed through the CLI.
     """
-    week = sys.argv[1]
+    week = int(sys.argv[1])
     commit_scores(week=week)
