@@ -5,9 +5,9 @@ After=network.target
 [Service]
 User=bmahlstedt
 Group=www-data
-WorkingDirectory=/home/bmahlstedt/code/supercontest
+WorkingDirectory=/home/bmahlstedt/code/supercontest/supercontest
 Environment="PATH=/home/bmahlstedt/code/supercontest/venv/bin
-ExecStart=uwsgi --ini data/supercontest.ini
+ExecStart=/home/bmahlstedt/code/supercontest/venv/bin/uwsgi --ini supercontest.ini
 
 [Install]
 WantedBy=multi-user.target
