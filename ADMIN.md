@@ -6,8 +6,7 @@ pip install -e .
 
 To create the database for the first time:
 ```python
-from supercontest.app import create_db
-create_db()
+sc-create-db
 ```
 
 To fetch lines, we need a webdriver. You'll need chrome and
@@ -61,13 +60,13 @@ be done before scores are committed, because it creates the matchup rows.
 After you run this, you typically have to restart the service to ingest the
 new changes. This should be fixed by proper session scoping.
 ```bash
-commit-lines <weeknum>
+sc-commit-lines <weeknum>
 ```
 
 To manually commit scores, do the following. This should never need to
 be done manually, but it's exposed as a development convenience.
 ```bash
-commit-scores <weeknum>
+sc-commit-scores <weeknum>
 ```
 
 For a simple query to the database, use:

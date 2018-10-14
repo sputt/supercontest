@@ -1,4 +1,5 @@
-from __future__ import print_function
+"""Logic for fetching NFL scores and committing them to the database.
+"""
 import sys
 from supercontest.utilities import get_soup_from_url
 from supercontest.models import Matchup
@@ -55,7 +56,7 @@ def _commit_scores(week, scores):
                 matchup.favored_team_score = game['home_team_score']
                 matchup.status = game['status']
                 break
-    db.session.commit()
+    db.session.commit()  # pylint: disable=no-member
 
 
 def commit_scores(week):
@@ -67,8 +68,9 @@ def commit_scores(week):
     """
     scores, week_from_nfl = fetch_scores()
     if week != week_from_nfl:
-        print('You are requesting scores for week {} but the NFL is '
-              'returning scores for week {}.'.format(week, week_from_nfl))
+        sys.stderr.write(
+            'You are requesting scores for week {} but the NFL is '
+            'returning scores for week {}.'.format(week, week_from_nfl))
         return
     _commit_scores(week=week, scores=scores)
 

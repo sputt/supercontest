@@ -7,7 +7,7 @@ User=bmahlstedt
 Group=www-data
 WorkingDirectory=/home/bmahlstedt/code/supercontest
 Environment="PATH=/home/bmahlstedt/code/supercontest/venv/bin
-ExecStart=/home/bmahlstedt/code/supercontest/venv/bin/uwsgi --ini supercontest.ini
+ExecStart=uwsgi --ini data/supercontest.ini
 
 [Install]
 WantedBy=multi-user.target

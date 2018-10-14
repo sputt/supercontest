@@ -1,10 +1,18 @@
 {% extends "layout.html" %}
 
 {% block table %}
+<div class="dropdown">
+  <button class="dropbtn">WEEK {{ week }}</button>
+  <div class="dropdown-content">
+    {% for available_week in available_weeks %}
+    <a href="{{ url_for('home', week=available_week) }}">Week {{ available_week }}</a>
+    {% endfor %}
+  </div>
+</div>
 <table>
   <thead>
     <tr>
-      <th>Time</th>
+      <th>Time (pacific)</th>
       <th>Line</th>
       <th>Favorite</th>
       <th>Score</th>

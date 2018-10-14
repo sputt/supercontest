@@ -1,9 +1,7 @@
-requests
 bs4
+decorator
 flask
 flask-sqlalchemy
-flask-login
-flask-wtf
-wtforms
-uwsgi
+requests
 selenium
+uwsgi
