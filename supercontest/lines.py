@@ -1,10 +1,12 @@
-from __future__ import print_function
+"""Logic for fetching the lines and committing them to the database.
+"""
 import sys
 from supercontest.models import Matchup
 from supercontest.app import db
 from supercontest.utilities import with_webdriver
 
 
+# pylint: disable=too-many-locals
 @with_webdriver
 def fetch_lines(driver=None):  # driver is passed by decorator
     """Hits the official Westgate site and returns its line table as an html string,
@@ -19,7 +21,7 @@ def fetch_lines(driver=None):  # driver is passed by decorator
         week (int): As returned by Westgate
     """
     # Fetch the lines as WebElements
-    url = 'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/supercontest-weekly-card/'
+    url = 'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/supercontest-weekly-card/'  # pylint: disable=line-too-long
     driver.get(url)
     iframe = driver.find_element_by_css_selector('iframe')
     driver.switch_to_frame(iframe)
@@ -29,7 +31,7 @@ def fetch_lines(driver=None):  # driver is passed by decorator
     date = ''
     lines = []
     for row in rows:
-        cells  = row.find_elements_by_css_selector('td')
+        cells = row.find_elements_by_css_selector('td')
         data = [cell.text for cell in cells if cell.text != '']
         # if only the first cell is populated, it's just a date row,
         # which is concatenated for subsequent iterations until it changes
@@ -101,8 +103,8 @@ def _commit_lines(week, lines):
     commit_scores() updates them later as the games are played.
     """
     matchups = instantiate_rows_for_matchups(week=week, lines=lines)
-    db.session.add_all(matchups)
-    db.session.commit()
+    db.session.add_all(matchups)  # pylint: disable=no-member
+    db.session.commit()  # pylint: disable=no-member
 
 
 def commit_lines(week):
@@ -114,8 +116,9 @@ def commit_lines(week):
     """
     lines, week_from_westgate = fetch_lines()
     if week != week_from_westgate:
-        print('You are requesting lines for week {} but westgate is '
-              'returning lines for week {}.'.format(week, week_from_westgate))
+        sys.stderr.write(
+            'You are requesting lines for week {} but westgate is returning '
+            'lines for week {}.'.format(week, week_from_westgate))
         return
     _commit_lines(week=week, lines=lines)
 

@@ -1,34 +1,45 @@
-from flask import Flask, render_template, redirect, url_for
+"""The main application. Contains the app and db for import elsewhere.
+"""
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import login_required, current_user
 
-app = Flask(__name__)
+app = Flask(__name__)  # pylint: disable=invalid-name
 app.config.from_pyfile('config.py')
-db = SQLAlchemy(app)
+db = SQLAlchemy(app)  # pylint: disable=invalid-name
 
 # Must be after db definition and before creation.
-from supercontest import models, scores
+from supercontest import scores  # pylint: disable=wrong-import-position
+from supercontest import models  # pylint: disable=wrong-import-position
 
 
 @app.route('/', defaults={'week': None})
 @app.route('/week<week>')
 def home(week=None):
+    """Main route for basic app interaction.
+    """
+    weeks = [res.week for res
+             in db.session.query(models.Matchup.week).distinct().all()]
     if week is not None:
-        # Use the week requested in the route, but cast str to int.
         week = int(week)
     else:
-        # Look up the most recent week in the db (already an int).
-        week = db.session.query(db.func.max(models.Matchup.week)).scalar()
+        week = max(weeks)
     scores.commit_scores(week=week)
     matchups = models.Matchup.query.filter_by(week=week).all()
-    return render_template('table.html', week=week, matchups=matchups)
+    return render_template('table.html',
+                           week=week,
+                           available_weeks=weeks,
+                           matchups=matchups)
 
 
 def create_db():
+    """Creates the db. Only called once, manually.
+    """
     db.create_all()
 
 
 def run_app():
+    """Logic for starting the app. Most should be abstracted to config.
+    """
     app.run(host='0.0.0.0')
 
 

@@ -1,12 +1,19 @@
+"""Contains the tables for the applications.
+"""
+# pylint: disable=no-member,too-few-public-methods
 from supercontest.app import db
 
 
 class User(db.Model):
+    """The table for users.
+    """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
 
 
 class Pick(db.Model):
+    """The table for user picks.
+    """
     id = db.Column(db.Integer, primary_key=True)
     week = db.Column(db.Integer, nullable=False)
     team = db.Column(db.String, nullable=False)
@@ -16,6 +23,8 @@ class Pick(db.Model):
 
 
 class Matchup(db.Model):
+    """The main table for lines and scores.
+    """
     id = db.Column(db.Integer, primary_key=True)
     week = db.Column(db.Integer, nullable=False)
     favored_team = db.Column(db.String, nullable=False)
@@ -27,8 +36,6 @@ class Matchup(db.Model):
     underdog_team_score = db.Column(db.Integer)
     status = db.Column(db.String)
     # P = has not started
-    # F = game is over
-
-    # Not sure about these yet:
+    # H = halftime
+    # F/FO = game is over
     # 1/2/3/4 = quarter
-    # OT = overtime
