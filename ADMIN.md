@@ -37,6 +37,10 @@ routes, git pull in a new db update, etc):
 sudo systemctl restart supercontest
 ```
 
+To enable mail, edit supercontest/gmail.py with the proper MAIL_PASSWORD.
+It's the name of the contest, without the location, in all lowercase, then a funny number
+and a punctuation mark.
+
 To certify (do once):
 ```bash
 sudo add-apt-repository ppa:certbot/certbot

@@ -2,10 +2,13 @@
 """
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail
 
 app = Flask(__name__)  # pylint: disable=invalid-name
 app.config.from_pyfile('config.py')
+app.config.from_pyfile('gmail.py')
 db = SQLAlchemy(app)  # pylint: disable=invalid-name
+mail = Mail(app)  # pylint: disable=invalid-name
 
 # Must be after db definition and before creation.
 from supercontest import scores  # pylint: disable=wrong-import-position

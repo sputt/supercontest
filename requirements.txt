@@ -1,6 +1,7 @@
 bs4
 decorator
 flask
+flask-mail
 flask-sqlalchemy
 requests
 selenium

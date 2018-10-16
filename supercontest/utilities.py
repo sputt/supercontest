@@ -6,6 +6,8 @@ import bs4
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from decorator import decorator
+from flask_mail import Message
+from supercontest.app import mail
 
 
 def get_soup_from_url(url):
@@ -32,3 +34,9 @@ def with_webdriver(function, *args, **kwargs):
         return function(driver, *args, **kwargs)
     finally:
         driver.quit()
+
+
+def send_mail(subject, body, recipient):
+    msg = Message(subject, recipients=[recipient])
+    msg.body = body
+    mail.send(msg)
