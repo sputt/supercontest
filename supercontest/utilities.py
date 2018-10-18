@@ -23,15 +23,15 @@ def get_soup_from_url(url):
 
 @decorator
 def with_webdriver(function, *args, **kwargs):
-    """Decorator. Requires that the decorated function accept "driver"
-    as its first argument. This is a selenium webdriver for Chrome (headless).
+    """Decorator. Requires that the decorated function accept the driver
+    as its only argument. This is a selenium webdriver for Chrome (headless).
     """
     chrome_options = Options()
     chrome_options.add_argument('--headless')
     driver = webdriver.Chrome(chrome_options=chrome_options)
     driver.implicitly_wait(30)
     try:
-        return function(driver, *args, **kwargs)
+        return function(driver)
     finally:
         driver.quit()
 
