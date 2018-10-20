@@ -1,6 +1,8 @@
 # Supercontest stuff
 *.swp
 instance/
+gmail_password.py
+*.db-journal
 
 # Mac stuff
 .DS_Store
