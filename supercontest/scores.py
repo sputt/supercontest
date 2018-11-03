@@ -3,7 +3,7 @@
 import sys
 from supercontest.utilities import get_soup_from_url
 from supercontest.models import Matchup
-from supercontest.app import db
+from supercontest import db
 
 
 def fetch_scores():
@@ -41,7 +41,7 @@ def _commit_scores(week, scores):
         week (int)
         scores (list of dicts): As returned from fetch_scores()
     """
-    matchups = Matchup.query.filter_by(week=week).all()
+    matchups = db.session.query(Matchup).filter_by(week=week).all()
     for game in scores:
         # could use home or visiting team, this is an arbitrary binary
         visiting_team = game['visiting_team']
@@ -70,14 +70,6 @@ def commit_scores(week):
     if week != week_from_nfl:
         sys.stderr.write(
             'You are requesting scores for week {} but the NFL is '
-            'returning scores for week {}.'.format(week, week_from_nfl))
+            'returning scores for week {}.\n'.format(week, week_from_nfl))
         return
     _commit_scores(week=week, scores=scores)
-
-
-def main():
-    """Command line entry point for all score committing. Requires
-    that the week be passed through the CLI.
-    """
-    week = int(sys.argv[1])
-    commit_scores(week=week)

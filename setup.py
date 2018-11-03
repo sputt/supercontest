@@ -18,11 +18,4 @@ setup(
     packages=find_packages(),
     install_requires=reqs,
     include_package_data=True,
-    entry_points = {
-        'console_scripts': [
-            'sc-create-db=supercontest.app:create_db',
-            'sc-commit-lines=supercontest.lines:main',
-            'sc-commit-scores=supercontest.scores:main',
-        ]
-    }
 )

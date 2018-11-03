@@ -5,7 +5,7 @@
   <button class="dropbtn">WEEK {{ week }}</button>
   <div class="dropdown-content">
     {% for available_week in available_weeks %}
-    <a href="{{ url_for('home', week=available_week) }}">Week {{ available_week }}</a>
+    <a href="{{ url_for('main.home', week=available_week) }}">Week {{ available_week }}</a>
     {% endfor %}
   </div>
 </div>

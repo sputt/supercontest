@@ -2,7 +2,10 @@ bs4
 decorator
 flask
 flask-mail
+flask-migrate
+flask-script
 flask-sqlalchemy
+flask-user
 requests
 selenium
 uwsgi

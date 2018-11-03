@@ -19,6 +19,7 @@ dist/
 
 # Virtual environments
 venv
+scenv
 
 # Test
 .tox
