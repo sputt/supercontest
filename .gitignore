@@ -1,7 +1,7 @@
 # Supercontest stuff
 *.swp
 instance/
-gmail_password.py
+config_private.py
 *.db-journal
 
 # Mac stuff
