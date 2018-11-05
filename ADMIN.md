@@ -37,6 +37,14 @@ routes, git pull in a new db update, etc):
 sudo systemctl restart supercontest
 ```
 
+To debug errors in the service:
+```bash
+sudo tail -f /var/log/nginx/error.log   # nginx error logs
+sudo tail -f /var/log/nginx/access.log  # nginx access logs
+sudo journalctl -u nginx                # nginx process logs
+sudo journalctl -u supercontest         # uwsgi logs
+```
+
 Create a file called supercontest/config_private.py with following content.
 ```python
 MAIL_PASSWORD = # name of the contest, without the location, all lowercase, then a funny number and a puncuation mark
