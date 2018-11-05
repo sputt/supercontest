@@ -7,7 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from decorator import decorator
 from flask_mail import Message
-from supercontest.app import mail
+from supercontest import mail
 
 
 def get_soup_from_url(url):
@@ -22,7 +22,7 @@ def get_soup_from_url(url):
 
 
 @decorator
-def with_webdriver(function, *args, **kwargs):
+def with_webdriver(function, *args, **kwargs):  # pylint: disable=unused-argument
     """Decorator. Requires that the decorated function accept the driver
     as its only argument. This is a selenium webdriver for Chrome (headless).
     """

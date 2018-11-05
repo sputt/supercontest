@@ -2,8 +2,8 @@
 """
 import sys
 from supercontest.models import Matchup
-from supercontest.app import db
 from supercontest.utilities import with_webdriver
+from supercontest import db
 
 
 # pylint: disable=too-many-locals
@@ -118,14 +118,6 @@ def commit_lines(week):
     if week != week_from_westgate:
         sys.stderr.write(
             'You are requesting lines for week {} but westgate is returning '
-            'lines for week {}.'.format(week, week_from_westgate))
+            'lines for week {}.\n'.format(week, week_from_westgate))
         return
     _commit_lines(week=week, lines=lines)
-
-
-def main():
-    """Command line entry point for all line committing. Requires
-    that the week be passed through the CLI.
-    """
-    week = int(sys.argv[1])
-    commit_lines(week=week)

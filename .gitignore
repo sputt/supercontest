@@ -1,6 +1,8 @@
 # Supercontest stuff
 *.swp
 instance/
+config_private.py
+*.db-journal
 
 # Mac stuff
 .DS_Store
@@ -17,6 +19,7 @@ dist/
 
 # Virtual environments
 venv
+scenv
 
 # Test
 .tox
