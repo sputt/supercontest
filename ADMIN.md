@@ -20,13 +20,15 @@ You must install nginx to serve the application:
 sudo apt install nginx
 ```
 
-Copy `data/supercontest.service` to  `/etc/systemd/system/`. Then you can run:
+Register the services with systemd (once):
 ```bash
+sudo ln -s "$(pwd)/data/supercontest.service" /etc/systemd/system/supercontest.service
 sudo systemctl start supercontest
 ```
 
-Copy `data/supercontest` to `/etc/nginx/sites-available/`. Then initialize (once) with:
+Then initialize the site with nginx (once):
 ```bash
+sudo ln -s "$(pwd)/data/supercontest" /etc/nginx/sites-available/supercontest
 sudo ln -s /etc/nginx/sites-available/supercontest /etc/nginx/sites-enabled
 sudo systemctl restart nginx
 ```
