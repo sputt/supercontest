@@ -2,7 +2,11 @@
 """
 # pylint: disable=no-member
 from flask_user import UserMixin
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, validators
+
 from supercontest import db
+
 
 class User(db.Model, UserMixin):
     """The table for users.
@@ -11,15 +15,27 @@ class User(db.Model, UserMixin):
     # so that Alembic can autogenerate the migrations properly.
     __table_args__ = (
         db.UniqueConstraint('email', name='email_constraint'),
-        db.UniqueConstraint('username', name='username_constraint'),
-        db.UniqueConstraint('password', name='password_constraint'),
     )
     id = db.Column(db.Integer, primary_key=True)
-    active = db.Column('is_active', db.Boolean(), nullable=False, server_default='1')
+    # UserMixin doesn't provide this property, for some reason?
+    active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
     email = db.Column(db.String(225, collation='NOCASE'), nullable=False, server_default='')
     email_confirmed_at = db.Column(db.DateTime())
-    username = db.Column(db.String(100, collation='NOCASE'), nullable=False, server_default='')
     password = db.Column(db.String(255), nullable=False, server_default='')
+    first_name = db.Column(db.String(50, collation='NOCASE'), nullable=False, server_default='')
+    last_name = db.Column(db.String(50, collation='NOCASE'), nullable=False, server_default='')
+
+
+class UserProfileForm(FlaskForm):
+    first_name = StringField(
+        'First name',
+        validators=[validators.DataRequired('First name is required')]
+    )
+    last_name = StringField(
+        'Last name',
+        validators=[validators.DataRequired('Last name is required')]
+    )
+    submit = SubmitField('Save')
 
 
 class Pick(db.Model):

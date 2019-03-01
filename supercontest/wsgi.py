@@ -1,5 +1,4 @@
-"""Just the run wrapper, the entry point for uwsgi
-in data/supercontest.ini
+"""Just the run wrapper, the entry point for uwsgi in data/supercontest.ini
 """
 from supercontest import get_app
 

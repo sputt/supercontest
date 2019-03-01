@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from decorator import decorator
 from flask_mail import Message
+
 from supercontest import mail
 
 

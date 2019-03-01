@@ -1,5 +1,6 @@
 from flask_migrate import MigrateCommand
 from flask_script import Manager
+
 from supercontest import get_app, db, models
 from supercontest.commands import (
     InitDbCommand,

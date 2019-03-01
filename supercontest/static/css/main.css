@@ -1,14 +1,9 @@
-html {
-  background: radial-gradient(white, grey) no-repeat center center fixed;
-  background-size: cover;
-}
-
 body {
   margin: auto;
   padding: 10px;
 }
 
-.dropdown, .dropbtn, table {
+.dropdown, .dropbtn, table, .width700 {
     width: 700px;
     margin-left: auto;
     margin-right: auto;
@@ -69,6 +64,7 @@ th {
     color: #FFF;
     font-weight: bold;
     height: 40px;
+    text-align: center;
 }
 
 td {  

@@ -4,6 +4,12 @@ virtualenv venv && . venv/bin/activate
 pip install -e .
 ```
 
+If this is a relatively naked system, you may need the appropriate
+Python headers to build uwsgi:
+```bash
+sudo apt install build-essential python-dev
+```
+
 To create the database for the first time:
 ```bash
 python manage.py init_db
@@ -16,17 +22,17 @@ sudo apt install chromedriver
 ```
 
 You must install nginx to serve the application:
-```
+```bash
 sudo apt install nginx
 ```
 
-Register the services with systemd (once):
+Register the service with systemd (once):
 ```bash
 sudo ln -s "$(pwd)/data/supercontest.service" /etc/systemd/system/supercontest.service
 sudo systemctl start supercontest
 ```
 
-Then initialize the site with nginx (once):
+Register the site with nginx (once):
 ```bash
 sudo ln -s "$(pwd)/data/supercontest" /etc/nginx/sites-available/supercontest
 sudo ln -s /etc/nginx/sites-available/supercontest /etc/nginx/sites-enabled
@@ -39,18 +45,10 @@ routes, git pull in a new db update, etc):
 sudo systemctl restart supercontest
 ```
 
-To debug errors in the service:
-```bash
-sudo tail -f /var/log/nginx/error.log   # nginx error logs
-sudo tail -f /var/log/nginx/access.log  # nginx access logs
-sudo journalctl -u nginx                # nginx process logs
-sudo journalctl -u supercontest         # uwsgi logs
-```
-
-Create a file called supercontest/config_private.py with following content.
+Create a file called supercontest/config/private.py with following content.
 ```python
 MAIL_PASSWORD = # name of the contest, without the location, all lowercase, then a funny number and a puncuation mark
-SECRET_KEY = # run python -c "import os; print repr(os.urandom(24));"
+SECRET_KEY = # run python -c "import random, string; print repr(''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32)));"
 ```
 
 To certify (do once):
@@ -122,4 +120,12 @@ If you have ever have an incomplete migration/upgrade prior or you want
 to develop on the model:
 ```bash
 python manage.py db stamp head
+```
+
+TO debug errors in the service:
+```bash
+sudo tail -f /var/log/nginx/error.log   # nginx error logs
+sudo tail -f /var/log/nginx/access.log  # nginx access logs
+sudo journalctl -u nginx                # nginx process logs
+sudo journalctl -u supercontest         # uwsgi logs
 ```

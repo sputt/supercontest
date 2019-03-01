@@ -1,12 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>South Bay Supercontest</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
   </head>
   <body>
-    {% block table %}
+    <div class="pull-left">
+      <a href="/"><strong>{{ user_manager.USER_APP_NAME }}</strong></a>
+    </div>
+    <div class="pull-right">
+      <a href="{{ url_for('main.user_profile') }}" style="text-transform: lowercase;">{{ current_user.first_name or current_user.email }}</a>
+      &nbsp;|&nbsp;
+      <a href="{{ url_for('user.logout') }}">sign out</a>
+    </div>
+    <br><hr style="margin-top: 10px; margin-bottom: 10px;" />
+    {% block content %}
     {% endblock %}
+    <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
   </body>
 </html>

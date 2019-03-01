@@ -1,7 +1,8 @@
 """Logic for fetching NFL scores and committing them to the database.
 """
 import sys
-from supercontest.utilities import get_soup_from_url
+
+from supercontest.core.utilities import get_soup_from_url
 from supercontest.models import Matchup
 from supercontest import db
 

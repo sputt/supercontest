@@ -1,8 +1,6 @@
 # Supercontest stuff
-*.swp
-instance/
-config_private.py
-*.db-journal
+private.py
+supercontest.db
 
 # Mac stuff
 .DS_Store
@@ -23,3 +21,10 @@ scenv
 
 # Test
 .tox
+
+# Pycharm
+.idea
+
+# Other
+*.swp
+*.db-journal

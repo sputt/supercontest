@@ -6,6 +6,8 @@ flask-migrate
 flask-script
 flask-sqlalchemy
 flask-user
+flask-wtf
 requests
 selenium
 uwsgi
+wtforms
