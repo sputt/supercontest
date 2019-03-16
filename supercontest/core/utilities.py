@@ -2,13 +2,16 @@
 other supercontest modules.
 """
 import requests
+import datetime
 import bs4
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from decorator import decorator
+from flask import current_app
 from flask_mail import Message
 
-from supercontest import mail
+from supercontest import mail, db
+from supercontest.models import User
 
 
 def get_soup_from_url(url):
@@ -41,3 +44,12 @@ def send_mail(subject, body, recipient):
     msg = Message(subject, recipients=[recipient])
     msg.body = body
     mail.send(msg)
+
+
+def add_user(email, password):
+    user = User(email=email,
+                password=current_app.user_manager.password_manager.hash_password(password),
+                active=True,
+                email_confirmed_at=datetime.datetime.utcnow())
+    db.session.add(user)
+    db.session.commit()

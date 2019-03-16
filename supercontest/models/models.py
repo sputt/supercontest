@@ -26,18 +26,6 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(50, collation='NOCASE'), nullable=False, server_default='')
 
 
-class UserProfileForm(FlaskForm):
-    first_name = StringField(
-        'First name',
-        validators=[validators.DataRequired('First name is required')]
-    )
-    last_name = StringField(
-        'Last name',
-        validators=[validators.DataRequired('Last name is required')]
-    )
-    submit = SubmitField('Save')
-
-
 class Pick(db.Model):
     """The table for user picks.
     """
@@ -45,8 +33,6 @@ class Pick(db.Model):
     week = db.Column(db.Integer, nullable=False)
     team = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref=db.backref('picks'))
-    points = db.Column(db.Float)
 
 
 class Matchup(db.Model):
@@ -67,3 +53,15 @@ class Matchup(db.Model):
     favored_team_score = db.Column(db.Integer)
     underdog_team_score = db.Column(db.Integer)
     status = db.Column(db.String)
+
+
+class UserProfileForm(FlaskForm):
+    first_name = StringField(
+        'First name',
+        validators=[validators.DataRequired('First name is required')]
+    )
+    last_name = StringField(
+        'Last name',
+        validators=[validators.DataRequired('Last name is required')]
+    )
+    submit = SubmitField('Save')

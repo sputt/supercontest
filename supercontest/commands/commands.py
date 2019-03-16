@@ -1,14 +1,12 @@
 # pylint: disable=no-self-use, method-hidden, arguments-differ
 from __future__ import print_function
 
-import datetime
-from flask import current_app
 from flask_script import Command, Option
 
 from supercontest import db
 from supercontest.core.lines import commit_lines
 from supercontest.core.scores import commit_scores
-from supercontest.models import User
+from supercontest.core.utilities import add_user
 
 
 class InitDbCommand(Command):
@@ -19,12 +17,7 @@ class InitDbCommand(Command):
         db.create_all()
         db.session.commit()
         print('Database has been initialized')
-        user = User(email='example@example.com',
-                    password=current_app.user_manager.password_manager.hash_password('hello'),
-                    active=True,
-                    email_confirmed_at=datetime.datetime.utcnow())
-        db.session.add(user)
-        db.session.commit()
+        add_user(email='example@example.com', password='hello')
         print('An example user has been added to the database')
 
 

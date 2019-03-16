@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="dropdown">
+<div class="center-block dropdown" style="width: 700px">
   <button class="dropbtn">WEEK {{ week }}</button>
   <div class="dropdown-content">
     {% for available_week in available_weeks %}
@@ -9,58 +9,63 @@
     {% endfor %}
   </div>
 </div>
-<table>
-  <thead>
-    <tr>
-      <th>Time (pacific)</th>
-      <th>Line</th>
-      <th>Favorite</th>
-      <th>Score</th>
-      <th>Underdog</th>
-      <th>Score</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for matchup in matchups %}
-    <tr>
-      <td id=datetime>{{ matchup.datetime }}</td>
-      <td id=line>{{ matchup.line }}</td>
-      {% if matchup.status == 'P' %}
-      <td id=favored_team>
-      {% elif (matchup.favored_team_score - matchup.underdog_team_score) > matchup.line %}
-      <td style="background: palegreen" id=favored_team>
-      {% elif (matchup.favored_team_score - matchup.underdog_team_score) == matchup.line %}
-      <td style="background: khaki" id=favored_team>
-      {% else %}
-      <td style="background: lightcoral" id=favored_team>
-      {% endif %}
-        {% if matchup.home_team == matchup.favored_team %}
-        {{ matchup.favored_team + '*' }}
+<div id="tableDiv">
+  <table class="width700 centered">
+    <thead>
+      <tr>
+        <th>Time (pacific)</th>
+        <th>Line</th>
+        <th>Favorite</th>
+        <th>Score</th>
+        <th>Underdog</th>
+        <th>Score</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for matchup in matchups %}
+      <tr class="matchup">
+        <td class="datetime">{{ matchup.datetime }}</td>
+        <td class="line">{{ matchup.line }}</td>
+        {% if matchup.status == 'P' %}
+        <td class="favoredTeam">
+        {% elif (matchup.favored_team_score - matchup.underdog_team_score) > matchup.line %}
+        <td class="favoredTeam" style="background: palegreen">
+        {% elif (matchup.favored_team_score - matchup.underdog_team_score) == matchup.line %}
+        <td class="favoredTeam" style="background: khaki">
         {% else %}
-        {{ matchup.favored_team }}
+        <td class="favoredTeam" style="background: lightcoral">
         {% endif %}
-      </td>
-      <td id=favored_team_score>{{ matchup.favored_team_score }}</td>
-      {% if matchup.status == 'P' %}
-      <td id=underdog_team>
-      {% elif (matchup.favored_team_score - matchup.underdog_team_score) < matchup.line %}
-      <td style="background: palegreen" id=underdog_team>
-      {% elif (matchup.favored_team_score - matchup.underdog_team_score) == matchup.line %}
-      <td style="background: khaki" id=underdog_team>
-      {% else %}
-      <td style="background: lightcoral" id=underdog_team>
-      {% endif %}
-        {% if matchup.home_team == matchup.underdog_team %}
-        {{ matchup.underdog_team + '*' }}
+          {% if matchup.home_team == matchup.favored_team %}
+          {{ matchup.favored_team + '*' }}
+          {% else %}
+          {{ matchup.favored_team }}
+          {% endif %}
+        </td>
+        <td class="favoredTeamScore">{{ matchup.favored_team_score }}</td>
+        {% if matchup.status == 'P' %}
+        <td class="underdogTeam">
+        {% elif (matchup.favored_team_score - matchup.underdog_team_score) < matchup.line %}
+        <td class="underdogTeam" style="background: palegreen">
+        {% elif (matchup.favored_team_score - matchup.underdog_team_score) == matchup.line %}
+        <td class="underdogTeam" style="background: khaki">
         {% else %}
-        {{ matchup.underdog_team }}
+        <td class="underdogTeam" style="background: lightcoral">
         {% endif %}
-      </td>
-      <td id=underdog_team_score>{{ matchup.underdog_team_score }}</td>
-      <td id=status>{{ matchup.status }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+          {% if matchup.home_team == matchup.underdog_team %}
+          {{ matchup.underdog_team + '*' }}
+          {% else %}
+          {{ matchup.underdog_team }}
+          {% endif %}
+        </td>
+        <td class="underdogTeamScore">{{ matchup.underdog_team_score }}</td>
+        <td class="status">{{ matchup.status }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <button id="submitButton" class="btn btn-primary center-block" style="margin-top: 10px; display: none;">
+    Submit Picks
+  </button>
+</div>
 {% endblock %}

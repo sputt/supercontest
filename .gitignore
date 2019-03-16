@@ -1,6 +1,7 @@
 # Supercontest stuff
 private.py
 supercontest.db
+backups
 
 # Mac stuff
 .DS_Store

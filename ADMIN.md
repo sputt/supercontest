@@ -97,6 +97,13 @@ python manage.py shell  # this injects 'db' and 'models' into context
 db.session.query(db.func.max(models.Matchup.week)).scalar()
 ```
 
+To add users for testing, for example:
+```bash
+python manage.py shell
+from supercontest.core.utilities import add_user
+add_user(email='example@example.com', password='hello')
+```
+
 To initialize the migration scheme, run:
 ```bash
 python manage.py db init
