@@ -10,11 +10,20 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='notify/notify.min.js') }}"></script>
   </head>
   <body>
     <div id="header-div" class="clearfix with-margins">
       <div class="pull-left">
         <a href="/"><strong>{{ user_manager.USER_APP_NAME }}</strong></a>
+        &nbsp;|&nbsp;
+        <a class="centered width700" href="/leaderboard">leaderboard</a>
+        {% if switch_link is defined %}
+          &nbsp;|&nbsp;
+          <a class="centered width700" href="{{ url_for(switch_link[0], week=week) }}">{{ switch_link[1] }}</a>
+        {% endif %}
       </div>
       <div class="pull-right">
         <a href="{{ url_for('main.user_profile') }}" style="text-transform: lowercase;">{{ current_user.first_name or current_user.email }}</a>
@@ -27,11 +36,5 @@
       {% block content %}
       {% endblock %}
     </div>
-    <script>const week = {{ week or 0 }};</script>
-    <script>const picks = {{ (picks or [])|tojson }};</script>
-    <script src="{{ url_for('static', filename='bootstrap/js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='notify/notify.min.js') }}"></script>
   </body>
 </html>

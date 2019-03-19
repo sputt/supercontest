@@ -1,0 +1,31 @@
+{% extends "week/week_header.html" %}
+
+{% block table %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
+<div id="tableDiv">
+  <table class="centered">
+    <thead>
+      <tr>
+        <th>User</th>
+        {% for matchup in matchups %}
+        <th class="rotate">{{ matchup[0] }}</th>
+        <th class="rotate">{{ matchup[1] }}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for user_email in user_emails %}
+      <tr>
+        <th>{{ user_email[0] }}</th>
+        {% for matchup in matchups %}
+          <td id={{ user_email[0] | replace('@', '') | replace('.', '') + matchup[0] }}></td>
+          <td id={{ user_email[0] | replace('@', '') | replace('.', '') + matchup[1] }}></td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<script>const all_picks = {{ (all_picks or [])|tojson }}</script>
+<script src="{{ url_for('static', filename='js/week_picks.js') }}"></script>
+{% endblock %}

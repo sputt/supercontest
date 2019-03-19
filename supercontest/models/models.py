@@ -33,6 +33,7 @@ class Pick(db.Model):
     week = db.Column(db.Integer, nullable=False)
     team = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    points = db.Column(db.Float)
 
 
 class Matchup(db.Model):
@@ -53,6 +54,7 @@ class Matchup(db.Model):
     favored_team_score = db.Column(db.Integer)
     underdog_team_score = db.Column(db.Integer)
     status = db.Column(db.String)
+    winner = db.Column(db.String)
 
 
 class UserProfileForm(FlaskForm):

@@ -11,3 +11,4 @@ requests
 selenium
 uwsgi
 wtforms
+xlrd

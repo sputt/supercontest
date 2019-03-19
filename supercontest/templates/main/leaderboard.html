@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
+<div id="tableDiv">
+  <table class="width700 centered">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>User</th>
+        {% for week in weeks %}
+        <th>{{ week }}</th>
+        {% endfor %}
+        <th>total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user_email, total in totals %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ user_email }}</td>
+        {% for week in weeks %}
+        <td>{{ results[user_email].get(week, 0.0) }}</td>
+        {% endfor %}
+        <td>{{ total }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

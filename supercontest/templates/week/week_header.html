@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dropdown.css') }}">
+<div class="center-block dropdown" style="width: 700px">
+  <button class="dropbtn">WEEK {{ week }}</button>
+  <div class="dropdown-content">
+    {% for available_week in available_weeks %}
+    <a href="{{ url_for(dropdown_links, week=available_week) }}">Week {{ available_week }}</a>
+    {% endfor %}
+  </div>
+</div>
+{% block table %}
+{% endblock %}
+<script>const week = {{ week }};</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "week/week_header.html" %}
+
+{% block table %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
+<div id="tableDiv">
+  <table class="width700 centered">
+    <thead>
+      <tr>
+        <th>Time (pacific)</th>
+        <th>Line</th>
+        <th>Favorite</th>
+        <th>Score</th>
+        <th>Underdog</th>
+        <th>Score</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for matchup in matchups %}
+      <tr class="matchup">
+        <td class="datetime">{{ matchup.datetime }}</td>
+        <td class="line">{{ matchup.line }}</td>
+        <td class="favoredTeam">
+          {{ matchup.favored_team + ('*' if matchup.home_team == matchup.favored_team else '') }}
+        </td>
+        <td class="favoredTeamScore">{{ matchup.favored_team_score }}</td>
+        <td class="underdogTeam">
+          {{ matchup.underdog_team + ('*' if matchup.home_team == matchup.underdog_team else '') }}
+        </td>
+        <td class="underdogTeamScore">{{ matchup.underdog_team_score }}</td>
+        <td class="status">{{ matchup.status }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <button id="submitButton" class="btn btn-primary center-block" style="margin-top: 10px; display: none;">
+    Submit Picks
+  </button>
+</div>
+
+<script>const picks = {{ (picks or [])|tojson }};</script>
+<script src="{{ url_for('static', filename='js/week_matchups.js') }}"></script>
+{% endblock %}
