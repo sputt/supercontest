@@ -16,7 +16,7 @@
     <tbody>
       {% for user_email in user_emails %}
       <tr>
-        <th>{{ user_email[0] }}</th>
+        <td>{{ user_email[0] }}</td>
         {% for matchup in matchups %}
           <td id={{ user_email[0] | replace('@', '') | replace('.', '') + matchup[0] }}></td>
           <td id={{ user_email[0] | replace('@', '') | replace('.', '') + matchup[1] }}></td>
