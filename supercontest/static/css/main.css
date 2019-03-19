@@ -7,3 +7,10 @@ with the table so I'm defining them here. */
     margin-left: auto;
     margin-right: auto;
 }
+.centered-parent {
+    text-align: center;
+}
+.centered-child {
+    margin: auto;
+    text-align: center;
+}

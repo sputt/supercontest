@@ -58,7 +58,7 @@ $.ajaxSetup({
     if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
       xhr.setRequestHeader("X-CSRFToken", csrftoken)
     };
-    $('#submitButton').hide();
+    $('#submitButtonDiv').hide();
   }
 })
 
@@ -66,7 +66,7 @@ $.ajaxSetup({
 $('#submitButton').click(function() {
   $.ajax({
     type: "POST",
-    url: "pick",
+    url: "/pick",
     contentType: 'application/json; charset=UTF-8',
     data: JSON.stringify({
       "picks": picks,
@@ -98,9 +98,9 @@ $('td').click(function () {
       picks.splice(picks.indexOf(team), 1);
       $(this).removeClass('highlighted')
       if (picks.length) {
-        $('#submitButton').show();
+        $('#submitButtonDiv').show();
       } else {
-        $('#submitButton').hide();
+        $('#submitButtonDiv').hide();
       };
     } else if (picks.length >= 5) {
       $.notify("You cannot select more than 5 teams per week", "warn");
@@ -108,9 +108,9 @@ $('td').click(function () {
       picks.push(team)
       $(this).addClass('highlighted');
       if (picks.length) {
-        $('#submitButton').show();
+        $('#submitButtonDiv').show();
       } else {
-        $('#submitButton').hide();
+        $('#submitButtonDiv').hide();
       };
     };
   };

@@ -28,6 +28,8 @@
       <div class="pull-right">
         <a href="{{ url_for('main.user_profile') }}" style="text-transform: lowercase;">{{ current_user.first_name or current_user.email }}</a>
         &nbsp;|&nbsp;
+        <a href="{{ url_for('main.feedback') }}">feedback</a>
+        &nbsp;|&nbsp;
         <a href="{{ url_for('user.logout') }}">sign out</a>
       </div>
     </div>

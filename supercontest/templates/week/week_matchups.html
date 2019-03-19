@@ -33,9 +33,12 @@
       {% endfor %}
     </tbody>
   </table>
-  <button id="submitButton" class="btn btn-primary center-block" style="margin-top: 10px; display: none;">
-    Submit Picks
-  </button>
+  <div id="submitButtonDiv" class="centered-parent" style="display:none;">
+    <button id="submitButton" class="btn btn-primary centered-child" style="margin-top: 10px">Submit Picks</button>
+    <br>
+    <input id="myCheck" type="checkbox" class="centered-child" style="margin-top: 10px;">
+    <label for="myCheck" style="font-weight: normal !important;">I am playing this week under protest</label>
+  </div>
 </div>
 
 <script>const picks = {{ (picks or [])|tojson }};</script>

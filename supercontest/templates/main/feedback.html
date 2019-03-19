@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h3>Your input is wanted!</h3>
+</p>
+<form action="/">
+    <p>How can we make the app better?</p>
+    <input type="text" id="myTextBox" autofocus="autofocus" style="width:50%;">
+    <br>
+    <input type="submit" value="Submit" style="margin-top: 10px;">
+</form>
+<script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
+{% endblock %}

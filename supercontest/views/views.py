@@ -15,11 +15,13 @@ main_blueprint = Blueprint('main',
 
 
 @main_blueprint.route('/')
+@login_required
 def home():
     return redirect(url_for('week.week_matchups'))
 
 
 @main_blueprint.route('/leaderboard')
+@login_required
 def leaderboard():
     weeks, results, totals = calculate_leaderboard()
     return render_template('main/leaderboard.html',
@@ -38,6 +40,12 @@ def user_profile():
         return redirect(url_for('main.home'))
     # Process GET or invalid POST
     return render_template('main/user_profile.html', form=form)
+
+
+@main_blueprint.route('/feedback')
+@login_required
+def feedback():
+    return render_template('main/feedback.html')
 
 
 @main_blueprint.route('/pick', methods=['POST'])
