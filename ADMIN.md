@@ -1,3 +1,5 @@
+The NFL updates their scoresheet about every ~30s on Sundays.
+
 Before anything:
 ```bash
 virtualenv venv && . venv/bin/activate
@@ -57,6 +59,11 @@ sudo add-apt-repository ppa:certbot/certbot
 sudo apt install python-certbot-nginx
 sudo certbot --nginx -d southbaysupercontest.com -d www.southbaysupercontest.com
 ```
+That last command can be rerun if you ever get refused connections. This will autonomously
+manage portions of your nginx config (data/supercontest with no extension) to all http/https
+and redirections. If this ever misbehaves, you can try copying the file hard to
+/etc/nginx/sites-available/ rather than symlinking to my vcs (I'm not sure if certbot will
+follow that softlink when updating the file).
 
 To renew certs:
 ```bash
@@ -133,6 +140,6 @@ TO debug errors in the service:
 ```bash
 sudo tail -f /var/log/nginx/error.log   # nginx error logs
 sudo tail -f /var/log/nginx/access.log  # nginx access logs
-sudo journalctl -u nginx                # nginx process logs
-sudo journalctl -u supercontest         # uwsgi logs
+sudo journalctl -r -u nginx             # nginx process logs
+sudo journalctl -r -u supercontest      # uwsgi logs
 ```
