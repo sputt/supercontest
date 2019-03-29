@@ -5,7 +5,7 @@ from supercontest import db
 from supercontest.core.scores import commit_scores
 from supercontest.core.picks import commit_picks, InvalidPicks
 from supercontest.core.utilities import get_team_abv
-from supercontest.core.results import calculate_leaderboard
+from supercontest.core.results import calculate_leaderboard, commit_winners_and_points
 from supercontest.models import Matchup, UserProfileForm, Pick, User
 
 main_blueprint = Blueprint('main',
@@ -118,13 +118,14 @@ def week_matchups():
 @week_blueprint.route('/picks')
 @login_required
 def week_picks():
+    commit_winners_and_points(week=g.week)
     favored_teams = db.session.query(Matchup.favored_team).filter_by(week=g.week).all()
     favored_teams = [get_team_abv(team[0]) for team in favored_teams]
     underdog_teams = db.session.query(Matchup.underdog_team).filter_by(week=g.week).all()
     underdog_teams = [get_team_abv(team[0]) for team in underdog_teams]
     user_emails = db.session.query(User.email).all()
-    all_picks = db.session.query(User.email, Pick.team).filter(Pick.week == g.week, Pick.user_id == User.id).all()
-    all_picks = [(pick[0], get_team_abv(pick[1])) for pick in all_picks]
+    all_picks = db.session.query(User.email, Pick.team, Pick.points).filter(Pick.week == g.week, Pick.user_id == User.id).all()
+    all_picks = [(pick[0], get_team_abv(pick[1]), pick[2]) for pick in all_picks]
     return render_template('week/week_picks.html',
                            week=g.week,
                            available_weeks=g.available_weeks,
