@@ -1,10 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, Response, g
 from flask_user import current_user, login_required
+import plotly
+import json
 
 from supercontest import db
 from supercontest.core.scores import commit_scores
 from supercontest.core.picks import commit_picks, InvalidPicks
-from supercontest.core.utilities import get_team_abv
+from supercontest.core.utilities import get_team_abv, accumulate
 from supercontest.core.results import calculate_leaderboard, commit_winners_and_points
 from supercontest.models import Matchup, UserProfileForm, Pick, User
 
@@ -23,11 +25,26 @@ def home():
 @main_blueprint.route('/leaderboard')
 @login_required
 def leaderboard():
+    # Calculate and commit results, returning them to be rendered
     weeks, results, totals = calculate_leaderboard()
+    # All three are necessary for the table, but 'results' contains
+    # everything necessary for the line graph by itself. Structure:
+    #   {user: {week: score, week: score...}
+    data = [
+        plotly.graph_objs.Scatter(x=[0]+results[user[0]].keys(),
+                                  y=list(accumulate([0]+results[user[0]].values())),
+                                  name=user[0])
+        for user in totals  # user[0] is email, used as key for results dict
+    ]
+    # Note that a zero week with zero points is prepended to both arrays
+    # to make the visualization better around the origin.
+    dataJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
+    # Layout (titles, axes, etc) is handled in JS.
     return render_template('main/leaderboard.html',
                            weeks=weeks,
                            results=results,
-                           totals=totals)
+                           totals=totals,
+                           dataJSON=dataJSON)
 
 
 @main_blueprint.route('/profile', methods=['GET', 'POST'])

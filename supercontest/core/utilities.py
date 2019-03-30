@@ -135,3 +135,14 @@ def commit_picks_from_excel(path):
                 picks = [Pick(week=week, team=pick, user_id=user_id) for pick in picks]
                 db.session.add_all(picks)
                 db.session.commit()
+
+
+def accumulate(my_list):
+    """Just like itertools.accumulate() in Python 3 or numpy.cumsum.
+    The input should be an iterable with numerics, and the return can be cast
+    to an iterable with list().
+    """
+    total = 0
+    for item in my_list:
+        total += item
+        yield total

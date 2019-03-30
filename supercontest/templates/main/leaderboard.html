@@ -2,6 +2,7 @@
 
 {% block content %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
+<div id="scoreGraph" class="width700 centered"></div>
 <div id="tableDiv">
   <table class="width700 centered">
     <thead>
@@ -28,5 +29,7 @@
     </tbody>
   </table>
 </div>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>const data = {{ dataJSON | safe }};</script>
 <script src="{{ url_for('static', filename='js/leaderboard.js') }}"></script>
 {% endblock %}

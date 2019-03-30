@@ -13,7 +13,7 @@ def calculate_leaderboard():
     """
     user_emails = [result.email for result in db.session.query(User.email).all()]
     results = {user_email: {} for user_email in user_emails}
-    weeks = [result.week for result in db.session.query(Matchup.week).distinct().all()]  # pylint: disable=no-member
+    weeks = [result.week for result in db.session.query(Matchup.week).filter(Matchup.week<=17).distinct().all()]  # pylint: disable=no-member
     for week in weeks:
         # TODO - technically you only have to calc and commit the most recent week, since the others are done and static
         commit_winners_and_points(week)
