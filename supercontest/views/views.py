@@ -33,7 +33,8 @@ def leaderboard():
     data = [
         plotly.graph_objs.Scatter(x=[0]+results[user[0]].keys(),
                                   y=list(accumulate([0]+results[user[0]].values())),
-                                  name=user[0])
+                                  name=user[0],
+                                  visible=(True if current_user.email==user[0] else 'legendonly'))
         for user in totals  # user[0] is email, used as key for results dict
     ]
     # Note that a zero week with zero points is prepended to both arrays
