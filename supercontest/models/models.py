@@ -16,7 +16,8 @@ class User(db.Model, UserMixin):
     __table_args__ = (
         db.UniqueConstraint('email', name='email_constraint'),
     )
-    id = db.Column(db.Integer, primary_key=True)
+    __seq__ = db.Sequence('user_id_seq', start=43)
+    id = db.Column(db.Integer, __seq__, server_default=__seq__.next_value(), primary_key=True)
     # UserMixin doesn't provide this property, for some reason?
     active = db.Column('is_active', db.Boolean(), nullable=False, server_default='0')
     email = db.Column(db.String(225, collation='NOCASE'), nullable=False, server_default='')
@@ -29,7 +30,8 @@ class User(db.Model, UserMixin):
 class Pick(db.Model):
     """The table for user picks.
     """
-    id = db.Column(db.Integer, primary_key=True)
+    __seq__ = db.Sequence('pick_id_seq', start=3106)
+    id = db.Column(db.Integer, __seq__, server_default=__seq__.next_value(), primary_key=True)
     week = db.Column(db.Integer, nullable=False)
     team = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -44,7 +46,8 @@ class Matchup(db.Model):
         F/FO = game is over
         1/2/3/4 = quarter
     """
-    id = db.Column(db.Integer, primary_key=True)
+    __seq__ = db.Sequence('matchup_id_seq', start=263)
+    id = db.Column(db.Integer, __seq__, server_default=__seq__.next_value(), primary_key=True)
     week = db.Column(db.Integer, nullable=False)
     favored_team = db.Column(db.String, nullable=False)
     underdog_team = db.Column(db.String, nullable=False)

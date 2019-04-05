@@ -13,12 +13,6 @@ mail = Mail()
 csrf_protect = CSRFProtect()
 
 
-class UriConfig(object):
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(
-        os.path.dirname(os.path.abspath(os.path.dirname(__file__))),
-        'data', 'supercontest.db')
-
-
 def is_hidden_field_filter(field):
     return isinstance(field, HiddenField)
 
@@ -27,7 +21,7 @@ def get_app():
     app = Flask(__name__)
     app.config.from_pyfile(os.path.join('config', 'public.py'))
     app.config.from_pyfile(os.path.join('config', 'private.py'))
-    app.config.from_object(UriConfig)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://supercontest:{}@localhost/supercontest'.format(app.config['MAIL_PASSWORD'])
 
     db.init_app(app)
     migrate.init_app(app, db)

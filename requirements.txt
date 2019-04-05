@@ -8,6 +8,7 @@ flask-sqlalchemy
 flask-user
 flask-wtf
 plotly
+psycopg2
 requests
 selenium
 uwsgi

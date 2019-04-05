@@ -13,7 +13,7 @@ def calculate_leaderboard():
     """
     user_emails = [result.email for result in db.session.query(User.email).all()]
     results = {user_email: {} for user_email in user_emails}
-    weeks = [result.week for result in db.session.query(Matchup.week).filter(Matchup.week<=17).distinct().all()]  # pylint: disable=no-member
+    weeks = [result.week for result in db.session.query(Matchup.week).filter(Matchup.week<=17).distinct().order_by(Matchup.week).all()]  # pylint: disable=no-member
     for week in weeks:
         # TODO - technically you only have to calc and commit the most recent week, since the others are done and static
         commit_winners_and_points(week)
@@ -29,7 +29,7 @@ def calculate_leaderboard():
 def count_points_for_week(week):
     """returns tuples of [(email, points), (email, points), etc]
     """
-    return db.session.query(User.email, func.sum(Pick.points)).filter(Pick.week == week, Pick.user_id == User.id).group_by(Pick.user_id).all()
+    return db.session.query(User.email, func.sum(Pick.points)).filter(Pick.week == week, Pick.user_id == User.id).group_by(User.email).all()
 
 
 def commit_winners_and_points(week):

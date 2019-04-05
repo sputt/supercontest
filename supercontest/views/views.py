@@ -109,7 +109,7 @@ def get_week(endpoint, values):
     g.available_weeks = [
         result.week
         for result
-        in db.session.query(Matchup.week).distinct().all()  # pylint: disable=no-member
+        in db.session.query(Matchup.week).distinct().order_by(Matchup.week).all()  # pylint: disable=no-member
     ]
     g.week = int(values.pop('week'))
 

@@ -49,7 +49,7 @@ sudo systemctl restart supercontest
 
 Create a file called supercontest/config/private.py with following content.
 ```python
-MAIL_PASSWORD = # name of the contest, without the location, all lowercase, then a funny number and a puncuation mark
+MAIL_PASSWORD = # find in my saved passwords
 SECRET_KEY = # run python -c "import random, string; print repr(''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32)));"
 ```
 
