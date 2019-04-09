@@ -1,89 +1,35 @@
-The NFL updates their scoresheet about every ~30s on Sundays.
+# Startup
 
-Before anything:
+Install the necessary docker capability:
 ```bash
-virtualenv venv && . venv/bin/activate
-pip install -e .
+sudo apt install docker.io docker-compose
 ```
 
-If this is a relatively naked system, you may need the appropriate
-Python headers to build uwsgi:
-```bash
-sudo apt install build-essential python-dev
-```
-
-To create the database for the first time:
-```bash
-python manage.py init_db
-```
-
-To fetch lines, we need a webdriver. You'll need chrome and
-the chromedriver. This can probably be done with:
-```bash
-sudo apt install chromedriver
-```
-
-You must install nginx to serve the application:
-```bash
-sudo apt install nginx
-```
-
-Register the service with systemd (once):
-```bash
-sudo ln -s "$(pwd)/data/supercontest.service" /etc/systemd/system/supercontest.service
-sudo systemctl start supercontest
-```
-
-Register the site with nginx (once):
-```bash
-sudo ln -s "$(pwd)/data/supercontest" /etc/nginx/sites-available/supercontest
-sudo ln -s /etc/nginx/sites-available/supercontest /etc/nginx/sites-enabled
-sudo systemctl restart nginx
-```
-
-If you ever need to restart the service (necessary after you modify the app, change
-routes, git pull in a new db update, etc):
-```bash
-sudo systemctl restart supercontest
-```
-
-Create a file called supercontest/config/private.py with following content.
+Create a file called supercontest/config/private.py with the following content:
 ```python
-MAIL_PASSWORD = # find in my saved passwords
+MAIL_PASSWORD = <>  # find in my saved passwords, same as POSTGRES_PASSWORD
 SECRET_KEY = # run python -c "import random, string; print repr(''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32)));"
 ```
 
-To certify (do once):
-```bash
-sudo add-apt-repository ppa:certbot/certbot
-sudo apt install python-certbot-nginx
-sudo certbot --nginx -d southbaysupercontest.com -d www.southbaysupercontest.com
-```
-That last command can be rerun if you ever get refused connections. This will autonomously
-manage portions of your nginx config (data/supercontest with no extension) to all http/https
-and redirections. If this ever misbehaves, you can try copying the file hard to
-/etc/nginx/sites-available/ rather than symlinking to my vcs (I'm not sure if certbot will
-follow that softlink when updating the file).
-
-To renew certs:
-```bash
-certbot renew
+Create a file called docker/database/private.conf with the following content:
+```yml
+POSTGRES_PASSWORD=<>  # find in my saved passwords, same as MAIL_PASSWORD
 ```
 
-To kill leftover chrome processes from line fetches:
+Initialize SSL certification so that Nginx starts with a dummy cert before getting
+the real ones:
 ```bash
-killall chromedriver /opt/google/chrome/chrome
+sudo ./init-letsencrypt.sh
 ```
 
-This app uses flask-script and flask-migrate, so it comes with the
-usual commands:
+Bring up the services:
 ```bash
-python manage.py --help  # list all commands
-python manage.py <command> --help  # usage help for command
-python manage.py shell
-python manage.py runserver
-python mangage.py db upgrade
+docker-compose up --build -d
 ```
+
+Then manually restore the database from a previous pgdump, if desired.
+
+# Helpful
 
 To manually commit lines, do the following. This is typically done
 on Wednesday nights, after Westgate posts the lines. This should
@@ -111,19 +57,12 @@ from supercontest.core.utilities import add_user
 add_user(email='example@example.com', password='hello')
 ```
 
-To initialize the migration scheme, run:
-```bash
-python manage.py db init
-python manage.py db revision -m "initial revision"
-python manage.py db upgrade
-```
-
 After you change any part of the models, run the following.
 ```bash
 python manage.py db migrate -m "description of change"
 ```
 
-Then manually check the migration script and commit that revision. To
+Then manually check the migration script and commit that revision 
 update to this on another machine, simply run the following:
 ```bash
 git pull
@@ -136,7 +75,14 @@ to develop on the model:
 python manage.py db stamp head
 ```
 
-TO debug errors in the service:
+# Debugging
+
+To debug errors in the service:
+```bash
+docker logs <flask/nginx/postgres>
+```
+
+If directly on the machines:
 ```bash
 sudo tail -f /var/log/nginx/error.log   # nginx error logs
 sudo tail -f /var/log/nginx/access.log  # nginx access logs

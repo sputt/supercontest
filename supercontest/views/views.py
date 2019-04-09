@@ -93,12 +93,7 @@ def define_week(endpoint, values):
     """
     if 'week' not in values:
         values['week'] = 17; return  # TODO: delete this line before 2019 season
-        available_weeks = [
-            result.week
-            for result
-            in db.session.query(Matchup.week).distinct().all()  # pylint: disable=no-member
-        ]
-        values['week'] = max(available_weeks) if available_weeks else 0
+        values['week'] = db.session.query(db.func.max(Matchup.week)).scalar() or 0
 
 
 @week_blueprint.url_value_preprocessor
