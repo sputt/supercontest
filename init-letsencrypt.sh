@@ -4,7 +4,7 @@ domains=(southbaysupercontest.com www.southbaysupercontest.com)
 email="brian.mahlstedt@gmail.com"
 data_path="./data/certbot" # for the shared docker volumes
 rsa_key_size=4096
-staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
+staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 if [ -d "$data_path" ]; then
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
@@ -78,4 +78,4 @@ docker-compose exec web_server nginx -s reload
 echo "### Bringing down the webserver now that real certs are acquired ..."
 docker-compose down
 
-echo "### Cert initialization finished. These will persist as long as the docker volumes do. You may now 'docker-compose up' as desired." 
+echo "### Cert initialization finished. These will persist as long as the docker volumes do. You may now bring up the containers as desired." 
