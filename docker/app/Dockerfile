@@ -17,6 +17,3 @@ RUN chmod +x /usr/bin/chromedriver
 COPY . /sc
 WORKDIR /sc
 RUN pip install -e .
-
-# Start the flask app with the uwsgi wrapper
-CMD ["uwsgi", "--ini", "./docker/app/uwsgi.ini"]

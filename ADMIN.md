@@ -25,9 +25,14 @@ the real ones (this ups and downs your webserver container):
 sudo ./init-letsencrypt.sh
 ```
 
-Bring up the services:
+To bring up the services (nginx, flask, postgres, certbot) for production:
 ```bash
-docker-compose up --build -d
+docker-compose up [--build] -d web_server certbot
+```
+
+For development (flask, postgres):
+```bash
+docker-compose up [--build] -d app_dev
 ```
 
 Then manually restore the database from a previous pgdump, if desired.
