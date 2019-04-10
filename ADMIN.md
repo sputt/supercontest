@@ -5,19 +5,22 @@ Install the necessary docker capability:
 sudo apt install docker.io docker-compose
 ```
 
+Make sure postgres/nginx/flask aren't running on the host,
+occupying the default ports that the containers will use.
+
 Create a file called supercontest/config/private.py with the following content:
 ```python
-MAIL_PASSWORD = <>  # find in my saved passwords, same as POSTGRES_PASSWORD
+MAIL_PASSWORD = <>  # find in my saved passwords, same as POSTGRES_PASSWORD but with single quotes
 SECRET_KEY = # run python -c "import random, string; print repr(''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32)));"
 ```
 
 Create a file called docker/database/private.conf with the following content:
 ```yml
-POSTGRES_PASSWORD=<>  # find in my saved passwords, same as MAIL_PASSWORD
+POSTGRES_PASSWORD=<>  # find in my saved passwords, same as MAIL_PASSWORD but without quotes
 ```
 
 Initialize SSL certification so that Nginx starts with a dummy cert before getting
-the real ones:
+the real ones (this ups and downs your webserver container):
 ```bash
 sudo ./init-letsencrypt.sh
 ```
@@ -28,6 +31,10 @@ docker-compose up --build -d
 ```
 
 Then manually restore the database from a previous pgdump, if desired.
+```bash
+@mylaptop:~/code/supercontest$ scp -i ~/.ssh/digitalocean backups/postgres/dump.sql southbaysupercontest.com:~
+@southbaysupercontest.com:~$ cat dump.sql | docker exec -i postgres psql -U postgres
+```
 
 # Helpful
 

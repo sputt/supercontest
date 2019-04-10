@@ -5,7 +5,7 @@ from supercontest.core.utilities import send_mail
 from supercontest import db
 
 MAX_PICKS = 5
-PICK_DAYS = [1, 2, 3, 4, 5, 6, 7]  # 1 is Monday, 7 is Sunday. Picks are allowed Wed-Sat.
+PICK_DAYS = [3, 4, 5, 6]  # 1 is Monday, 7 is Sunday. Picks are allowed Wed-Sat.
 PICKABLE_STATUS = 'P'  # not yet started
 
 

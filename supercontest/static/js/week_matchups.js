@@ -90,7 +90,7 @@ $('td').click(function () {
     let opponent = $(this).closest('tr').find('td.' + opponentColumn).text().trim().replace("*", "");
     if ($(this).closest('tr').find('td.status').text() != "P") {
       $.notify("The " + team + " game has already started", "warn");
-    } else if (![1,2,3,4,5,6,7].includes(date.getDay())) {
+    } else if (![3,4,5,6].includes(date.getDay())) {
       $.notify("Picks can only be placed Wednesday-Saturday", "warn");
     } else if (picks.includes(opponent)) {
       $.notify("You have already selected the opposing team: " + opponent, "warn");

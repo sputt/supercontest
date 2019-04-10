@@ -41,6 +41,7 @@ services:
       - db_volume:/var/lib/postgresql/data
 
   certbot:
+    container_name: certbot
     image: certbot/certbot
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
