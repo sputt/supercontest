@@ -2,9 +2,9 @@
 
 domains=(southbaysupercontest.com www.southbaysupercontest.com)
 email="brian.mahlstedt@gmail.com"
-data_path="./data/certbot" # for the shared docker volumes
+data_path="/var/lib/supercontest/certbot" # for the shared docker volumes
 rsa_key_size=4096
-staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
+staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 if [ -d "$data_path" ]; then
   read -p "Existing data found for $domains. Continue and replace existing certificate? (y/N) " decision
@@ -12,7 +12,6 @@ if [ -d "$data_path" ]; then
     exit
   fi
 fi
-
 
 if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/ssl-dhparams.pem" ]; then
   echo "### Downloading recommended TLS parameters ..."
@@ -22,7 +21,7 @@ if [ ! -e "$data_path/conf/options-ssl-nginx.conf" ] || [ ! -e "$data_path/conf/
   echo
 fi
 
-echo "### Creating dummy certificate for $domains ..."
+echo "### Creating dummy certificate (on the shared nginx/certbot volume for /etc/letsencrypt) for $domains so that nginx can start ..."
 path="/etc/letsencrypt/live/$domains"
 mkdir -p "$data_path/conf/live/$domains"
 docker-compose run --rm --entrypoint "\
@@ -32,18 +31,16 @@ docker-compose run --rm --entrypoint "\
     -subj '/CN=localhost'" certbot
 echo
 
-
-echo "### Starting nginx ..."
+echo "### Starting nginx now that the dummy certs are in place ..."
 docker-compose up --force-recreate -d web_server
 echo
 
-echo "### Deleting dummy certificate for $domains ..."
+echo "### Deleting dummy certificate for $domains (on the shared nginx/certbot conf volume for /etc/letsencrypt) ..."
 docker-compose run --rm --entrypoint "\
   rm -Rf /etc/letsencrypt/live/$domains && \
   rm -Rf /etc/letsencrypt/archive/$domains && \
   rm -Rf /etc/letsencrypt/renewal/$domains.conf" certbot
 echo
-
 
 echo "### Requesting Let's Encrypt certificate for $domains ..."
 #Join $domains to -d args
@@ -51,16 +48,13 @@ domain_args=""
 for domain in "${domains[@]}"; do
   domain_args="$domain_args -d $domain"
 done
-
 # Select appropriate email arg
 case "$email" in
   "") email_arg="--register-unsafely-without-email" ;;
   *) email_arg="--email $email" ;;
 esac
-
 # Enable staging mode if needed
 if [ $staging != "0" ]; then staging_arg="--staging"; fi
-
 docker-compose run --rm --entrypoint "\
   certbot certonly --webroot -w /var/www/certbot \
     $staging_arg \
@@ -71,8 +65,7 @@ docker-compose run --rm --entrypoint "\
     --force-renewal" certbot
 echo
 
-# Probably don't need this anymore since we down->up after.
-echo "### Reloading nginx ..."
+echo "### Reloading nginx to ingest the real cert ..."
 docker-compose exec web_server nginx -s reload
 
 echo "### Bringing down the webserver now that real certs are acquired ..."

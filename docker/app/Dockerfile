@@ -1,8 +1,8 @@
 FROM python:2.7
 
 # Chromedriver is necessary to fetch the lines
-RUN apt update
-RUN apt install -y wget unzip
+RUN apt-get update
+RUN apt-get install -y wget unzip
 RUN wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
 RUN unzip chromedriver_linux64.zip
 RUN rm chromedriver_linux64.zip
