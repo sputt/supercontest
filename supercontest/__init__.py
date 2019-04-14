@@ -1,3 +1,7 @@
+# pylint: disable=cyclic-import
+# This toplevel package imports some modules to build the app.
+# but it's protected by the get_app function, which is not called here
+# but my the modules themselves.
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -7,10 +11,12 @@ from flask_user import UserManager
 from flask_wtf.csrf import CSRFProtect
 from wtforms.fields import HiddenField
 
+# pylint: disable=invalid-name
 db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
 csrf_protect = CSRFProtect()
+# pylint: enable=invalid-name
 
 
 def is_hidden_field_filter(field):
@@ -18,16 +24,10 @@ def is_hidden_field_filter(field):
 
 
 def get_headerless_conf(pth):
-    with open(pth) as fh:
-        content = fh.readlines()
+    with open(pth) as filehandle:
+        content = filehandle.readlines()
     return {line.split('=')[0]:line.split('=')[1].strip() for line in content
             if not line.startswith('#')}
-
-
-def merge_two_dicts(x, y):
-    z = x.copy()
-    z.update(y)
-    return z
 
 
 def get_app():
@@ -40,11 +40,12 @@ def get_app():
     # The flask app reads the database configs directly, rather than being passed them
     # through the env in docker. This means runserver and other debug/dev methods
     # aren't FULLY coupled to docker-compose. Runserver still won't work because it now expects
-    # the db in another container on a certain port, but you can still use it for light smoketesting.
+    # the db in another container on a certain port, but you can still use it for
+    # light smoketesting.
     db_conf_dir = os.path.join(curdir, '..', 'docker', 'database')
     db_public_conf = get_headerless_conf(os.path.join(db_conf_dir, 'public.conf'))
     db_private_conf = get_headerless_conf(os.path.join(db_conf_dir, 'private.conf'))
-    db_conf = merge_two_dicts(db_public_conf, db_private_conf)
+    db_conf = {**db_public_conf, **db_private_conf}
     app.config['SQLALCHEMY_DATABASE_URI'] = \
         'postgresql://{user}:{password}@{host}:{port}/{database}'.format(
             user=db_conf['POSTGRES_USER'],
@@ -64,10 +65,10 @@ def get_app():
     from supercontest.models import User  # pylint: disable=wrong-import-position
     user_manager = UserManager(app, db, User)
 
-    app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
+    app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter  # pylint: disable=no-member
 
     @app.context_processor
-    def context_processor():
+    def context_processor():  # pylint: disable=unused-variable
         return dict(user_manager=user_manager)
 
     return app

@@ -2,7 +2,7 @@
 """
 from supercontest import get_app
 
-app = get_app()
+app = get_app()  # pylint: disable=invalid-name
 
 if __name__ == '__main__':
     app.run()

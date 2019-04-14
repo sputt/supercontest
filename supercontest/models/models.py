@@ -1,6 +1,6 @@
 """Contains the tables for the applications.
 """
-# pylint: disable=no-member
+# pylint: disable=no-member,too-few-public-methods
 from flask_user import UserMixin
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, validators

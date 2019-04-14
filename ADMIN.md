@@ -2,7 +2,8 @@
 
 Install the necessary docker capability:
 ```bash
-sudo apt install docker.io docker-compose
+sudo apt install docker.io
+# follow instructions online to install docker-compose, don't use apt
 ```
 
 Make sure postgres/nginx/flask aren't running on the host,
@@ -25,23 +26,41 @@ the real ones (this ups and downs your webserver container):
 sudo ./init-letsencrypt.sh
 ```
 
-To bring up the services (nginx, flask, postgres, certbot) for production:
+Restore an existing database (from /backups/postgres/supercontest.dump):
 ```bash
-docker-compose up [--build] -d web_server certbot
+make restore-db
 ```
 
-For development (flask, postgres):
+To bring up the services, run the following. Dev just starts flask and postgres
+containers. Prod starts nginx and certbot containers as well. Run the usual
+`docker-compose down` whenever you want to end them.
 ```bash
-docker-compose up [--build] -d app_dev
-```
-
-Then manually restore the database from a previous pgdump, if desired.
-```bash
-@mylaptop:~/code/supercontest$ scp -i ~/.ssh/digitalocean backups/postgres/dump.sql southbaysupercontest.com:~
-@southbaysupercontest.com:~$ cat dump.sql | docker exec -i postgres psql -U postgres
+make [build-]start-[dev|prod]
 ```
 
 # Helpful
+
+flask-script (python manage.py <>) is used as a makefile of sorts for the
+Python functionality of this application (fetching the lines in Python, etc).
+There is a standard makefile for the bash API of this application (making
+a backup of the db, starting a dev service container, etc).
+
+Reindex the ctags for vim:
+```bash
+make reindex-ctags
+```
+
+To explore the db:
+```bash
+make explore-db
+```
+
+You may backup and restore the database locally with the following. They are
+idempotent, and the backup is stored at ./backups/postgres/supercontest.dump.
+```bash
+make backup-db
+make restore-db
+```
 
 To manually commit lines, do the following. This is typically done
 on Wednesday nights, after Westgate posts the lines. This should

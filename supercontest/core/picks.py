@@ -30,13 +30,13 @@ def commit_picks(user, week, teams, email=False):
     teams = [team.replace('*', '') for team in teams]
 
     # Query to find out which games haven't started yet this week.
-    pickable_matchups = db.session.query(
-            Matchup.favored_team,
-            Matchup.underdog_team
-        ).filter_by(
-            week=week,
-            status=PICKABLE_STATUS
-        ).all()
+    pickable_matchups = db.session.query(  # pylint: disable=no-member
+        Matchup.favored_team,
+        Matchup.underdog_team
+    ).filter_by(
+        week=week,
+        status=PICKABLE_STATUS
+    ).all()
     # This are still structured in matchups, so flatten.
     pickable_teams = [team
                       for pickable_matchup in pickable_matchups
@@ -47,9 +47,9 @@ def commit_picks(user, week, teams, email=False):
 
     # If you've made it this far, the picks are good. Wipe any previous
     # picks and commit the new ones.
-    old_picks = db.session.query(Pick).filter_by(week=week, user_id=user.id).all()
+    old_picks = db.session.query(Pick).filter_by(week=week, user_id=user.id).all()  # pylint: disable=no-member
     for old_pick in old_picks:
-        db.session.delete(old_pick)
+        db.session.delete(old_pick)  # pylint: disable=no-member
     picks = [Pick(week=week, team=team, user_id=user.id)
              for team in teams]
     db.session.add_all(picks)  # pylint: disable=no-member

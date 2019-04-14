@@ -3,7 +3,7 @@ version: '3.5'
 services:
 
   web_server:
-    container_name: nginx
+    container_name: web_server
     build:
       context: .
       dockerfile: ./docker/web_server/Dockerfile
@@ -18,7 +18,7 @@ services:
       - app_prod
 
   app_prod:
-    container_name: flask_prod
+    container_name: app_prod
     build:
       context: .
       dockerfile: ./docker/app/Dockerfile
@@ -31,7 +31,7 @@ services:
       - database
 
   app_dev:
-    container_name: flask_dev
+    container_name: app_dev
     build:
       context: .
       dockerfile: ./docker/app/Dockerfile
@@ -39,16 +39,16 @@ services:
       - .:/sc
     ports:
       - 5000:5000
-    command: "uwsgi --ini ./docker/app/uwsgi.ini --socket 0.0.0.0:5000 --protocol http"
+    command: "uwsgi --ini ./docker/app/uwsgi.ini --socket 0.0.0.0:5000 --protocol http --py-autoreload 1"
     depends_on:
       - database
 
   database:
-    container_name: postgres
-    build:
-      context: .
-      dockerfile: ./docker/database/Dockerfile
-    env_file: ./docker/database/private.conf
+    container_name: database
+    image: postgres
+    env_file:
+      - ./docker/database/private.conf
+      - ./docker/database/public.conf
     ports:
       - 5432:5432
     volumes:

@@ -42,7 +42,7 @@ def _commit_scores(week, scores):
         week (int)
         scores (list of dicts): As returned from fetch_scores()
     """
-    matchups = db.session.query(Matchup).filter_by(week=week).all()
+    matchups = db.session.query(Matchup).filter_by(week=week).all()  # pylint: disable=no-member
     for game in scores:
         # could use home or visiting team, this is an arbitrary binary
         visiting_team = game['visiting_team']

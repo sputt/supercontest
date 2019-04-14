@@ -1,6 +1,4 @@
 # pylint: disable=no-self-use, method-hidden, arguments-differ
-from __future__ import print_function
-
 from flask_script import Command, Option
 
 from supercontest import db
@@ -15,7 +13,7 @@ class InitDbCommand(Command):
     def run(self):
         db.drop_all()
         db.create_all()
-        db.session.commit()
+        db.session.commit()  # pylint: disable=no-member
         print('Database has been initialized')
         add_user(email='example@example.com', password='hello')
         print('An example user has been added to the database')

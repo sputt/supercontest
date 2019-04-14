@@ -1,4 +1,4 @@
-FROM python:2.7
+FROM python:3.7
 
 # Chromedriver is necessary to fetch the lines
 RUN apt-get update

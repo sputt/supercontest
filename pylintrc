@@ -1,7 +1,4 @@
 [MESSAGES CONTROL]
 disable =
-    cyclic-import,
-    invalid-name,
     missing-docstring,
-    too-few-public-methods,
-    too-many-locals,
+    fixme,

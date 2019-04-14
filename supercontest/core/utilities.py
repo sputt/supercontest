@@ -1,10 +1,8 @@
 """Utilites for use across the package. This should not import any
 other supercontest modules.
 """
-from __future__ import print_function
-
-import requests
 import datetime
+import requests
 import bs4
 import xlrd
 from selenium import webdriver
@@ -55,12 +53,12 @@ def add_user(email, password, **kwargs):
                 active=True,
                 email_confirmed_at=datetime.datetime.utcnow(),
                 **kwargs)
-    db.session.add(user)
-    db.session.commit()
+    db.session.add(user)  # pylint: disable=no-member
+    db.session.commit()  # pylint: disable=no-member
 
 
 def get_team_abv(team):
-    map = {
+    _map = {
         'CARDINALS': 'ARI',
         'FALCONS': 'ATL',
         'RAVENS': 'BAL',
@@ -94,38 +92,45 @@ def get_team_abv(team):
         'TITANS': 'TEN',
         'REDSKINS': 'WAS'
     }
-    return map.get(team, team)
+    return _map.get(team, team)
 
 
 def commit_users_from_excel(path):
-    wb = xlrd.open_workbook(path)
-    sheet = wb.sheet_by_name('Main')
+    workbook = xlrd.open_workbook(path)
+    sheet = workbook.sheet_by_name('Main')
     for row_index in range(1, sheet.nrows):  # skip first row of headers
-        name = sheet.cell_value(row_index, 0).replace(u'\u2019', "'")  # replace unicode with right single quote
+        # replace unicode with right single quote
+        name = sheet.cell_value(row_index, 0).replace(u'\u2019', "'")
         email = sheet.cell_value(row_index, 2)
         print('Registering "{}" with "{}"'.format(name, email))
         add_user(email=email, password='sbsc19', first_name=name)
 
 
 def commit_picks_from_excel(path):
-    wb = xlrd.open_workbook(path)
+    workbook = xlrd.open_workbook(path)
     for week in range(1, 18):  # this goes 1-17
         print('Week {}'.format(week))
-        sheet = wb.sheet_by_name('week{}picks'.format(week))
+        sheet = workbook.sheet_by_name('week{}picks'.format(week))
         for row_index in range(1, sheet.nrows):  # skip first row of headers
-            cut_last_cols = 1 if week in [8, 9, 10] else 2  # cut the last two cols, question and count mostly
+            # cut the last two cols, question and count mostly
+            cut_last_cols = 1 if week in [8, 9, 10] else 2
             row_values = sheet.row_values(row_index, end_colx=sheet.ncols-cut_last_cols)
-            user = row_values.pop(0).replace(u'\u2019', "'")  # first col is user, replace unicode with right single quote
-            # ignore empty strings and take the first five. This is the only place which has a discrepancy with Petty's
-            # spreadsheet. Taking the first or last five did not match scores. He was taking some random collection
-            # of them and I don't have his script to check. Therefore, weeks where people had >5 picks MIGHT
-            # be off by a point or two.
+            # first col is user, replace unicode with right single quote
+            user = row_values.pop(0).replace(u'\u2019', "'")
+            # ignore empty strings and take the first five. This is the only
+            # place which has a discrepancy with Petty's spreadsheet. Taking
+            # the first or last five did not match scores. He was taking some
+            # random collection of them and I don't have his script to check.
+            # Therefore, weeks where people had >5 picks MIGHT be off by a
+            # point or two.
             picks = [pick for pick in row_values if pick][:5]
-            user_id = db.session.query(User.id).filter_by(first_name=user).first()[0]
-            # Petty's spreadsheet kept people with multiple submissions (harner week 17, grdich week 13,
-            # freie week 7). The only one with a DIFFERENCE in picks was Grdich. Petty kept the first entry
-            # (assuming bc submission timestamp was most recent), so I'll keep that one.
-            if db.session.query(Pick).filter_by(week=week, user_id=user_id).all():
+            user_id = db.session.query(User.id).filter_by(first_name=user).first()[0]  # pylint: disable=no-member
+            # Petty's spreadsheet kept people with multiple submissions
+            # (harner week 17, grdich week 13, freie week 7). The only one
+            # with a DIFFERENCE in picks was Grdich. Petty kept the first
+            # entry (assuming bc submission timestamp was most recent), so
+            # I'll keep that one.
+            if db.session.query(Pick).filter_by(week=week, user_id=user_id).all():  # pylint: disable=no-member
                 print('Duplicate pick rows detected for {}, keeping the previous'.format(user))
             elif user_id is None:
                 print('"{}" does not match any first names in the db, '
@@ -133,16 +138,5 @@ def commit_picks_from_excel(path):
             else:
                 print('Committing picks for {}: {}'.format(user, picks))
                 picks = [Pick(week=week, team=pick, user_id=user_id) for pick in picks]
-                db.session.add_all(picks)
-                db.session.commit()
-
-
-def accumulate(my_list):
-    """Just like itertools.accumulate() in Python 3 or numpy.cumsum.
-    The input should be an iterable with numerics, and the return can be cast
-    to an iterable with list().
-    """
-    total = 0
-    for item in my_list:
-        total += item
-        yield total
+                db.session.add_all(picks)  # pylint: disable=no-member
+                db.session.commit()  # pylint: disable=no-member

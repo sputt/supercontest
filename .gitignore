@@ -18,8 +18,8 @@ dist/
 *.egg
 
 # Virtual environments
+.venv
 venv
-scenv
 
 # Test
 .tox
