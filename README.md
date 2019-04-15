@@ -4,7 +4,7 @@
 
 * Language: Python 3
 * Framework: Flask/WSGI
-* Backend: PostgresQL
+* Backend: PostgreSQL
 * Server: nginx
 * Composition: Docker
 * Deployment: Ansible
