@@ -1,0 +1,7 @@
+---
+- hosts: all
+  tasks:
+    - name: Update source
+      shell: chdir=~/code/supercontest/ git checkout master && git pull
+    - name: Rebuild and start containers
+      shell: chdir=~/code/supercontest/ make build-start-prod

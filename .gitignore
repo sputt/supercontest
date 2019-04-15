@@ -27,6 +27,9 @@ venv
 # Pycharm
 .idea
 
+# Ansible
+.retry
+
 # Other
 *.swp
 *.db-journal

@@ -28,7 +28,7 @@ sudo ./init-letsencrypt.sh
 
 Restore an existing database (from /backups/postgres/supercontest.dump):
 ```bash
-make restore-db
+make restore-local-db-from-local
 ```
 
 To bring up the services, run the following. Dev just starts flask and postgres
@@ -38,6 +38,9 @@ containers. Prod starts nginx and certbot containers as well. Run the usual
 make [build-]start-[dev|prod]
 ```
 
+After that first manual bringup, it is recommened to use ansible from a more
+convenient control node (eg your laptop) to deploy at will. See below.
+
 # Helpful
 
 flask-script (python manage.py <>) is used as a makefile of sorts for the
@@ -45,21 +48,36 @@ Python functionality of this application (fetching the lines in Python, etc).
 There is a standard makefile for the bash API of this application (making
 a backup of the db, starting a dev service container, etc).
 
+Deployments are done with ansible, wrapped by our makefile:
+```bash
+make deploy
+```
+
 Reindex the ctags for vim:
 ```bash
 make reindex-ctags
 ```
 
-To explore the db:
+To explore the db (locally):
 ```bash
-make explore-db
+make explore-local-db
 ```
 
 You may backup and restore the database locally with the following. They are
 idempotent, and the backup is stored at ./backups/postgres/supercontest.dump.
 ```bash
-make backup-db
-make restore-db
+make backup-local-db-to-local
+make restore-local-db-from-local
+```
+
+This can also be done remotely, which basically just SSHs into the production server,
+runs the equivalent local command, then SCPs the file back. These enter through the
+makefile, farm out to ansible for SSH/SCP, then back to the makefile to run the local
+command. "restore" will pull ./backups/postgres/supercontest.dump from local. "backup"
+will leave a uniquely timestamped dump file in ./backups/postgres/supercontest.dump.
+```bash
+make backup-remote-db-to-local
+make restore-remote-db-from-local
 ```
 
 To manually commit lines, do the following. This is typically done
@@ -110,7 +128,7 @@ python manage.py db stamp head
 
 To debug errors in the service:
 ```bash
-docker logs <flask/nginx/postgres>
+docker logs -f <flask/nginx/postgres>
 ```
 
 If directly on the machines:

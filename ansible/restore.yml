@@ -1,0 +1,21 @@
+---
+- hosts: all
+  tasks:
+    - name: Ensure existence of backup directory
+      file:
+        path: ~/code/supercontest/backups/postgres
+        state: directory
+    - name: Copy the local backup to the remote server
+      copy:
+        src: ~/code/supercontest/backups/postgres/supercontest.dump
+        dest: ~/code/supercontest/backups/postgres/supercontest.dump
+    - name: Update the makefile (not all source)
+      copy:
+        src: ~/code/supercontest/makefile
+        dest: ~/code/supercontest/makefile
+    - name: Restore the dockerized database
+      shell: chdir=~/code/supercontest/ make restore-local-db-from-local
+    - name: Revert the makefile (not all source)
+      shell: chdir=~/code/supercontest/ git checkout -- makefile
+    - name: Bring the service back up
+      shell: chdir=~/code/supercontest/ make start-prod

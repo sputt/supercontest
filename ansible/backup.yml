@@ -1,0 +1,20 @@
+---
+- hosts: all
+  tasks:
+    - name: Ensure existence of backup directory
+      file:
+        path: ~/code/supercontest/backups/postgres
+        state: directory
+    - name: Update the makefile (not all source)
+      copy:
+        src: ~/code/supercontest/makefile
+        dest: ~/code/supercontest/makefile
+    - name: Backup the dockerized database
+      shell: chdir=~/code/supercontest/ make backup-local-db-to-local
+    - name: Copying the remote backup locally
+      fetch:
+        src: ~/code/supercontest/backups/postgres/supercontest.dump
+        dest: ~/code/supercontest/backups/postgres/{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}.dump
+        flat: yes
+    - name: Revert the makefile (not all source)
+      shell: chdir=~/code/supercontest/ git checkout -- makefile
