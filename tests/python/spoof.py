@@ -1,24 +1,27 @@
+"""A testing module that contains fake lines and fake scores. Currently unused.
+"""
+
 
 def spoof_lines():
     """Just returns fake lines for testing purposes.
     """
     lines = [
-        [u'LIONS*', u'PACKERS', u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'1'],
-        [u'COLTS*', u'TEXANS', u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'2'],
-        [u'VIKINGS*', u'BEARS', u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'3'],
-        [u'PATRIOTS*', u'JETS', u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'4'],
-        [u'GIANTS*', u'REDSKINS', u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'5'],
-        [u'EAGLES*', u'COWBOYS', u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'6'],
-        [u'STEELERS*', u'BROWNS', u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'0'],
-        [u'FALCONS*', u'PANTHERS', u'SUNDAY, DECEMBER 31, 2017, 1:25 PM', u'0'],
-        [u'RAVENS*', u'BENGALS', u'SUNDAY, DECEMBER 31, 2017, 1:25 PM', u'7'],
-        [u'BRONCOS*', u'CHIEFS', u'SUNDAY, DECEMBER 31, 2017, 1:25 PM', u'8'],
-        [u'RAMS*', u'49ERS', u'SUNDAY, DECEMBER 31, 2017, 1:25 PM', u'3'],
-        [u'CHARGERS*', u'RAIDERS', u'SUNDAY, DECEMBER 31, 2017, 1:25 PM', u'1'],
-        [u'DOLPHINS*', u'BILLS', u'SUNDAY, DECEMBER 31, 2017, 1:25 PM', u'1'],
-        [u'SEAHAWKS*', u'CARDINALS', u'SUNDAY, DECEMBER 31, 2017, 1:25 PM', u'4'],
-        [u'BUCCANEERS*', u'SAINTS', u'SUNDAY, DECEMBER 31, 2017, 1:25 PM', u'0'],
-        [u'TITANS*', u'JAGUARS', u'SUNDAY, DECEMBER 31, 2017, 1:25 PM', u'9'],
+        [u'LIONS*',      u'PACKERS',   u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'1'],
+        [u'COLTS*',      u'TEXANS',    u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'2'],
+        [u'VIKINGS*',    u'BEARS',     u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'3'],
+        [u'PATRIOTS*',   u'JETS',      u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'4'],
+        [u'GIANTS*',     u'REDSKINS',  u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'5'],
+        [u'EAGLES*',     u'COWBOYS',   u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'6'],
+        [u'STEELERS*',   u'BROWNS',    u'SUNDAY, DECEMBER 31, 2017, 10:00 AM', u'0'],
+        [u'FALCONS*',    u'PANTHERS',  u'SUNDAY, DECEMBER 31, 2017, 1:25 PM',  u'0'],
+        [u'RAVENS*',     u'BENGALS',   u'SUNDAY, DECEMBER 31, 2017, 1:25 PM',  u'7'],
+        [u'BRONCOS*',    u'CHIEFS',    u'SUNDAY, DECEMBER 31, 2017, 1:25 PM',  u'8'],
+        [u'RAMS*',       u'49ERS',     u'SUNDAY, DECEMBER 31, 2017, 1:25 PM',  u'3'],
+        [u'CHARGERS*',   u'RAIDERS',   u'SUNDAY, DECEMBER 31, 2017, 1:25 PM',  u'1'],
+        [u'DOLPHINS*',   u'BILLS',     u'SUNDAY, DECEMBER 31, 2017, 1:25 PM',  u'1'],
+        [u'SEAHAWKS*',   u'CARDINALS', u'SUNDAY, DECEMBER 31, 2017, 1:25 PM',  u'4'],
+        [u'BUCCANEERS*', u'SAINTS',    u'SUNDAY, DECEMBER 31, 2017, 1:25 PM',  u'0'],
+        [u'TITANS*',     u'JAGUARS',   u'SUNDAY, DECEMBER 31, 2017, 1:25 PM',  u'9'],
     ]
 
     return lines

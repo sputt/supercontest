@@ -15,7 +15,7 @@ class InitDbCommand(Command):
         db.create_all()
         db.session.commit()  # pylint: disable=no-member
         print('Database has been initialized')
-        add_user(email='example@example.com', password='hello')
+        add_user(email='example@example.com', password='hello')  # nosec
         print('An example user has been added to the database')
 
 

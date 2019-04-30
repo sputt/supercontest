@@ -114,7 +114,7 @@ def get_week(endpoint, values):  # pylint: disable=unused-argument
 @week_blueprint.route('/')
 @login_required
 def week_matchups():
-    if g.week == max(g.available_weeks):  # only check/commit scores if on the latest week
+    if g.week == max(g.available_weeks or [0]):  # only check/commit scores if on the latest week
         # TODO: this should be changed to happen periodically! It's slow.
         commit_scores(week=g.week)  # pylint:disable=no-member
     matchups = db.session.query(Matchup).filter_by(week=g.week).all()  # pylint: disable=no-member

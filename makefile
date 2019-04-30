@@ -74,3 +74,17 @@ backup-remote-db-to-local:
 .PHONY: restore-remote-db-from-local
 restore-remote-db-from-local:
 	ANSIBLE_CONFIG=~/code/supercontest/ansible/ansible.cfg ansible-playbook -i ansible/hosts ansible/restore.yml
+
+.PHONY: test-python
+test-python:
+	tox
+
+.PHONY: test-js
+test-js:
+	rm -rf ./.jsenv ./node_modules && virtualenv .jsenv --python=python3.7 --always-copy
+	. ./.jsenv/bin/activate && pip install nodeenv jasmine && nodeenv -p && npm install eslint
+	./node_modules/.bin/eslint supercontest/static/js/
+	./.jsenv/bin/jasmine ci --browser chrome --config tests/js/jasmine.yml
+
+.PHONY: test
+test: test-python test-js

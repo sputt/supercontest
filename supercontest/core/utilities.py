@@ -29,16 +29,25 @@ def get_soup_from_url(url):
 @decorator
 def with_webdriver(function, *args, **kwargs):  # pylint: disable=unused-argument
     """Decorator. Requires that the decorated function accept the driver
-    as its only argument. This is a selenium webdriver for Chrome (headless).
+    as its only argument.
     """
-    chrome_options = Options()
-    chrome_options.add_argument('--headless')
-    driver = webdriver.Chrome(chrome_options=chrome_options)
-    driver.implicitly_wait(30)
+    driver = get_webdriver()
     try:
         return function(driver)
     finally:
         driver.quit()
+
+
+def get_webdriver():
+    """Instantiate and configure a selenium webdriver for chrome (headless).
+    """
+    chrome_options = Options()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-dev-shm-usage')
+    driver = webdriver.Chrome(options=chrome_options)
+    driver.implicitly_wait(30)
+    return driver
 
 
 def send_mail(subject, body, recipient):
@@ -103,7 +112,7 @@ def commit_users_from_excel(path):
         name = sheet.cell_value(row_index, 0).replace(u'\u2019', "'")
         email = sheet.cell_value(row_index, 2)
         print('Registering "{}" with "{}"'.format(name, email))
-        add_user(email=email, password='sbsc19', first_name=name)
+        add_user(email=email, password='sbsc19', first_name=name)  # nosec
 
 
 def commit_picks_from_excel(path):

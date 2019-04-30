@@ -13,37 +13,41 @@ class InvalidPicks(ValueError):
     pass
 
 
-def commit_picks(user, week, teams, email=False):
+def commit_picks(user, week, teams, email=False, verify=True):
     """Wrapper to write picks to the database.
 
     Args:
         user (obj): flask.current_user object
+        week (int): the week to pick for
         teams (list): picks from the client, list of unicode string team names
+        email (bool): send mail or don't send mail
+        verify (bool): check conditions like max5 or weekday, or skip checks
     """
-    # Initial condition checking.
-    if len(teams) > MAX_PICKS:
-        raise InvalidPicks('You cannot select more than 5 teams per week')
-    if datetime.datetime.today().isoweekday() not in PICK_DAYS:
-        raise InvalidPicks('Picks can only be placed Wednesday-Saturday')
-
     # The frontend adds an asterisk for home teams, simply remove here.
     teams = [team.replace('*', '') for team in teams]
 
-    # Query to find out which games haven't started yet this week.
-    pickable_matchups = db.session.query(  # pylint: disable=no-member
-        Matchup.favored_team,
-        Matchup.underdog_team
-    ).filter_by(
-        week=week,
-        status=PICKABLE_STATUS
-    ).all()
-    # This are still structured in matchups, so flatten.
-    pickable_teams = [team
-                      for pickable_matchup in pickable_matchups
-                      for team in pickable_matchup]
-    for team in teams:
-        if team not in pickable_teams:
-            raise InvalidPicks('The {} game has already started'.format(team))
+    # Initial condition checking.
+    if verify is True:
+        if len(teams) > MAX_PICKS:
+            raise InvalidPicks('You cannot select more than 5 teams per week')
+        if datetime.datetime.today().isoweekday() not in PICK_DAYS:
+            raise InvalidPicks('Picks can only be placed Wednesday-Saturday')
+
+        # Query to find out which games haven't started yet this week.
+        pickable_matchups = db.session.query(  # pylint: disable=no-member
+            Matchup.favored_team,
+            Matchup.underdog_team
+        ).filter_by(
+            week=week,
+            status=PICKABLE_STATUS
+        ).all()
+        # This are still structured in matchups, so flatten.
+        pickable_teams = [team
+                          for pickable_matchup in pickable_matchups
+                          for team in pickable_matchup]
+        for team in teams:
+            if team not in pickable_teams:
+                raise InvalidPicks('The {} game has already started'.format(team))
 
     # If you've made it this far, the picks are good. Wipe any previous
     # picks and commit the new ones.

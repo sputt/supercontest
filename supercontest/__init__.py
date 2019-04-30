@@ -30,12 +30,17 @@ def get_headerless_conf(pth):
             if not line.startswith('#')}
 
 
-def get_app():
+def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):  # pylint: disable=dangerous-default-value
+    """You may pass the name/port/host of the db if you want to deviate
+    from the standard configs (staging/production). This is used for testing.
+    extra_config_settings is forwarded to app.config during instantiation of Flask.
+    """
     curdir = os.path.dirname(os.path.abspath(__file__))
 
     app = Flask(__name__)
     app.config.from_pyfile(os.path.join(curdir, 'config', 'public.py'))
     app.config.from_pyfile(os.path.join(curdir, 'config', 'private.py'))
+    app.config.update(extra_config_settings)
 
     # The flask app reads the database configs directly, rather than being passed them
     # through the env in docker. This means runserver and other debug/dev methods
@@ -50,9 +55,9 @@ def get_app():
         'postgresql://{user}:{password}@{host}:{port}/{database}'.format(
             user=db_conf['POSTGRES_USER'],
             password=db_conf['POSTGRES_PASSWORD'],
-            host=db_conf['POSTGRES_HOST'],
-            port=db_conf['POSTGRES_PORT'],
-            database=db_conf['POSTGRES_DB'])
+            host=db_host or db_conf['POSTGRES_HOST'],
+            port=db_port or db_conf['POSTGRES_PORT'],
+            database=db_name or db_conf['POSTGRES_DB'])
 
     db.init_app(app)
     migrate.init_app(app, db)

@@ -20,9 +20,13 @@ dist/
 # Virtual environments
 .venv
 venv
+.testenv
+.jsenv
+node_modules
 
 # Test
 .tox
+.coverage
 
 # Pycharm
 .idea

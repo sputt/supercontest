@@ -1,0 +1,27 @@
+{
+  "name": "supercontest",
+  "version": "1.0.0",
+  "description": "## Stack",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-google": "^0.12.0"
+  },
+  "scripts": {
+    "test": "tox"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brianmahlstedt/supercontest.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/brianmahlstedt/supercontest/issues"
+  },
+  "homepage": "https://github.com/brianmahlstedt/supercontest#readme"
+}
