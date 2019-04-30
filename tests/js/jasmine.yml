@@ -1,3 +1,6 @@
-spec_dir: tests/js/
+helpers:
+  - "tests/js/helpers/*.js"
+src_files:
+  - "supercontest/static/js/*.js"
 spec_files:
-  - "*.js"
+  - "tests/js/*.js"

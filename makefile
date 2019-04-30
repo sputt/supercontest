@@ -84,7 +84,7 @@ test-js:
 	rm -rf ./.jsenv ./node_modules && virtualenv .jsenv --python=python3.7 --always-copy
 	. ./.jsenv/bin/activate && pip install nodeenv jasmine && nodeenv -p && npm install eslint
 	./node_modules/.bin/eslint supercontest/static/js/
-	./.jsenv/bin/jasmine ci --browser chrome --config tests/js/jasmine.yml
+	# ./.jsenv/bin/jasmine ci --browser chrome --config tests/js/jasmine.yml
 
 .PHONY: test
 test: test-python test-js
