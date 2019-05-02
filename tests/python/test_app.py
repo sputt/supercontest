@@ -1,4 +1,6 @@
 import time
+import requests
+import bs4
 from flask_testing import LiveServerTestCase
 from flask import url_for
 
@@ -135,3 +137,23 @@ class AppTests(LiveServerTestCase):
         self.goto('main.leaderboard')
         element = self.webdriver.find_element_by_class_name('weekScore')  # there's only 1
         self.assertEqual(element.text, '2.0')
+
+    def test_graphql_query(self):
+        """While this test exercises the API endpoint, it also shows how to
+        authenticate with the app using a simple HTTP request (rather than Selenium or
+        another more complicated solution). This demonstrates the creds required to
+        get past login_required, but does not show CSRF because it's disabled for the
+        test app. See the README for how to provide the CSRF token.
+        """
+        query = """
+        {
+          users {
+            email
+          }
+        }
+        """
+        with requests.session() as session:
+            session.post(self.get_server_url() + '/user/sign-in', data=self.creds)
+            response = session.get(self.get_server_url() + '/graphql', json={'query': query})
+        user_email = response.json()['data']['users'][0]['email']
+        self.assertEqual(user_email, 'test@nowhere.com')

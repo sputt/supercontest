@@ -1,12 +1,15 @@
 bs4
 decorator
 flask
+flask-graphql
 flask-mail
 flask-migrate
 flask-script
 flask-sqlalchemy
 flask-user
 flask-wtf
+graphene
+graphene-sqlalchemy
 plotly
 psycopg2
 requests

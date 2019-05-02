@@ -39,6 +39,8 @@ services:
       - .:/sc
     ports:
       - 5000:5000
+    environment:
+      - SC_DEV=1
     command: "uwsgi --ini ./docker/app/uwsgi.ini --socket 0.0.0.0:5000 --protocol http --py-autoreload 1"
     depends_on:
       - database

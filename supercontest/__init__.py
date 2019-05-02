@@ -7,8 +7,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_mail import Mail
-from flask_user import UserManager
+from flask_user import UserManager, login_required
 from flask_wtf.csrf import CSRFProtect
+from flask_graphql import GraphQLView
 from wtforms.fields import HiddenField
 
 # pylint: disable=invalid-name
@@ -30,12 +31,14 @@ def get_headerless_conf(pth):
             if not line.startswith('#')}
 
 
-def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):  # pylint: disable=dangerous-default-value
+def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):  # pylint: disable=dangerous-default-value,too-many-locals
     """You may pass the name/port/host of the db if you want to deviate
     from the standard configs (staging/production). This is used for testing.
     extra_config_settings is forwarded to app.config during instantiation of Flask.
     """
     curdir = os.path.dirname(os.path.abspath(__file__))
+
+    dev_mode = bool(os.environ.get('SC_DEV'))
 
     app = Flask(__name__)
     app.config.from_pyfile(os.path.join(curdir, 'config', 'public.py'))
@@ -62,7 +65,8 @@ def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
-    csrf_protect.init_app(app)
+    if not dev_mode:
+        csrf_protect.init_app(app)
 
     from supercontest.views import register_blueprints  # pylint: disable=wrong-import-position
     register_blueprints(app)
@@ -75,5 +79,13 @@ def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):
     @app.context_processor
     def context_processor():  # pylint: disable=unused-variable
         return dict(user_manager=user_manager)
+
+    # Add graphql view.
+    from supercontest.graphql import schema
+    # Intentionally allowing users in production to use graphiql to explore
+    # the db because it still requires auth. To disable this in dev mode,
+    # set graphiql=dev_mode instead of True.
+    view = GraphQLView.as_view('graphql', schema=schema, graphiql=True)
+    app.add_url_rule('/graphql', view_func=login_required(view))
 
     return app
