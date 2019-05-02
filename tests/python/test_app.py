@@ -153,7 +153,10 @@ class AppTests(LiveServerTestCase):
         }
         """
         with requests.session() as session:
-            session.post(self.get_server_url() + '/user/sign-in', data=self.creds)
-            response = session.get(self.get_server_url() + '/graphql', json={'query': query})
+            session.post(self.get_server_url() + '/user/sign-in',
+                         data=self.creds,
+                         headers=dict(referer=self.get_server_url()))
+            response = session.get(self.get_server_url() + '/graphql',
+                                   json={'query': query})
         user_email = response.json()['data']['users'][0]['email']
         self.assertEqual(user_email, 'test@nowhere.com')

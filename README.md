@@ -39,7 +39,7 @@ with requests.session() as session:
     soup = bs4.BeautifulSoup(response.text, 'html.parser')
     csrf_token = soup.find(id='csrf_token')['value']
     creds['csrf_token'] = csrf_token
-    session.post(root_url + '/user/sign-in', data=creds)
+    session.post(root_url + '/user/sign-in', data=creds, headers=dict(referer=response.url))
     response = session.get(root_url + '/graphql', json=dict(query=query))
 data = response.json()
 ```

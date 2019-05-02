@@ -38,7 +38,7 @@ def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):
     """
     curdir = os.path.dirname(os.path.abspath(__file__))
 
-    dev_mode = bool(os.environ.get('SC_DEV'))
+    dev_mode = bool(os.environ.get('SC_DEV'))  # pylint: disable=unused-variable
 
     app = Flask(__name__)
     app.config.from_pyfile(os.path.join(curdir, 'config', 'public.py'))
