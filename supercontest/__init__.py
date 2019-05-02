@@ -65,8 +65,7 @@ def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
-    if not dev_mode:
-        csrf_protect.init_app(app)
+    csrf_protect.init_app(app)
 
     from supercontest.views import register_blueprints  # pylint: disable=wrong-import-position
     register_blueprints(app)
@@ -86,6 +85,6 @@ def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):
     # the db because it still requires auth. To disable this in dev mode,
     # set graphiql=dev_mode instead of True.
     view = GraphQLView.as_view('graphql', schema=schema, graphiql=True)
-    app.add_url_rule('/graphql', view_func=login_required(view))
+    app.add_url_rule('/graphql', view_func=login_required(csrf_protect.exempt(view)))
 
     return app
