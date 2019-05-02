@@ -63,17 +63,17 @@ reindex-ctags: virtualenv
 
 .PHONY: deploy
 deploy:
-	ANSIBLE_CONFIG=~/code/supercontest/ansible/ansible.cfg ansible-playbook -i ansible/hosts ansible/deploy.yml
+	ANSIBLE_CONFIG=~/code/supercontest/ansible/ansible.cfg ansible-playbook -i ansible/hosts ansible/deploy.yml --key-file "~/.ssh/digitalocean"
 
 # Basically wraps the local backup with an ssh/scp session.
 .PHONY: backup-remote-db-to-local
 backup-remote-db-to-local:
-	ANSIBLE_CONFIG=~/code/supercontest/ansible/ansible.cfg ansible-playbook -i ansible/hosts ansible/backup.yml
+	ANSIBLE_CONFIG=~/code/supercontest/ansible/ansible.cfg ansible-playbook -i ansible/hosts ansible/backup.yml --key-file "~/.ssh/digitalocean"
 
 # Basically wraps the local restore with an ssh/scp session.
 .PHONY: restore-remote-db-from-local
 restore-remote-db-from-local:
-	ANSIBLE_CONFIG=~/code/supercontest/ansible/ansible.cfg ansible-playbook -i ansible/hosts ansible/restore.yml
+	ANSIBLE_CONFIG=~/code/supercontest/ansible/ansible.cfg ansible-playbook -i ansible/hosts ansible/restore.yml --key-file "~/.ssh/digitalocean"
 
 .PHONY: test-python
 test-python:
