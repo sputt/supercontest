@@ -9,19 +9,19 @@ DB_DUMP=$(SRC)/backups/postgres/supercontest.dump
 
 .PHONY: start-dev
 start-dev:
-	docker-compose up -d app_dev
+	docker-compose up -d app-dev
 
 .PHONY: build-start-dev
 build-start-dev:
-	docker-compose up -d --build app_dev
+	docker-compose up -d --build app-dev
 
 .PHONY: start-prod
 start-prod:
-	docker-compose up -d web_server certbot
+	docker-compose up -d app-prod
 
 .PHONY: build-start-prod
 build-start-prod:
-	docker-compose up -d --build web_server certbot
+	docker-compose up -d --build app-prod
 
 # This requires an existing container named postgres with a user named
 # supercontest and a database named supercontest.

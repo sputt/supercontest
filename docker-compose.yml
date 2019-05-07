@@ -1,24 +1,9 @@
-version: '3.5'
+version: '3'
 
 services:
 
-  web_server:
-    container_name: web_server
-    build:
-      context: .
-      dockerfile: ./docker/web_server/Dockerfile
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /var/lib/supercontest/certbot/conf:/etc/letsencrypt
-      - /var/lib/supercontest/certbot/www:/var/www/certbot
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
-    depends_on:
-      - app_prod
-
-  app_prod:
-    container_name: app_prod
+  app-prod:
+    container_name: app-prod
     build:
       context: .
       dockerfile: ./docker/app/Dockerfile
@@ -26,12 +11,17 @@ services:
       - .:/sc
     expose:
       - 8080
-    command: "uwsgi --ini ./docker/app/uwsgi.ini --socket :8080"
+    environment:
+      - VIRTUAL_HOST=southbaysupercontest.com,www.southbaysupercontest.com
+      - VIRTUAL_PROTO=uwsgi
+      - LETSENCRYPT_HOST=southbaysupercontest.com
+      - LETSENCRYPT_EMAIL=brian.mahlstedt@gmail.com
+    command: "uwsgi --ini ./docker/app/uwsgi.ini:prod"
     depends_on:
       - database
 
-  app_dev:
-    container_name: app_dev
+  app-dev:
+    container_name: app-dev
     build:
       context: .
       dockerfile: ./docker/app/Dockerfile
@@ -41,7 +31,7 @@ services:
       - 5000:5000
     environment:
       - SC_DEV=1
-    command: "uwsgi --ini ./docker/app/uwsgi.ini --socket 0.0.0.0:5000 --protocol http --py-autoreload 1"
+    command: "uwsgi --ini ./docker/app/uwsgi.ini:dev"
     depends_on:
       - database
 
@@ -56,13 +46,10 @@ services:
     volumes:
       - db_volume:/var/lib/postgresql/data
 
-  certbot:
-    container_name: certbot
-    image: certbot/certbot
-    volumes:
-      - /var/lib/supercontest/certbot/conf:/etc/letsencrypt
-      - /var/lib/supercontest/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
 volumes:
   db_volume:
+
+networks:
+  default:
+    external:
+      name: nginx-proxy

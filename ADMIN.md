@@ -20,20 +20,18 @@ Create a file called docker/database/private.conf with the following content:
 POSTGRES_PASSWORD=<>  # find in my saved passwords, same as MAIL_PASSWORD but without quotes
 ```
 
-Initialize SSL certification so that Nginx starts with a dummy cert before getting
-the real ones (this ups and downs your webserver container):
-```bash
-sudo ./init-letsencrypt.sh
-```
-
 Restore an existing database (from /backups/postgres/supercontest.dump):
 ```bash
 make restore-local-db-from-local
 ```
 
-To bring up the services, run the following. Dev just starts flask and postgres
-containers. Prod starts nginx and certbot containers as well. Run the usual
-`docker-compose down` whenever you want to end them.
+If you're bringing up the production application, it expects an nginx webserver
+to reverse-proxy traffic to its container. Follow the instruction in
+https://github.com/brianmahlstedt/infra/blob/master/README.md to create the docker network
+and nginx/letsencrypt containers to serve the traffic.
+
+Now, bring up the services. Dev/prod simply have different configurations
+(ports, autoreload, etc). `docker-compose down` whenever you want to end them.
 ```bash
 make [build-]start-[dev|prod]
 ```
