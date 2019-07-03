@@ -1,14 +1,21 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/dropdown.css') }}">
-<div class="center-block dropdown" style="width: 700px">
-  <button class="dropbtn">WEEK {{ week }}</button>
-  <div class="dropdown-content">
-    {% for available_week in available_weeks %}
-    <a href="{{ url_for(dropdown_links, week=available_week) }}">Week {{ available_week }}</a>
-    {% endfor %}
-  </div>
+<div class="center-block" style="width: 700px;">
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <ul class="nav navbar-nav">
+        <p class="navbar-text" style="font-size: medium; color: white; width: 40px;">Week</p>
+        {% for _week in available_weeks %}
+          {% if _week == week %}
+            <li style="width: 6%;"><a style="font-size: x-large; color: white;" href="{{ url_for(week_link_prefix, week=_week) }}">{{ '%02d' % _week }}</a></li>
+          {% else %}
+            <li style="width: 4.8%;"><a href="{{ url_for(week_link_prefix, week=_week) }}">{{ '%02d' % _week }}</a></li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  </nav>
 </div>
 {% block table %}
 {% endblock %}

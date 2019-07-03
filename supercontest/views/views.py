@@ -126,7 +126,7 @@ def week_matchups():
                            available_weeks=g.available_weeks,
                            matchups=matchups,
                            picks=picks,
-                           dropdown_links='week.week_matchups',
+                           week_link_prefix='week.week_matchups',
                            switch_link=('week.week_picks', 'picks'))
 
 
@@ -149,5 +149,5 @@ def week_picks():
                            matchups=list(zip(favored_teams, underdog_teams)),
                            user_emails=user_emails,
                            all_picks=all_picks,
-                           dropdown_links='week.week_picks',
+                           week_link_prefix='week.week_picks',
                            switch_link=('week.week_matchups', 'games'))
