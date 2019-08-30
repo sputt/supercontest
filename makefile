@@ -1,6 +1,6 @@
 SRC=$(HOME)/code/supercontest
 VENV=$(SRC)/.venv
-DB_CONTAINER=database
+DB_CONTAINER=supercontest-database
 DB_USER=supercontest
 DB_NAME=supercontest
 DB_DUMP=$(SRC)/backups/postgres/supercontest.dump
@@ -9,19 +9,19 @@ DB_DUMP=$(SRC)/backups/postgres/supercontest.dump
 
 .PHONY: start-dev
 start-dev:
-	docker-compose up -d app-dev
+	docker-compose up -d supercontest-app-dev
 
 .PHONY: build-start-dev
 build-start-dev:
-	docker-compose up -d --build app-dev
+	docker-compose up -d --build supercontest-app-dev
 
 .PHONY: start-prod
 start-prod:
-	docker-compose up -d app-prod
+	docker-compose up -d supercontest-app-prod
 
 .PHONY: build-start-prod
 build-start-prod:
-	docker-compose up -d --build app-prod
+	docker-compose up -d --build supercontest-app-prod
 
 # This requires an existing container named postgres with a user named
 # supercontest and a database named supercontest.

@@ -2,8 +2,8 @@ version: '3'
 
 services:
 
-  app-prod:
-    container_name: app-prod
+  supercontest-app-prod:
+    container_name: supercontest-app-prod
     build:
       context: .
       dockerfile: ./docker/app/Dockerfile
@@ -18,10 +18,10 @@ services:
       - LETSENCRYPT_EMAIL=brian.mahlstedt@gmail.com
     command: "uwsgi --ini ./docker/app/uwsgi.ini:prod"
     depends_on:
-      - database
+      - supercontest-database
 
-  app-dev:
-    container_name: app-dev
+  supercontest-app-dev:
+    container_name: supercontest-app-dev
     build:
       context: .
       dockerfile: ./docker/app/Dockerfile
@@ -33,10 +33,10 @@ services:
       - SC_DEV=1
     command: "uwsgi --ini ./docker/app/uwsgi.ini:dev"
     depends_on:
-      - database
+      - supercontest-database
 
-  database:
-    container_name: database
+  supercontest-database:
+    container_name: supercontest-database
     image: postgres
     env_file:
       - ./docker/database/private.conf

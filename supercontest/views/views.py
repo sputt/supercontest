@@ -1,3 +1,4 @@
+import datetime
 import json
 from itertools import accumulate
 from flask import Blueprint, render_template, request, redirect, url_for, Response, g
@@ -6,7 +7,7 @@ import plotly
 
 from supercontest import db
 from supercontest.core.scores import commit_scores
-from supercontest.core.picks import commit_picks, InvalidPicks
+from supercontest.core.picks import commit_picks, InvalidPicks, PICK_DAYS
 from supercontest.core.utilities import get_team_abv
 from supercontest.core.results import calculate_leaderboard, commit_winners_and_points
 from supercontest.models import Matchup, UserProfileForm, Pick, User
@@ -93,15 +94,13 @@ def define_week(endpoint, values):  # pylint: disable=unused-argument
     query the database for the most recent matchups and go to that page.
     """
     if 'week' not in values:
-        # TODO: delete this line before 2019 season
-        values['week'] = 17; return  # pylint: disable=multiple-statements
-        values['week'] = db.session.query(db.func.max(Matchup.week)).scalar() or 0  # pylint: disable=no-member,unreachable
+        values['week'] = db.session.query(db.func.max(Matchup.week)).scalar() or 0  # pylint: disable=no-member
 
 
 @week_blueprint.url_value_preprocessor
 def get_week(endpoint, values):  # pylint: disable=unused-argument
     """Attributes 'available_weeks' and 'week' to the g object for
-    use in subsequent routes.
+    use in subsequent routes. url_defaults obviously executes before this.
     """
     g.available_weeks = [
         result.week
@@ -143,6 +142,18 @@ def week_picks():
         User.email, Pick.team, Pick.points).filter(
             Pick.week == g.week, Pick.user_id == User.id).all()
     all_picks = [(pick[0], get_team_abv(pick[1]), pick[2]) for pick in all_picks]
+    if (datetime.datetime.today().isoweekday() in PICK_DAYS and
+        max(g.available_weeks) == g.week):
+        msg = ('Other user picks are hidden until lockdown on Saturday night '
+               'at midnight.<br>You may see your own picks for this week '
+               'on the <a href={}>{}</a> tab.'.format(
+                   url_for('week.week_matchups'), 'matchups'))
+        return render_template('week/week_header.html',
+                               week=g.week,
+                               available_weeks=g.available_weeks,
+                               message=msg,
+                               week_link_prefix='week.week_picks',
+                               switch_link=('week.week_matchups', 'matchups'))
     return render_template('week/week_picks.html',
                            week=g.week,
                            available_weeks=g.available_weeks,
@@ -150,4 +161,4 @@ def week_picks():
                            user_emails=user_emails,
                            all_picks=all_picks,
                            week_link_prefix='week.week_picks',
-                           switch_link=('week.week_matchups', 'games'))
+                           switch_link=('week.week_matchups', 'matchups'))

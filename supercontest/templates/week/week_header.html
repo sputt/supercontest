@@ -17,6 +17,9 @@
     </div>
   </nav>
 </div>
+{% if message is defined %}
+  <p style="text-align: center;">{{ message|safe }}</p>
+{% endif %}
 {% block table %}
 {% endblock %}
 <script>const week = {{ week }};</script>
