@@ -58,15 +58,3 @@ class Matchup(db.Model):
     underdog_team_score = db.Column(db.Integer)
     status = db.Column(db.String)
     winner = db.Column(db.String)
-
-
-class UserProfileForm(FlaskForm):
-    first_name = StringField(
-        'First name',
-        validators=[validators.DataRequired('First name is required')]
-    )
-    last_name = StringField(
-        'Last name',
-        validators=[validators.DataRequired('Last name is required')]
-    )
-    submit = SubmitField('Save')

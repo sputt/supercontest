@@ -16,12 +16,12 @@
       </tr>
     </thead>
     <tbody>
-      {% for user_email, total in totals %}
+      {% for user_id, total in totals %}
       <tr>
         <td>{{ loop.index }}</td>
-        <td>{{ user_email }}</td>
+        <td>{{ display_map[user_id] }}</td>
         {% for week in weeks %}
-        <td class="weekScore">{{ results[user_email].get(week, 0.0) }}</td>
+        <td class="weekScore">{{ results[user_id].get(week, 0.0) }}</td>
         {% endfor %}
 	<td><strong>{{ total }}</strong></td>
       </tr>

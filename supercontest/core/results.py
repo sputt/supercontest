@@ -6,12 +6,12 @@ from supercontest.models import Pick, Matchup, User
 
 def calculate_leaderboard():
     """returns
-      results = {user: {week: score, week: score ... }
+      results = {user_id: {week: score, week: score ... }
       weeks = [1, 2, ... ]
-      totals = [(user, points), (user, points) ... ] (sorted)
+      totals = [(user_id, points), (user_id, points) ... ] (sorted)
     """
-    user_emails = [result.email for result in db.session.query(User.email).all()]  # pylint: disable=no-member
-    results = {user_email: {} for user_email in user_emails}
+    user_ids = [result.id for result in db.session.query(User.id).all()]  # pylint: disable=no-member
+    results = {user_id: {} for user_id in user_ids}
     weeks = [result.week for result in db.session.query(  # pylint: disable=no-member
         Matchup.week).filter(Matchup.week <= 17).distinct().order_by(Matchup.week).all()]
     for week in weeks:
@@ -29,11 +29,11 @@ def calculate_leaderboard():
 
 
 def count_points_for_week(week):
-    """returns tuples of [(email, points), (email, points), etc]
+    """returns tuples of [(id, points), (id, points), etc]
     """
     results = db.session.query(  # pylint: disable=no-member
-        User.email, func.sum(Pick.points)).filter(
-            Pick.week == week, Pick.user_id == User.id).group_by(User.email).all()
+        User.id, func.sum(Pick.points)).filter(
+            Pick.week == week, Pick.user_id == User.id).group_by(User.id).all()
     return results
 
 

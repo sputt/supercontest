@@ -1,13 +1,19 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<h3>Your input is wanted!</h3>
-</p>
-<form action="/">
-    <p>How can we make the app better?</p>
-    <input type="text" id="myTextBox" autofocus="autofocus" style="width:50%;">
-    <br>
-    <input type="submit" value="Submit" style="margin-top: 10px;">
-</form>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-7 col-md-6 col-lg-5 col-centered">
+            <h3>Your input is wanted!</h3>
+            <form action="/">
+                <div class="form-group">
+                    <p>How can we make the app better?</p>
+                    <input type="text" class="form-control" id="myTextBox" autofocus="autofocus">
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
 <script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
 {% endblock %}

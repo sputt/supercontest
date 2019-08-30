@@ -10,7 +10,7 @@ from supercontest.core.scores import commit_scores
 from supercontest.core.picks import commit_picks, InvalidPicks, PICK_DAYS
 from supercontest.core.utilities import get_team_abv
 from supercontest.core.results import calculate_leaderboard, commit_winners_and_points
-from supercontest.models import Matchup, UserProfileForm, Pick, User
+from supercontest.models import Matchup, Pick, User
 
 main_blueprint = Blueprint('main',  # pylint: disable=invalid-name
                            __name__,
@@ -32,12 +32,17 @@ def leaderboard():
     # All three are necessary for the table, but 'results' contains
     # everything necessary for the line graph by itself. Structure:
     #   {user: {week: score, week: score...}
+    # `totals` has the user as ID, and we'll want to map that to actual names
+    # or emails for display, so let's do that now.
+    display_map = {r.id: (' '.join([r.first_name, r.last_name]) if
+                          r.first_name or r.last_name else r.email)
+                   for r in db.session.query(User).all()}
     data = [
         plotly.graph_objs.Scatter(x=[0]+list(results[user[0]].keys()),
                                   y=list(accumulate([0]+list(results[user[0]].values()))),
-                                  name=user[0],
-                                  visible=(True if current_user.email == user[0] else 'legendonly'))
-        for user in totals  # user[0] is email, used as key for results dict
+                                  name=display_map[user[0]],
+                                  visible=(True if current_user.id == user[0] else 'legendonly'))
+        for user in totals  # user[0] is id, used as key for results dict
     ]
     # Note that a zero week with zero points is prepended to both arrays
     # to make the visualization better around the origin.
@@ -47,19 +52,8 @@ def leaderboard():
                            weeks=weeks,
                            results=results,
                            totals=totals,
+                           display_map=display_map,
                            dataJSON=dataJSON)
-
-
-@main_blueprint.route('/profile', methods=['GET', 'POST'])
-@login_required
-def user_profile():
-    form = UserProfileForm(request.form, obj=current_user)
-    if request.method == 'POST' and form.validate():
-        form.populate_obj(current_user)
-        db.session.commit()  # pylint: disable=no-member
-        return redirect(url_for('main.home'))
-    # Process GET or invalid POST
-    return render_template('main/user_profile.html', form=form)
 
 
 @main_blueprint.route('/feedback')
@@ -126,7 +120,7 @@ def week_matchups():
                            matchups=matchups,
                            picks=picks,
                            week_link_prefix='week.week_matchups',
-                           switch_link=('week.week_picks', 'picks'))
+                           switch_link=('week.week_picks', 'Picks'))
 
 
 @week_blueprint.route('/picks')
@@ -147,13 +141,13 @@ def week_picks():
         msg = ('Other user picks are hidden until lockdown on Saturday night '
                'at midnight.<br>You may see your own picks for this week '
                'on the <a href={}>{}</a> tab.'.format(
-                   url_for('week.week_matchups'), 'matchups'))
+                   url_for('week.week_matchups'), 'Matchups'))
         return render_template('week/week_header.html',
                                week=g.week,
                                available_weeks=g.available_weeks,
                                message=msg,
                                week_link_prefix='week.week_picks',
-                               switch_link=('week.week_matchups', 'matchups'))
+                               switch_link=('week.week_matchups', 'Matchups'))
     return render_template('week/week_picks.html',
                            week=g.week,
                            available_weeks=g.available_weeks,
@@ -161,4 +155,4 @@ def week_picks():
                            user_emails=user_emails,
                            all_picks=all_picks,
                            week_link_prefix='week.week_picks',
-                           switch_link=('week.week_matchups', 'matchups'))
+                           switch_link=('week.week_matchups', 'Matchups'))

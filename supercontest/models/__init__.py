@@ -1,1 +1,1 @@
-from .models import User, Pick, Matchup, UserProfileForm
+from .models import User, Pick, Matchup
