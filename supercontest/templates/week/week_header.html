@@ -1,26 +1,37 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<div class="center-block" style="width: 700px;">
-  <nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-      <ul class="nav navbar-nav">
-        <p class="navbar-text" style="font-size: medium; color: white; width: 40px;">Week</p>
-        {% for _week in available_weeks %}
-          {% if _week == week %}
-            <li style="width: 6%;"><a style="font-size: x-large; color: white;" href="{{ url_for(week_link_prefix, week=_week) }}">{{ '%02d' % _week }}</a></li>
-          {% else %}
-            <li style="width: 4.8%;"><a href="{{ url_for(week_link_prefix, week=_week) }}">{{ '%02d' % _week }}</a></li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-    </div>
-  </nav>
+
+<div class="container-fluid">
+  <div class="row justify-content-center my-1">
+    {% for span in [(1, 7), (7, 13), (13, 18)] %}
+      <div class="col-auto text-center">
+        <div class="row justify-content-center">
+          <ul class="nav nav-pills">
+            {% for week in range(*span) %}
+              <div class="col-auto text-center px-0"><li class="nav-item">
+                <a id="week{{ week }}_nav" class="nav-link" href="{{ url_for(request.url_rule.endpoint, week=week) }}">{{ '%02d' % week }}</a>
+              </li></div>
+            {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+          </ul>
+  </div>
+  <hr class="m-0"/>
 </div>
+
 {% if message is defined %}
-  <p class="text-center">{{ message|safe }}</p>
+  <p class="text-center mt-3">{{ message|safe }}</p>
 {% endif %}
+
 {% block table %}
 {% endblock %}
-<script>const week = {{ week }};</script>
+
+<script>
+  const week = {{ g.week }};
+  const available_weeks = {{ g.available_weeks }};
+</script>
+<script src="{{ url_for('static', filename='js/week_header.js') }}"></script>
+
 {% endblock %}

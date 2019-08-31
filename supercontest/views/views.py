@@ -8,7 +8,7 @@ import plotly
 from supercontest import db
 from supercontest.core.scores import commit_scores
 from supercontest.core.picks import commit_picks, InvalidPicks, PICK_DAYS
-from supercontest.core.utilities import get_team_abv
+from supercontest.core.utilities import get_team_abv, get_id_name_map
 from supercontest.core.results import calculate_leaderboard, commit_winners_and_points
 from supercontest.models import Matchup, Pick, User
 
@@ -29,14 +29,25 @@ def home():
 def leaderboard():
     # Calculate and commit results, returning them to be rendered
     weeks, results, totals = calculate_leaderboard()
+    display_map = get_id_name_map()
+    return render_template('main/leaderboard.html',
+                           weeks=weeks,
+                           results=results,
+                           totals=totals,
+                           display_map=display_map)
+
+
+@main_blueprint.route('/graph')
+@login_required
+def graph():
+    # Calculate and commit results, returning them to be rendered
+    weeks, results, totals = calculate_leaderboard()
     # All three are necessary for the table, but 'results' contains
     # everything necessary for the line graph by itself. Structure:
     #   {user: {week: score, week: score...}
     # `totals` has the user as ID, and we'll want to map that to actual names
     # or emails for display, so let's do that now.
-    display_map = {r.id: (' '.join([r.first_name, r.last_name]) if
-                          r.first_name or r.last_name else r.email)
-                   for r in db.session.query(User).all()}
+    display_map = get_id_name_map()
     data = [
         plotly.graph_objs.Scatter(x=[0]+list(results[user[0]].keys()),
                                   y=list(accumulate([0]+list(results[user[0]].values()))),
@@ -48,12 +59,7 @@ def leaderboard():
     # to make the visualization better around the origin.
     dataJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)  # pylint: disable=invalid-name
     # Layout (titles, axes, etc) is handled in JS.
-    return render_template('main/leaderboard.html',
-                           weeks=weeks,
-                           results=results,
-                           totals=totals,
-                           display_map=display_map,
-                           dataJSON=dataJSON)
+    return render_template('main/graph.html', dataJSON=dataJSON)
 
 
 @main_blueprint.route('/feedback')
@@ -87,7 +93,7 @@ def define_week(endpoint, values):  # pylint: disable=unused-argument
     """If the user goes to the website's home / without any week specification,
     query the database for the most recent matchups and go to that page.
     """
-    if 'week' not in values:
+    if not values.get('week'):
         values['week'] = db.session.query(db.func.max(Matchup.week)).scalar() or 0  # pylint: disable=no-member
 
 
@@ -104,7 +110,7 @@ def get_week(endpoint, values):  # pylint: disable=unused-argument
     g.week = int(values.pop('week'))
 
 
-@week_blueprint.route('/')
+@week_blueprint.route('/matchups')
 @login_required
 def week_matchups():
     if g.week == max(g.available_weeks or [0]):  # only check/commit scores if on the latest week
@@ -115,12 +121,8 @@ def week_matchups():
     picks = [pick[0] for pick in db.session.query(  # pylint: disable=no-member
         Pick.team).filter_by(week=g.week, user_id=current_user.id).all()]
     return render_template('week/week_matchups.html',
-                           week=g.week,
-                           available_weeks=g.available_weeks,
                            matchups=matchups,
-                           picks=picks,
-                           week_link_prefix='week.week_matchups',
-                           switch_link=('week.week_picks', 'Picks'))
+                           picks=picks)
 
 
 @week_blueprint.route('/picks')
@@ -131,28 +133,23 @@ def week_picks():
     favored_teams = [get_team_abv(team[0]) for team in favored_teams]
     underdog_teams = db.session.query(Matchup.underdog_team).filter_by(week=g.week).all()  # pylint: disable=no-member
     underdog_teams = [get_team_abv(team[0]) for team in underdog_teams]
-    user_emails = db.session.query(User.email).all()  # pylint: disable=no-member
+    matchups = list(zip(favored_teams, underdog_teams))
+    user_ids = [str(ident[0]) for ident in db.session.query(User.id).all()]  # pylint: disable=no-member
+    display_map = get_id_name_map()
     all_picks = db.session.query(  # pylint: disable=no-member
-        User.email, Pick.team, Pick.points).filter(
+        User.id, Pick.team, Pick.points).filter(
             Pick.week == g.week, Pick.user_id == User.id).all()
-    all_picks = [(pick[0], get_team_abv(pick[1]), pick[2]) for pick in all_picks]
+    all_picks = [(str(pick[0]), get_team_abv(pick[1]), pick[2]) for pick in all_picks]
+    print(all_picks)
     if (datetime.datetime.today().isoweekday() in PICK_DAYS and
         max(g.available_weeks) == g.week):
         msg = ('Other user picks are hidden until lockdown on Saturday night '
                'at midnight.<br>You may see your own picks for this week '
                'on the <a href={}>{}</a> tab.'.format(
                    url_for('week.week_matchups'), 'Matchups'))
-        return render_template('week/week_header.html',
-                               week=g.week,
-                               available_weeks=g.available_weeks,
-                               message=msg,
-                               week_link_prefix='week.week_picks',
-                               switch_link=('week.week_matchups', 'Matchups'))
+        return render_template('week/week_header.html', message=msg)
     return render_template('week/week_picks.html',
-                           week=g.week,
-                           available_weeks=g.available_weeks,
-                           matchups=list(zip(favored_teams, underdog_teams)),
-                           user_emails=user_emails,
-                           all_picks=all_picks,
-                           week_link_prefix='week.week_picks',
-                           switch_link=('week.week_matchups', 'Matchups'))
+                           matchups=matchups,
+                           user_ids=user_ids,
+                           display_map=display_map,
+                           all_picks=all_picks)

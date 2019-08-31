@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="container-fluid mt-1">
+  <div class="row justify-content-center">
+    <div id="scoreGraph" class="col"></div>
+  </div>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script>const data = {{ dataJSON | safe }};</script>
+<script src="{{ url_for('static', filename='js/graph.js') }}"></script>
+
+{% endblock %}

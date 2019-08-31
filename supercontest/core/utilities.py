@@ -149,3 +149,15 @@ def commit_picks_from_excel(path):
                 picks = [Pick(week=week, team=pick, user_id=user_id) for pick in picks]
                 db.session.add_all(picks)  # pylint: disable=no-member
                 db.session.commit()  # pylint: disable=no-member
+
+
+def get_id_name_map():
+    """This function grabs the display name for every row in the user table,
+    returning the first or last name if populated. If not, returns the email.
+    Data is returned as a dictionary where the keys are ids and the values
+    are the names.
+    """
+    return {r.id: (' '.join([r.first_name, r.last_name]) if
+                   r.first_name or r.last_name else r.email)
+            for r in db.session.query(User).all()}
+

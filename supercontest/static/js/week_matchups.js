@@ -19,34 +19,37 @@ if (picks.length) {
     const status = $(this).find('td.status').text();
     if (status == 'P') {
       if (picks.includes(favoredTeamName)) {
-        favoredTeam.addClass('highlighted');
+        favoredTeam.addClass('table-primary');
       };
       if (picks.includes(underdogTeamName)) {
-        underdogTeam.addClass('highlighted');
+        underdogTeam.addClass('table-primary');
       };
     } else {
-      // TODO: this logic is done in python serverside, and is returned
-      // through the matchups.winner var. Deduplicate here.
+      // This logic is done in python serverside, and is returned
+      // through the matchups.winner var. You could deduplicate it here,
+      // but then you'd have to call calculate_leaderboard() every time
+      // the main page (matchups) is refreshed. This is totally doable,
+      // but is not ideal during live scorewatching.
       if ((favoredTeamScore - underdogTeamScore) > line) {
         if (picks.includes(favoredTeamName)) {
-          favoredTeam.css('background-color', 'palegreen');
+          favoredTeam.addClass('table-success');
         };
         if (picks.includes(underdogTeamName)) {
-          underdogTeam.css('background-color', 'lightcoral');
+          underdogTeam.addClass('table-danger');
         };
       } else if ((favoredTeamScore - underdogTeamScore) == line) {
         if (picks.includes(favoredTeamName)) {
-          favoredTeam.css('background-color', 'khaki');
+          favoredTeam.addClass('table-warning');
         };
         if (picks.includes(underdogTeamName)) {
-          underdogTeam.css('background-color', 'khaki');
+          underdogTeam.addClass('table-warning');
         };
       } else {
         if (picks.includes(favoredTeamName)) {
-          favoredTeam.css('background-color', 'lightcoral');
+          favoredTeam.addClass('table-danger');
         };
         if (picks.includes(underdogTeamName)) {
-          underdogTeam.css('background-color', 'palegreen');
+          underdogTeam.addClass('table-success');
         };
       };
     };
@@ -103,7 +106,7 @@ $('td').click(function() {
           'warn');
     } else if (picks.includes(team)) {
       picks.splice(picks.indexOf(team), 1);
-      $(this).removeClass('highlighted');
+      $(this).removeClass('table-primary');
       if (picks.length) {
         $('#submitButtonDiv').show();
       } else {
@@ -111,9 +114,10 @@ $('td').click(function() {
       };
     } else if (picks.length >= 5) {
       $.notify('You cannot select more than 5 teams per week', 'warn');
-    } else {
+    } else {  // the pick is valid
       picks.push(team);
-      $(this).addClass('highlighted');
+      $(this).removeClass('table-active');
+      $(this).addClass('table-primary');
       if (picks.length) {
         $('#submitButtonDiv').show();
       } else {
@@ -129,13 +133,13 @@ $('td').hover(
       if ($(this).hasClass('favoredTeam') || $(this).hasClass('underdogTeam')) {
         $(this).css('cursor', 'pointer');
         if (!picks.includes($(this).text().trim().replace('*', ''))) {
-          $(this).addClass('highlighted');
+          $(this).addClass('table-active');
         };
       };
     },
     function() {
       if (!picks.includes($(this).text().trim().replace('*', ''))) {
-        $(this).removeClass('highlighted');
+        $(this).removeClass('table-active');
       }
     }
 );

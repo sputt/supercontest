@@ -1,46 +1,58 @@
 {% extends "week/week_header.html" %}
 
 {% block table %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
-<div id="tableDiv">
-  <table class="width700 centered">
-    <thead>
-      <tr>
-        <th>Time (pacific)</th>
-        <th>Line</th>
-        <th>Favorite</th>
-        <th>Score</th>
-        <th>Underdog</th>
-        <th>Score</th>
-        <th>Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for matchup in matchups %}
-      <tr class="matchup">
-        <td class="datetime">{{ matchup.datetime }}</td>
-        <td class="line">{{ matchup.line }}</td>
-        <td class="favoredTeam">
-          {{ matchup.favored_team + ('*' if matchup.home_team == matchup.favored_team else '') }}
-        </td>
-        <td class="favoredTeamScore">{{ matchup.favored_team_score }}</td>
-        <td class="underdogTeam">
-          {{ matchup.underdog_team + ('*' if matchup.home_team == matchup.underdog_team else '') }}
-        </td>
-        <td class="underdogTeamScore">{{ matchup.underdog_team_score }}</td>
-        <td class="status">{{ matchup.status }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  <div id="submitButtonDiv" class="centered-parent" style="display:none;">
-    <button id="submitButton" class="btn btn-primary centered-child" style="margin-top: 10px">Submit Picks</button>
-    <br>
-    <input id="myCheck" type="checkbox" class="centered-child" style="margin-top: 10px;">
-    <label for="myCheck" style="font-weight: normal !important;">I am playing this week under protest</label>
+
+<div class="container mt-3">
+  <div class="row justify-content-center">
+    <div class="col">
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered table-striped table-hover text-center">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">Time (pacific)</th>
+              <th scope="col">Line</th>
+              <th scope="col">Favorite</th>
+              <th scope="col">Score</th>
+              <th scope="col">Underdog</th>
+              <th scope="col">Score</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for matchup in matchups %}
+            <tr class="matchup">
+              <td class="datetime">{{ matchup.datetime }}</td>
+              <td class="line">{{ matchup.line }}</td>
+              <td class="favoredTeam">
+                {{ matchup.favored_team + ('*' if matchup.home_team == matchup.favored_team else '') }}
+              </td>
+              <td class="favoredTeamScore">{{ matchup.favored_team_score }}</td>
+              <td class="underdogTeam">
+                {{ matchup.underdog_team + ('*' if matchup.home_team == matchup.underdog_team else '') }}
+              </td>
+              <td class="underdogTeamScore">{{ matchup.underdog_team_score }}</td>
+              <td class="status">{{ matchup.status }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div id="submitButtonDiv" class="text-center" style="display:none;">
+          <button id="submitButton" class="btn btn-primary">Submit Picks</button>
+          <div class="form-check mt-2">
+            <input id="myCheck" class="form-check-input" type="checkbox">
+            <label class="form-check-label" for="myCheck">
+              I am playing this week under protest
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>
 
 <script>const picks = {{ (picks or [])|tojson }};</script>
 <script src="{{ url_for('static', filename='js/week_matchups.js') }}"></script>
+
 {% endblock %}

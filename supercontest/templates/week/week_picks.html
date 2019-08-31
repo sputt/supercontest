@@ -1,31 +1,39 @@
 {% extends "week/week_header.html" %}
 
 {% block table %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/tables.css') }}">
-<div id="tableDiv">
-  <table class="centered">
-    <thead>
-      <tr>
-        <th>User</th>
-        {% for matchup in matchups %}
-        <th class="rotate">{{ matchup[0] }}</th>
-        <th class="rotate">{{ matchup[1] }}</th>
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for user_email in user_emails %}
-      <tr>
-        <td>{{ user_email[0] }}</td>
-        {% for matchup in matchups %}
-          <td id={{ user_email[0] | replace('@', '') | replace('.', '') + matchup[0] }}></td>
-          <td id={{ user_email[0] | replace('@', '') | replace('.', '') + matchup[1] }}></td>
-        {% endfor %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+<div class="container mt-3">
+  <div class="row justify-content-center">
+    <div class="col">
+      <div class="table-responsive" id="tableDiv">
+        <table class="table table-sm table-bordered table-striped table-hover text-center">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">User</th>
+              {% for matchup in matchups %}
+              <th scope="col">{{ matchup[0] }}</th>
+              <th scope="col">{{ matchup[1] }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for user_id in user_ids %}
+            <tr>
+              <td>{{ display_map[user_id|int] }}</td>
+              {% for matchup in matchups %}
+                <td id={{ user_id + matchup[0] }}></td>
+                <td id={{ user_id + matchup[1] }}></td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
+
 <script>const all_picks = {{ (all_picks or [])|tojson }}</script>
 <script src="{{ url_for('static', filename='js/week_picks.js') }}"></script>
+
 {% endblock %}

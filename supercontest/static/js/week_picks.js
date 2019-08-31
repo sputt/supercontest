@@ -4,16 +4,15 @@
 //    (this is not a problem for the headers, which are explicitly defined).
 
 $.each(all_picks, function(i, pick) {
-  // email+team, no @ or .
-  const selector = pick[0].replace(/\@/g, '').replace(/\./g, '') + pick[1];
-  const points = pick[2]; // 1.0, 0.5, 0.0
+  const selector = pick[0] + pick[1];  // user id and picked team
+  const points = pick[2]; // points, one of [1.0, 0.5, 0.0]
   if (points == 1.0) {
-    $('#' + selector).css('background-color', 'palegreen');
+    $('#' + selector).addClass('table-success');
   } else if (points == 0.5) {
-    $('#' + selector).css('background-color', 'khaki');
+    $('#' + selector).addClass('table-warning');
   } else if (points == 0.0) {
-    $('#' + selector).css('background-color', 'lightcoral');
+    $('#' + selector).addClass('table-danger');
   } else {
-    $('#' + selector).addClass('highlighted');
+    $('#' + selector).addClass('table-primary');
   };
 });
