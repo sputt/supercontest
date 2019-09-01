@@ -15,6 +15,8 @@
 
 <img src="https://logo.clearbit.com/python.org" width="75">   <img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" width="75">   <img src="https://www.fullstackpython.com/img/logos/uwsgi.png" width="75">   <img src="https://logo.clearbit.com/nginx.com" width="75">   <img src="https://logo.clearbit.com/postgresql.org" width="75">   <img src="https://logo.clearbit.com/getbootstrap.com" width="75">   <img src="https://logo.clearbit.com/graphql.org" width="75">   <img src="https://logo.clearbit.com/python.org" width="75">   <img src="https://logo.clearbit.com/docker.com" width="75">   <img src="https://logo.clearbit.com/ansible.com" width="75">   
 
+<a href="https://clearbit.com">Logos provided by Clearbit</a>
+
 ## Queries
 
 I have chosen to enable GraphiQL on [southbaysupercontest](https://southbaysupercontest.com) because it is protected
@@ -47,5 +49,3 @@ with requests.session() as session:
     response = session.get(root_url + '/graphql', json=dict(query=query))
 data = response.json()
 ```
-
-<a href="https://clearbit.com">Logos provided by Clearbit</a>
