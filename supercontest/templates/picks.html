@@ -1,6 +1,6 @@
-{% extends "week/week_header.html" %}
+{% extends "week_navs.html" %}
 
-{% block table %}
+{% block week_navs_content %}
 
 <div class="container mt-3">
   <div class="row justify-content-center">
@@ -11,20 +11,20 @@
             <tr>
               <th scope="col">User</th>
               {% for matchup in matchups %}
-              <th scope="col">{{ matchup[0] }}</th>
-              <th scope="col">{{ matchup[1] }}</th>
+                <th scope="col">{{ matchup[0] }}</th>
+                <th scope="col">{{ matchup[1] }}</th>
               {% endfor %}
             </tr>
           </thead>
           <tbody>
             {% for user_id in user_ids %}
-            <tr>
-              <td>{{ display_map[user_id|int] }}</td>
-              {% for matchup in matchups %}
-                <td id={{ user_id + matchup[0] }}></td>
-                <td id={{ user_id + matchup[1] }}></td>
-              {% endfor %}
-            </tr>
+              <tr>
+                <td>{{ display_map[user_id|int] }}</td>
+                {% for matchup in matchups %}
+                  <td id={{ user_id + matchup[0] }}></td>
+                  <td id={{ user_id + matchup[1] }}></td>
+                {% endfor %}
+              </tr>
             {% endfor %}
           </tbody>
         </table>
@@ -34,6 +34,6 @@
 </div>
 
 <script>const all_picks = {{ (all_picks or [])|tojson }}</script>
-<script src="{{ url_for('static', filename='js/week_picks.js') }}"></script>
+<script src="{{ url_for('static', filename='js/picks.js') }}"></script>
 
 {% endblock %}

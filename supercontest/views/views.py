@@ -1,4 +1,3 @@
-import datetime
 import json
 from itertools import accumulate
 from flask import Blueprint, render_template, request, redirect, url_for, Response, g
@@ -8,40 +7,129 @@ import plotly
 from supercontest import db
 from supercontest.core.scores import commit_scores
 from supercontest.core.picks import commit_picks, InvalidPicks, PICK_DAYS
-from supercontest.core.utilities import get_team_abv, get_id_name_map
+from supercontest.core.utilities import get_team_abv, get_id_name_map, is_today
 from supercontest.core.results import calculate_leaderboard, commit_winners_and_points
 from supercontest.models import Matchup, Pick, User
 
-main_blueprint = Blueprint('main',  # pylint: disable=invalid-name
-                           __name__,
-                           template_folder='templates',
-                           static_folder='static')
+# This is the primary blueprint of the application. If flask supported nested
+# blueprints, I'd do one for season and one for week, but they're both here.
+# Many routes in the supercontest are data-specific to the season and week.
+season_week_blueprint = Blueprint('season_week',  # pylint: disable=invalid-name
+                                  __name__,
+                                  template_folder='templates',
+                                  static_folder='static')
+only_season_endpoints = ['season_week.leaderboard', 'season_week.graph']  # pylint: disable=invalid-name
 
 
-@main_blueprint.route('/')
+@season_week_blueprint.url_defaults
+def define_week(endpoint, values):  # pylint: disable=unused-argument
+    """If the user goes to the website's home / without any week or season
+    specification, query the database for the most recent matchups and go
+    to that page.
+    """
+    if not values.get('season'):
+        values['season'] = db.session.query(db.func.max(Matchup.season)).scalar() or 0  # pylint: disable=no-member
+    if not values.get('week') and endpoint not in only_season_endpoints:
+        values['week'] = db.session.query(db.func.max(Matchup.week)).filter_by(  # pylint: disable=no-member
+            season=values['season']).scalar() or 0
+
+
+@season_week_blueprint.url_value_preprocessor
+def get_week(endpoint, values):  # pylint: disable=unused-argument
+    """Attributes current and available weeks and seasons to the g object for
+    use in subsequent routes. url_defaults obviously executes before this.
+
+    This also adds the useful is_current_week, which is a logical condition for
+    many other actions.
+    """
+    g.available_seasons = [
+        result.season
+        for result
+        in db.session.query(Matchup.season).distinct().order_by(Matchup.season).all()  # pylint: disable=no-member
+    ]
+    g.season = int(values.pop('season'))
+
+    if endpoint not in only_season_endpoints:
+        g.available_weeks = [
+            result.week
+            for result
+            in db.session.query(Matchup.week).filter_by(  # pylint: disable=no-member
+                season=g.season).distinct().order_by(Matchup.week).all()
+        ]
+        g.week = int(values.pop('week'))
+
+        g.is_current_week = (g.season == max(g.available_seasons or [0]) and
+                             g.week == max(g.available_weeks or [0]))
+
+
+@season_week_blueprint.route('/season<season>/week<week>/matchups')
 @login_required
-def home():
-    return redirect(url_for('week.week_matchups'))
+def matchups():
+    # If you are on the most recent week of the most recent season, this
+    # fetches and commits scores every time the site is visited/refreshed.
+    # It's not the slowest thing in the world, and is ok for now. It is
+    # restricted to Thursday/Sunday/Monday, because those are the only
+    # days scores would change.
+    if g.is_current_week and is_today(['Thursday', 'Sunday', 'Monday']):
+        commit_scores(season=g.season, week=g.week)  # pylint: disable=no-member
+    _matchups = db.session.query(Matchup).filter_by(  # pylint: disable=no-member
+        season=g.season, week=g.week).all()
+    # get the picks to overlay, then extract the single-element tuples
+    _picks = [pick[0] for pick in db.session.query(Pick.team).filter_by(  # pylint: disable=no-member
+        season=g.season, week=g.week, user_id=current_user.id).all()]
+    return render_template('matchups.html',
+                           matchups=_matchups,
+                           picks=_picks)
 
 
-@main_blueprint.route('/leaderboard')
+@season_week_blueprint.route('/season<season>/week<week>/picks')
+@login_required
+def picks():
+    commit_winners_and_points(season=g.season, week=g.week)
+    results = db.session.query(  # pylint: disable=no-member
+        Matchup.favored_team, Matchup.underdog_team).filter_by(
+            season=g.season, week=g.week).all()
+    favs, dogs = zip(*results)
+    favored_teams = [get_team_abv(team) for team in favs]
+    underdog_teams = [get_team_abv(team) for team in dogs]
+    _matchups = list(zip(favored_teams, underdog_teams))
+    user_ids = [str(ident[0]) for ident in db.session.query(User.id).all()]  # pylint: disable=no-member
+    display_map = get_id_name_map()
+    all_picks = db.session.query(  # pylint: disable=no-member
+        User.id, Pick.team, Pick.points).filter(
+            Pick.season == g.season, Pick.week == g.week, Pick.user_id == User.id).all()
+    all_picks = [(str(pick[0]), get_team_abv(pick[1]), pick[2]) for pick in all_picks]
+    if is_today(PICK_DAYS) and g.is_current_week:
+        msg = ('Other user picks are hidden until lockdown on Saturday night '
+               'at midnight.<br>You may see your own picks for this week '
+               'on the <a href={}>{}</a> tab.'.format(
+                   url_for('season_week.matchups'), 'Matchups'))
+        return render_template('pick_restriction.html', message=msg)
+    return render_template('picks.html',
+                           matchups=_matchups,
+                           user_ids=user_ids,
+                           display_map=display_map,
+                           all_picks=all_picks)
+
+
+@season_week_blueprint.route('/season<season>/leaderboard')
 @login_required
 def leaderboard():
     # Calculate and commit results, returning them to be rendered
-    weeks, results, totals = calculate_leaderboard()
+    weeks, results, totals = calculate_leaderboard(season=g.season)
     display_map = get_id_name_map()
-    return render_template('main/leaderboard.html',
+    return render_template('leaderboard.html',
                            weeks=weeks,
                            results=results,
                            totals=totals,
                            display_map=display_map)
 
 
-@main_blueprint.route('/graph')
+@season_week_blueprint.route('/season<season>/graph')
 @login_required
 def graph():
     # Calculate and commit results, returning them to be rendered
-    weeks, results, totals = calculate_leaderboard()
+    _, results, totals = calculate_leaderboard(season=g.season)
     # All three are necessary for the table, but 'results' contains
     # everything necessary for the line graph by itself. Structure:
     #   {user: {week: score, week: score...}
@@ -59,13 +147,27 @@ def graph():
     # to make the visualization better around the origin.
     dataJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)  # pylint: disable=invalid-name
     # Layout (titles, axes, etc) is handled in JS.
-    return render_template('main/graph.html', dataJSON=dataJSON)
+    return render_template('graph.html', dataJSON=dataJSON)
+
+
+# The "main" blueprint is the collection of all other views, the ones that
+# don't require a season or week to be specified.
+main_blueprint = Blueprint('main',  # pylint: disable=invalid-name
+                           __name__,
+                           template_folder='templates',
+                           static_folder='static')
+
+
+@main_blueprint.route('/')
+@login_required
+def home():
+    return redirect(url_for('season_week.matchups'))
 
 
 @main_blueprint.route('/feedback')
 @login_required
 def feedback():
-    return render_template('main/feedback.html')
+    return render_template('feedback.html')
 
 
 @main_blueprint.route('/pick', methods=['POST'])
@@ -73,83 +175,10 @@ def feedback():
 def pick():
     try:
         commit_picks(user=current_user,
+                     season=request.json.get('season'),
                      week=request.json.get('week'),
                      teams=request.json.get('picks'))
     except InvalidPicks as msg:
         return Response(status=400, response=msg)
     else:
         return Response(status=200)
-
-
-week_blueprint = Blueprint('week',  # pylint: disable=invalid-name
-                           __name__,
-                           template_folder='templates',
-                           static_folder='static',
-                           url_prefix='/week<week>')
-
-
-@week_blueprint.url_defaults
-def define_week(endpoint, values):  # pylint: disable=unused-argument
-    """If the user goes to the website's home / without any week specification,
-    query the database for the most recent matchups and go to that page.
-    """
-    if not values.get('week'):
-        values['week'] = db.session.query(db.func.max(Matchup.week)).scalar() or 0  # pylint: disable=no-member
-
-
-@week_blueprint.url_value_preprocessor
-def get_week(endpoint, values):  # pylint: disable=unused-argument
-    """Attributes 'available_weeks' and 'week' to the g object for
-    use in subsequent routes. url_defaults obviously executes before this.
-    """
-    g.available_weeks = [
-        result.week
-        for result
-        in db.session.query(Matchup.week).distinct().order_by(Matchup.week).all()  # pylint: disable=no-member
-    ]
-    g.week = int(values.pop('week'))
-
-
-@week_blueprint.route('/matchups')
-@login_required
-def week_matchups():
-    if g.week == max(g.available_weeks or [0]):  # only check/commit scores if on the latest week
-        # TODO: this should be changed to happen periodically! It's slow.
-        commit_scores(week=g.week)  # pylint:disable=no-member
-    matchups = db.session.query(Matchup).filter_by(week=g.week).all()  # pylint: disable=no-member
-    # get the picks to overlay, then extract the single-element tuples
-    picks = [pick[0] for pick in db.session.query(  # pylint: disable=no-member
-        Pick.team).filter_by(week=g.week, user_id=current_user.id).all()]
-    return render_template('week/week_matchups.html',
-                           matchups=matchups,
-                           picks=picks)
-
-
-@week_blueprint.route('/picks')
-@login_required
-def week_picks():
-    commit_winners_and_points(week=g.week)
-    favored_teams = db.session.query(Matchup.favored_team).filter_by(week=g.week).all()  # pylint: disable=no-member
-    favored_teams = [get_team_abv(team[0]) for team in favored_teams]
-    underdog_teams = db.session.query(Matchup.underdog_team).filter_by(week=g.week).all()  # pylint: disable=no-member
-    underdog_teams = [get_team_abv(team[0]) for team in underdog_teams]
-    matchups = list(zip(favored_teams, underdog_teams))
-    user_ids = [str(ident[0]) for ident in db.session.query(User.id).all()]  # pylint: disable=no-member
-    display_map = get_id_name_map()
-    all_picks = db.session.query(  # pylint: disable=no-member
-        User.id, Pick.team, Pick.points).filter(
-            Pick.week == g.week, Pick.user_id == User.id).all()
-    all_picks = [(str(pick[0]), get_team_abv(pick[1]), pick[2]) for pick in all_picks]
-    print(all_picks)
-    if (datetime.datetime.today().isoweekday() in PICK_DAYS and
-        max(g.available_weeks) == g.week):
-        msg = ('Other user picks are hidden until lockdown on Saturday night '
-               'at midnight.<br>You may see your own picks for this week '
-               'on the <a href={}>{}</a> tab.'.format(
-                   url_for('week.week_matchups'), 'Matchups'))
-        return render_template('week/week_header.html', message=msg)
-    return render_template('week/week_picks.html',
-                           matchups=matchups,
-                           user_ids=user_ids,
-                           display_map=display_map,
-                           all_picks=all_picks)

@@ -63,12 +63,13 @@ def fetch_lines(driver=None):  # driver is passed by decorator
     return lines, week
 
 
-def instantiate_rows_for_matchups(week, lines):
+def instantiate_rows_for_matchups(season, week, lines):
     """This function strips the asterisks (if any) from the team names
     so that they're pure before committing to the table. It adds that
     respective team to the home_team column.
 
     Args:
+        season (int)
         week (int)
         lines (list): from fetch_lines() return, [FAV, UNDERDOG, DATETIME, LINE]
 
@@ -87,7 +88,8 @@ def instantiate_rows_for_matchups(week, lines):
             home_team = underdog_team
         else:
             home_team = None
-        matchup = Matchup(week=week,
+        matchup = Matchup(season=season,
+                          week=week,
                           favored_team=favored_team,
                           underdog_team=underdog_team,
                           datetime=line[2],
@@ -98,21 +100,22 @@ def instantiate_rows_for_matchups(week, lines):
     return matchups
 
 
-def _commit_lines(week, lines):
+def _commit_lines(season, week, lines):
     """This is always done before commit_scores(). This function
     creates the rows for the matchups and adds the lines, then
     commit_scores() updates them later as the games are played.
     """
-    matchups = instantiate_rows_for_matchups(week=week, lines=lines)
+    matchups = instantiate_rows_for_matchups(season=season, week=week, lines=lines)
     db.session.add_all(matchups)  # pylint: disable=no-member
     db.session.commit()  # pylint: disable=no-member
 
 
-def commit_lines(week):
+def commit_lines(season, week):
     """Python wrapper for all line committing. Requires
     that the week be passed through Python.
 
     Args:
+        season (int)
         week (int)
     """
     lines, week_from_westgate = fetch_lines()
@@ -121,4 +124,4 @@ def commit_lines(week):
             'You are requesting lines for week {} but westgate is returning '
             'lines for week {}.\n'.format(week, week_from_westgate))
         return
-    _commit_lines(week=week, lines=lines)
+    _commit_lines(season=season, week=week, lines=lines)

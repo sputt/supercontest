@@ -40,6 +40,7 @@ class AppTests(LiveServerTestCase):
 
     def setUp(self):
         # Some config attrs.
+        self.season = 1987
         self.week = 1
         self.creds = dict(email='test@nowhere.com', password='hello')
         # Create tables.
@@ -49,9 +50,9 @@ class AppTests(LiveServerTestCase):
         # Add user.
         add_user(**self.creds)
         # Add lines.
-        _commit_lines(week=self.week, lines=spoof_lines())
+        _commit_lines(season=self.season, week=self.week, lines=spoof_lines())
         # Add scores.
-        _commit_scores(week=self.week, scores=spoof_scores())
+        _commit_scores(season=self.season, week=self.week, scores=spoof_scores())
         # Webdriver.
         if hasattr(self, 'webdriver'):
             self.webdriver.quit()
@@ -99,7 +100,7 @@ class AppTests(LiveServerTestCase):
         self.assertIn('You must be signed in to access', self.webdriver.page_source)
         # Then attempt to login and reload home.
         self.login()
-        self.goto('week.week_matchups', week=self.week)
+        self.goto('season_week.matchups', season=self.season, week=self.week)
         # Make sure a table of lines and scores is in the dom.
         self.assertEqual(len(self.webdriver.find_elements_by_class_name('favoredTeam')), 16)
         self.assertEqual(len(self.webdriver.find_elements_by_class_name('underdogTeamScore')), 16)
@@ -119,22 +120,23 @@ class AppTests(LiveServerTestCase):
                     for team in picks]
         # Login and verify you have no picks first.
         self.login()
-        self.goto('week.week_picks', week=self.week)
+        self.goto('season_week.picks', season=self.season, week=self.week)
         for pick_id in pick_ids:
             element = self.webdriver.find_element_by_id(pick_id)
             background_color = element.value_of_css_property('background-color')
             self.assertNotIn(background_color, list(color_map.values()))
         # Make the picks.
         user_obj = db.session.query(User).first()
-        commit_picks(user=user_obj, week=self.week, teams=picks, email=False, verify=False)
+        commit_picks(user=user_obj, season=self.season, week=self.week,
+                     teams=picks, email=False, verify=False)
         # Verify the correct picks now that they've been placed.
-        self.goto('week.week_picks', week=self.week)
+        self.goto('season_week.picks', season=self.season, week=self.week)
         for pick_id in pick_ids:
             element = self.webdriver.find_element_by_id(pick_id)
             background_color = element.value_of_css_property('background-color')
             self.assertIn(background_color, list(color_map.values()))
         # Go to leaderboard to confirm that scoring works.
-        self.goto('main.leaderboard')
+        self.goto('season_week.leaderboard')
         element = self.webdriver.find_element_by_class_name('weekScore')  # there's only 1
         self.assertEqual(element.text, '2.0')
 

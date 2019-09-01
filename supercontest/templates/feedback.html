@@ -1,6 +1,7 @@
-{% extends "layout.html" %}
+{% extends "settings_navs.html" %}
 
-{% block content %}
+{% block settings_navs_content %}
+
 <div class="container mt-3">
   <div class="row justify-content-center">
     <div class="col-5">
@@ -15,5 +16,7 @@
     </div>
   </div>
 </div>
+
 <script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
+
 {% endblock %}

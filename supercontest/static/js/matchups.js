@@ -1,6 +1,6 @@
 // Some general notes:
-//  * {{week}} (int) and {{picks}} (array) and {{matchups}} (dict) are defined
-//    in templates.
+//  * {{season}} (int) and {{week}} (int) and {{picks}} (array) and
+//    {{matchups}} (dict) are defined in templates.
 //  * trim() is necessary for the team cells because jinja injects newlines
 //    (this is not a problem for the headers, which are explicitly defined).
 
@@ -77,6 +77,7 @@ $('#submitButton').click(function() {
     data: JSON.stringify({
       'picks': picks,
       'week': week,
+      'season': season,
     }),
     success: function(data) {
       $.notify('Picks submitted successfully', 'success');

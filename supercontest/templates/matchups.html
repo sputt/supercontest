@@ -1,6 +1,6 @@
-{% extends "week/week_header.html" %}
+{% extends "week_navs.html" %}
 
-{% block table %}
+{% block week_navs_content %}
 
 <div class="container mt-3">
   <div class="row justify-content-center">
@@ -53,6 +53,6 @@
 </div>
 
 <script>const picks = {{ (picks or [])|tojson }};</script>
-<script src="{{ url_for('static', filename='js/week_matchups.js') }}"></script>
+<script src="{{ url_for('static', filename='js/matchups.js') }}"></script>
 
 {% endblock %}

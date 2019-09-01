@@ -1,0 +1,35 @@
+{% extends "adspace.html" %}
+
+{% block adspace_content %}
+
+<div class="container-fluid mt-1">
+  <div class="row justify-content-center">
+    <ul class="nav nav-tabs">
+      <div class="col-auto text-center"><li class="nav-item">
+        <a class="nav-link" href="{{ url_for('user.edit_user_profile') }}">
+          {{ current_user.first_name or current_user.email }}
+        </a>
+      </li></div>
+      <div class="col text-center"><li class="nav-item">
+        <a class="nav-link" href="{{ url_for('user.logout') }}">
+          Logout
+        </a>
+      </li></div>
+      <div class="col text-center"><li class="nav-item">
+        <a id="nav_graphql" class="nav-link" href="{{ url_for('graphql') }}">
+          API
+        </a>
+      </li></div>
+      <div class="col text-center"><li class="nav-item">
+        <a id="nav_feedback" class="nav-link" href="{{ url_for('main.feedback') }}">
+          Feedback
+        </a>
+      </li></div>
+    </ul>
+  </div>
+</div>
+
+{% block settings_navs_content %}
+{% endblock %}
+
+{% endblock %}

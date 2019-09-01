@@ -2,8 +2,6 @@
 """
 # pylint: disable=no-member,too-few-public-methods
 from flask_user import UserMixin
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, validators
 
 from supercontest import db
 
@@ -32,6 +30,7 @@ class Pick(db.Model):
     """
     __seq__ = db.Sequence('pick_id_seq', start=3106)
     id = db.Column(db.Integer, __seq__, server_default=__seq__.next_value(), primary_key=True)
+    season = db.Column(db.Integer, nullable=False)
     week = db.Column(db.Integer, nullable=False)
     team = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -48,6 +47,7 @@ class Matchup(db.Model):
     """
     __seq__ = db.Sequence('matchup_id_seq', start=263)
     id = db.Column(db.Integer, __seq__, server_default=__seq__.next_value(), primary_key=True)
+    season = db.Column(db.Integer, nullable=False)
     week = db.Column(db.Integer, nullable=False)
     favored_team = db.Column(db.String, nullable=False)
     underdog_team = db.Column(db.String, nullable=False)

@@ -1,0 +1,32 @@
+{% extends "main_navs.html" %}
+
+{% block main_navs_content %}
+
+<div class="container-fluid mt-1">
+  <div class="row justify-content-center">
+    {% for span in [(1, 7), (7, 13), (13, 18)] %}
+      <div class="col-auto text-center">
+        <div class="row justify-content-center">
+          <ul class="nav nav-tabs">
+            {% for week in range(*span) %}
+              <div class="col-auto text-center px-0"><li class="nav-item">
+                <a id="weeknav_week{{ week }}" class="nav-link" href="{{ url_for(request.url_rule.endpoint, season=g.season, week=week) }}">{{ '%02d' % week }}</a>
+              </li></div>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% block week_navs_content %}
+{% endblock %}
+
+<script>
+  const week = {{ g.week }};
+  const available_weeks = {{ g.available_weeks }};
+</script>
+<script src="{{ url_for('static', filename='js/week_navs.js') }}"></script>
+
+{% endblock %}

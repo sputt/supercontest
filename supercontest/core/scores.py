@@ -35,14 +35,16 @@ def fetch_scores():
     return scores, week
 
 
-def _commit_scores(week, scores):
+def _commit_scores(season, week, scores):
     """Commits the scores to the database.
 
     Args:
+        season (int)
         week (int)
         scores (list of dicts): As returned from fetch_scores()
     """
-    matchups = db.session.query(Matchup).filter_by(week=week).all()  # pylint: disable=no-member
+    matchups = db.session.query(Matchup).filter_by(  # pylint: disable=no-member
+        season=season, week=week).all()
     for game in scores:
         # could use home or visiting team, this is an arbitrary binary
         visiting_team = game['visiting_team']
@@ -60,7 +62,7 @@ def _commit_scores(week, scores):
     db.session.commit()  # pylint: disable=no-member
 
 
-def commit_scores(week):
+def commit_scores(season, week):
     """Python wrapper for all score committing. Requires
     that the week be passed through Python.
 
@@ -73,4 +75,4 @@ def commit_scores(week):
             'You are requesting scores for week {} but the NFL is '
             'returning scores for week {}.\n'.format(week, week_from_nfl))
         return
-    _commit_scores(week=week, scores=scores)
+    _commit_scores(season=season, week=week, scores=scores)

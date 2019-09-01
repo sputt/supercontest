@@ -51,6 +51,11 @@ Deployments are done with ansible, wrapped by our makefile:
 make deploy
 ```
 
+Deployments will rebuild and restart the production containers, but do not
+automatically run database migrations. If your change involved the models,
+ssh into the droplet and run `python manage.py db upgrade` from the app
+container.
+
 Reindex the ctags for vim:
 ```bash
 make reindex-ctags
@@ -78,17 +83,24 @@ make backup-remote-db-to-local
 make restore-remote-db-from-local
 ```
 
+The following manage.py commands need to be run in the app container, because
+they require access to various app pieces. For example, the database migrations
+need python, flask-scripts, a psycopg2 connection to the db, etc. Simply shell
+into the app container and then run them as you normally would on the host.
+It will add the migration file to the volume in the container, which gets synced
+back to vcs on your host.
+
 To manually commit lines, do the following. This is typically done
 on Wednesday nights, after Westgate posts the lines. This should
 be done before scores are committed, because it creates the matchup rows.
 ```bash
-python manage.py commit_lines --week <num>
+python manage.py commit_lines --season <XXXX> --week <XX>
 ```
 
 To manually commit scores, do the following. This should never need to
 be done manually, but it's exposed as a development convenience.
 ```bash
-python manage.py commit_scores --week <num>
+python manage.py commit_scores --season <XXXX> --week <XX>
 ```
 
 To manually inspect the database, for example:
@@ -126,7 +138,7 @@ python manage.py db stamp head
 
 To debug errors in the service:
 ```bash
-docker logs -f <flask/nginx/postgres>
+docker logs -f <>
 ```
 
 If directly on the machines:

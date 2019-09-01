@@ -1,11 +1,9 @@
-import datetime
-
 from supercontest.models import Pick, Matchup
-from supercontest.core.utilities import send_mail
+from supercontest.core.utilities import send_mail, is_today
 from supercontest import db
 
 MAX_PICKS = 5
-PICK_DAYS = [3, 4, 5, 6]  # 1 is Monday, 7 is Sunday. Picks are allowed Wed-Sat.
+PICK_DAYS = ['Wednesday', 'Thursday', 'Friday', 'Saturday']
 PICKABLE_STATUS = 'P'  # not yet started
 
 
@@ -13,11 +11,12 @@ class InvalidPicks(ValueError):
     pass
 
 
-def commit_picks(user, week, teams, email=False, verify=True):
+def commit_picks(user, season, week, teams, email=False, verify=True):  # pylint: disable=too-many-arguments
     """Wrapper to write picks to the database.
 
     Args:
         user (obj): flask.current_user object
+        season (int): the season to pick for
         week (int): the week to pick for
         teams (list): picks from the client, list of unicode string team names
         email (bool): send mail or don't send mail
@@ -30,7 +29,7 @@ def commit_picks(user, week, teams, email=False, verify=True):
     if verify is True:
         if len(teams) > MAX_PICKS:
             raise InvalidPicks('You cannot select more than 5 teams per week')
-        if datetime.datetime.today().isoweekday() not in PICK_DAYS:
+        if not is_today(PICK_DAYS):
             raise InvalidPicks('Picks can only be placed Wednesday-Saturday')
 
         # Query to find out which games haven't started yet this week.
@@ -38,10 +37,11 @@ def commit_picks(user, week, teams, email=False, verify=True):
             Matchup.favored_team,
             Matchup.underdog_team
         ).filter_by(
+            season=season,
             week=week,
             status=PICKABLE_STATUS
         ).all()
-        # This are still structured in matchups, so flatten.
+        # These are still structured in matchups, so flatten.
         pickable_teams = [team
                           for pickable_matchup in pickable_matchups
                           for team in pickable_matchup]
@@ -51,10 +51,11 @@ def commit_picks(user, week, teams, email=False, verify=True):
 
     # If you've made it this far, the picks are good. Wipe any previous
     # picks and commit the new ones.
-    old_picks = db.session.query(Pick).filter_by(week=week, user_id=user.id).all()  # pylint: disable=no-member
+    old_picks = db.session.query(Pick).filter_by(  # pylint: disable=no-member
+        season=season, week=week, user_id=user.id).all()
     for old_pick in old_picks:
         db.session.delete(old_pick)  # pylint: disable=no-member
-    picks = [Pick(week=week, team=team, user_id=user.id)
+    picks = [Pick(season=season, week=week, team=team, user_id=user.id)
              for team in teams]
     db.session.add_all(picks)  # pylint: disable=no-member
     db.session.commit()  # pylint: disable=no-member

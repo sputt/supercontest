@@ -8,7 +8,6 @@
       <meta name="csrf-token" content="{{ csrf_token() }}">
     {% endif %}
     <title>South Bay Supercontest</title>
-
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -16,71 +15,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
   </head>
-
   <body>
-    <div class="jumbotron jumbotron-fluid mb-0">
-      <div class="container-fluid text-center">
-        <h2>your custom content here</h2>
-      </div>
-    </div>
-    <div class="container-fluid">
-      <div class="row justify-content-center my-1">
-        <ul class="nav nav-pills">
-          <div class="col-auto text-center"><li class="nav-item">
-            <a class="nav-link" href="{{ url_for('user.edit_user_profile') }}">
-              {{ current_user.first_name or current_user.email }}
-            </a>
-          </li></div>
-          <div class="col text-center"><li class="nav-item">
-            <a class="nav-link" href="{{ url_for('user.logout') }}">
-              Logout
-            </a>
-          </li></div>
-          <div class="col text-center"><li class="nav-item">
-            <a id="nav_graphql" class="nav-link" href="{{ url_for('graphql') }}">
-              API
-            </a>
-          </li></div>
-          <div class="col text-center"><li class="nav-item">
-            <a id="nav_feedback" class="nav-link" href="{{ url_for('main.feedback') }}">
-              Feedback
-            </a>
-          </li></div>
-        </ul>
-      </div>
-      <hr class="m-0" />
-      <div class="row justify-content-center my-1">
-        <ul class="nav nav-pills">
-          <div class="col text-center"><li class="nav-item">
-            <a id="nav_matchups" class="nav-link" href="{{ url_for('week.week_matchups', week=g.week) }}">
-              Matchups
-            </a>
-          </li></div>
-          <div class="col text-center"><li class="nav-item">
-            <a id="nav_picks" class="nav-link" href="{{ url_for('week.week_picks', week=g.week) }}">
-              Picks
-            </a>
-          </li></div>
-          <div class="col text-center"><li class="nav-item">
-            <a id="nav_leaderboard" class="nav-link" href="/leaderboard">
-              Leaderboard
-            </a>
-          </li></div>
-          <div class="col text-center"><li class="nav-item">
-            <a id="nav_graph" class="nav-link" href="/graph">
-              Graph
-            </a>
-          </li></div>
-        </ul>
-      </div>
-      <hr class="m-0" />
-    </div>
-
-    <div>
-      {% block content %}
-      {% endblock %}
-    </div>
-
+    {% block layout_content %}
+    {% endblock %}
     <script src="{{ url_for('static', filename='js/nav_active.js') }}"></script>
   </body>
 </html>

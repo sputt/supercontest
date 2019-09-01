@@ -2,6 +2,7 @@
 other supercontest modules.
 """
 import datetime
+import calendar
 import requests
 import bs4
 import xlrd
@@ -115,7 +116,7 @@ def commit_users_from_excel(path):
         add_user(email=email, password='sbsc19', first_name=name)  # nosec
 
 
-def commit_picks_from_excel(path):
+def commit_picks_from_excel(path, season):
     workbook = xlrd.open_workbook(path)
     for week in range(1, 18):  # this goes 1-17
         print('Week {}'.format(week))
@@ -139,14 +140,16 @@ def commit_picks_from_excel(path):
             # with a DIFFERENCE in picks was Grdich. Petty kept the first
             # entry (assuming bc submission timestamp was most recent), so
             # I'll keep that one.
-            if db.session.query(Pick).filter_by(week=week, user_id=user_id).all():  # pylint: disable=no-member
+            if db.session.query(Pick).filter_by(  # pylint: disable=no-member
+                    season=season, week=week, user_id=user_id).all():
                 print('Duplicate pick rows detected for {}, keeping the previous'.format(user))
             elif user_id is None:
                 print('"{}" does not match any first names in the db, '
                       'moving to next user'.format(user))
             else:
                 print('Committing picks for {}: {}'.format(user, picks))
-                picks = [Pick(week=week, team=pick, user_id=user_id) for pick in picks]
+                picks = [Pick(season=season, week=week, team=pick, user_id=user_id)
+                         for pick in picks]
                 db.session.add_all(picks)  # pylint: disable=no-member
                 db.session.commit()  # pylint: disable=no-member
 
@@ -159,5 +162,14 @@ def get_id_name_map():
     """
     return {r.id: (' '.join([r.first_name, r.last_name]) if
                    r.first_name or r.last_name else r.email)
-            for r in db.session.query(User).all()}
+            for r in db.session.query(User).all()}  # pylint: disable=no-member
 
+
+def is_today(allowable_days):
+    """Provide allowable_days as an iterable of capitalized text
+    (eg ['Monday', 'Friday']) and this will return a boolean if
+    today is valid.
+    """
+    today_int = datetime.datetime.today().weekday()
+    today_name = calendar.day_name[today_int]
+    return today_name in allowable_days
