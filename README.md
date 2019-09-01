@@ -13,37 +13,37 @@
 * Composition: Docker
 * Deployment: Ansible
 
-<div>
-  <div style="float:left;position:relative;width:10%">
-    <img src="https://logo.clearbit.com/python.org" style="float:left;">
-  </div>
-  <div style="float:left;position:relative;width:10%">
-    <img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" style="float:left;">
-  </div>
-  <div style="float:left;position:relative;width:10%">
-    <img src="https://www.fullstackpython.com/img/logos/uwsgi.png" style="float:left;">
-  </div>
-  <div style="float:left;position:relative;width:10%">
-    <img src="https://logo.clearbit.com/nginx.com" style="float:left;">
-  </div>
-  <div style="float:left;position:relative;width:10%">
-    <img src="https://logo.clearbit.com/postgresql.org" style="float:left;">
-  </div>
-  <div style="float:left;position:relative;width:10%">
-    <img src="https://logo.clearbit.com/getbootstrap.com" style="float:left;">
-  </div>
-  <div style="float:left;position:relative;width:10%">
-    <img src="https://logo.clearbit.com/graphql.org" style="float:left;">
-  </div>
-  <div style="float:left;position:relative;width:10%">
-    <img src="https://logo.clearbit.com/python.org" style="float:left;">
-  </div>
-  <div style="float:left;position:relative;width:10%">
-    <img src="https://logo.clearbit.com/docker.com" style="float:left;">
-  </div>
-  <div style="float:left;position:relative;width:10%">
-    <img src="https://logo.clearbit.com/ansible.com" style="float:left;">
-  </div>
+<div style="display:inline;">
+<div style="float:left;position:relative;width:10%">
+<img src="https://logo.clearbit.com/python.org" style="float:left;">
+</div>
+<div style="float:left;position:relative;width:10%">
+<img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" style="float:left;">
+</div>
+<div style="float:left;position:relative;width:10%">
+<img src="https://www.fullstackpython.com/img/logos/uwsgi.png" style="float:left;">
+</div>
+<div style="float:left;position:relative;width:10%">
+<img src="https://logo.clearbit.com/nginx.com" style="float:left;">
+</div>
+<div style="float:left;position:relative;width:10%">
+<img src="https://logo.clearbit.com/postgresql.org" style="float:left;">
+</div>
+<div style="float:left;position:relative;width:10%">
+<img src="https://logo.clearbit.com/getbootstrap.com" style="float:left;">
+</div>
+<div style="float:left;position:relative;width:10%">
+<img src="https://logo.clearbit.com/graphql.org" style="float:left;">
+</div>
+<div style="float:left;position:relative;width:10%">
+<img src="https://logo.clearbit.com/python.org" style="float:left;">
+</div>
+<div style="float:left;position:relative;width:10%">
+<img src="https://logo.clearbit.com/docker.com" style="float:left;">
+</div>
+<div style="float:left;position:relative;width:10%">
+<img src="https://logo.clearbit.com/ansible.com" style="float:left;">
+</div>
 </div>
 
 ## Queries
