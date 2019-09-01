@@ -2,8 +2,8 @@
 
 ## Stack
 
-* Language: Python 3 <img src="https://logo.clearbit.com/python.org" width="20">
-* Application: Flask <img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" width="20">
+* Language: Python 3
+* Application: Flask
 * Server: uWSGI <img src="https://www.fullstackpython.com/img/logos/uwsgi.png" width="20">
 * Proxy: nginx <img src="https://logo.clearbit.com/nginx.com" width="20">
 * Database: PostgreSQL <img src="https://logo.clearbit.com/postgresql.org" width="20">
@@ -13,6 +13,8 @@
 * Composition: Docker <img src="https://logo.clearbit.com/docker.com" width="20">
 * Deployment: Ansible <img src="https://logo.clearbit.com/ansible.com" width="20">
 
+<img src="https://logo.clearbit.com/python.org" width="20">
+<img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" width="20">
 
 ## Queries
 
