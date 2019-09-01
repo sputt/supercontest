@@ -2,14 +2,16 @@
 
 ## Stack
 
-* Language: Python 3
-* Framework: Flask/WSGI
-* Backend: PostgreSQL
-* Server: nginx
+* Language: Python 3 <img src="https://logo.clearbit.com/python.org">
+* Application: Flask
+* Server: uWSGI
+* Proxy: nginx
+* Database: PostgreSQL
+* Frontend: Bootstrap 4
 * API: GraphQL
+* Migration: Alembic
 * Composition: Docker
 * Deployment: Ansible
-* Migration: Alembic
 
 ## Queries
 
@@ -43,3 +45,5 @@ with requests.session() as session:
     response = session.get(root_url + '/graphql', json=dict(query=query))
 data = response.json()
 ```
+
+<a href="https://clearbit.com">Logos provided by Clearbit</a>
