@@ -13,8 +13,8 @@
 * Composition: Docker <img src="https://logo.clearbit.com/docker.com" width="20">
 * Deployment: Ansible <img src="https://logo.clearbit.com/ansible.com" width="20">
 
-<div class="inline-block"><img src="https://logo.clearbit.com/python.org" width="20"></div>
-<div class="inline-block"><img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" width="20"></div>
+<div style="float:left;position:relative;width:10%"><img src="https://logo.clearbit.com/python.org"></div>
+<div style="float:left;position:relative;width:10%"><img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png"></div>
 
 ## Queries
 
