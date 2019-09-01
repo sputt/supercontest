@@ -2,16 +2,16 @@
 
 ## Stack
 
-* Language: Python 3 <img src="https://logo.clearbit.com/python.org" style="width: 1em;">
-* Application: Flask <img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" style="width: 1em;">
-* Server: uWSGI <img src="https://www.fullstackpython.com/img/logos/uwsgi.png" style="width: 1em;">
-* Proxy: nginx <img src="https://logo.clearbit.com/nginx.com" style="width: 1em;">
-* Database: PostgreSQL <img src="https://logo.clearbit.com/postgresql.org" style="width: 1em;">
-* Frontend: Bootstrap 4 <img src="https://logo.clearbit.com/getbootstrap.com" style="width: 1em;">
-* API: GraphQL <img src="https://logo.clearbit.com/graphql.org" style="width: 1em;">
-* Migration: Alembic <img src="https://logo.clearbit.com/python.org" style="width: 1em;">
-* Composition: Docker <img src="https://logo.clearbit.com/docker.com" style="width: 1em;">
-* Deployment: Ansible <img src="https://logo.clearbit.com/ansible.com" style="width: 1em;">
+* Language: Python 3 <img src="https://logo.clearbit.com/python.org" width="10">
+* Application: Flask <img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" width="10">
+* Server: uWSGI <img src="https://www.fullstackpython.com/img/logos/uwsgi.png" width="10">
+* Proxy: nginx <img src="https://logo.clearbit.com/nginx.com" width="10">
+* Database: PostgreSQL <img src="https://logo.clearbit.com/postgresql.org" width="10">
+* Frontend: Bootstrap 4 <img src="https://logo.clearbit.com/getbootstrap.com" width="10">
+* API: GraphQL <img src="https://logo.clearbit.com/graphql.org" width="10">
+* Migration: Alembic <img src="https://logo.clearbit.com/python.org" width="10">
+* Composition: Docker <img src="https://logo.clearbit.com/docker.com" width="10">
+* Deployment: Ansible <img src="https://logo.clearbit.com/ansible.com" width="10">
 
 
 ## Queries
