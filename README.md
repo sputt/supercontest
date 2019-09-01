@@ -13,7 +13,7 @@
 * Composition: Docker
 * Deployment: Ansible
 
-<img src="https://logo.clearbit.com/python.org" width="30"><img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" width="30"><img src="https://www.fullstackpython.com/img/logos/uwsgi.png" width="30"><img src="https://logo.clearbit.com/nginx.com" width="30"><img src="https://logo.clearbit.com/postgresql.org" width="30"><img src="https://logo.clearbit.com/getbootstrap.com" width="30"><img src="https://logo.clearbit.com/graphql.org" width="30"><img src="https://logo.clearbit.com/python.org" width="30"><img src="https://logo.clearbit.com/docker.com" width="30"><img src="https://logo.clearbit.com/ansible.com" width="30">
+<img src="https://logo.clearbit.com/python.org" style="width:10%;padding:0px 3px 0px;"><img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" style="width:10%;padding:0px 3px 0px;"><img src="https://www.fullstackpython.com/img/logos/uwsgi.png" style="width:10%;padding:0px 3px 0px;"><img src="https://logo.clearbit.com/nginx.com" style="width:10%;padding:0px 3px 0px;"><img src="https://logo.clearbit.com/postgresql.org" style="width:10%;padding:0px 3px 0px;"><img src="https://logo.clearbit.com/getbootstrap.com" style="width:10%;padding:0px 3px 0px;"><img src="https://logo.clearbit.com/graphql.org" style="width:10%;padding:0px 3px 0px;"><img src="https://logo.clearbit.com/python.org" style="width:10%;padding:0px 3px 0px;"><img src="https://logo.clearbit.com/docker.com" style="width:10%;padding:0px 3px 0px;"><img src="https://logo.clearbit.com/ansible.com" style="width:10%;padding:0px 3px 0px;">
 
 ## Queries
 
