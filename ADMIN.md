@@ -162,8 +162,17 @@ which my laptop is not guaranteed to be.
 #### Wednesday evening after 5 pm
 
 Check Westgate to ensure the new lines for this week have been posted.
+Ensure they have before continuing.
+
+Get into the production app container. Here is the usual way:
 ```bash
-ssh sc && tmux attach && docker-compose exec supercontest-app-prod bash  # the prep
+ssh sc
+tmux attach
+docker-compose exec supercontest-app-prod bash
+```
+
+Once in, actually fetch and commit the new lines:
+```bash
 python manage.py commit_lines --season <XXXX> --week <X>
 ```
 
