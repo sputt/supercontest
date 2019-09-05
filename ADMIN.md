@@ -151,3 +151,33 @@ sudo tail -f /var/log/nginx/access.log  # nginx access logs
 sudo journalctl -r -u nginx             # nginx process logs
 sudo journalctl -r -u supercontest      # uwsgi logs
 ```
+
+# Weekly Tasks
+
+You must do two things weekly, manually. Cron jobs could be written for
+these, but (a) one is dependent on westgate, and I don't want to tie
+automation to that and (b) they require the backup destination to be live,
+which my laptop is not guaranteed to be.
+
+#### Wednesday evening after 5 pm
+
+Check Westgate to ensure the new lines for this week have been posted.
+```bash
+ssh sc && tmux attach && docker-compose exec supercontest-app-prod bash  # the prep
+python manage.py commit_lines --season <XXXX> --week <X>
+```
+
+Then backup the database, to lock in the scores and results of last week.
+Run this on your laptop. It will automatically create a unique filename with timestamp.
+```bash
+make backup-remote-db-to-local
+```
+
+#### Sunday morning as early as possible
+
+Run this whenever is most convenient after Saturday pick lockdown. This
+simply captures the fresh picks from this week. It, again, should be run from
+your laptop, and automatically creates a unique name from the timestamp.
+```bash
+make backup-remote-db-to-local
+```
