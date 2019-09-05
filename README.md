@@ -13,7 +13,7 @@
 * Composition: Docker
 * Deployment: Ansible
 
-<img src="https://logo.clearbit.com/python.org" width="75">   <img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" width="75">   <img style="padding-bottom:5px" src="https://www.fullstackpython.com/img/logos/uwsgi.png" width="75">   <img src="https://logo.clearbit.com/nginx.com" width="75">   <img src="https://logo.clearbit.com/postgresql.org" width="75">   <img src="https://logo.clearbit.com/getbootstrap.com" width="75">   <img src="https://logo.clearbit.com/graphql.org" width="75">   <img src="https://logo.clearbit.com/sqlalchemy.org" width="75">   <img src="https://logo.clearbit.com/docker.com" width="75">   <img src="https://logo.clearbit.com/ansible.com" width="75">   
+<img src="https://logo.clearbit.com/python.org" width="75">   <img src="https://flask.palletsprojects.com/en/1.1.x/_static/flask-icon.png" width="75">   <img src="https://www.fullstackpython.com/img/logos/uwsgi.png" width="75">   <img src="https://logo.clearbit.com/nginx.com" width="75">   <img src="https://logo.clearbit.com/postgresql.org" width="75">   <img src="https://logo.clearbit.com/getbootstrap.com" width="75">   <img src="https://logo.clearbit.com/graphql.org" width="75">   <img src="https://logo.clearbit.com/sqlalchemy.org" width="75">   <img src="https://logo.clearbit.com/docker.com" width="75">   <img src="https://logo.clearbit.com/ansible.com" width="75">   
 
 <a href="https://clearbit.com">Logos provided by Clearbit</a>
 

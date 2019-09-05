@@ -89,18 +89,21 @@ need python, flask-scripts, a psycopg2 connection to the db, etc. Simply shell
 into the app container and then run them as you normally would on the host.
 It will add the migration file to the volume in the container, which gets synced
 back to vcs on your host.
+```bash
+docker-compose exec supercontest-app-[dev|prod] bash
+```
 
 To manually commit lines, do the following. This is typically done
 on Wednesday nights, after Westgate posts the lines. This should
 be done before scores are committed, because it creates the matchup rows.
 ```bash
-python manage.py commit_lines --season <XXXX> --week <XX>
+python manage.py commit_lines --season <XXXX> --week <X>
 ```
 
 To manually commit scores, do the following. This should never need to
 be done manually, but it's exposed as a development convenience.
 ```bash
-python manage.py commit_scores --season <XXXX> --week <XX>
+python manage.py commit_scores --season <XXXX> --week <X>
 ```
 
 To manually inspect the database, for example:

@@ -19,7 +19,6 @@ def fetch_lines(driver=None):  # driver is passed by decorator
 
     Returns:
         lines (list): [FAVORED_TEAM, UNDERDOG_TEAM, DATETIME, LINE]
-        week (int): As returned by Westgate
     """
     # Fetch the lines as WebElements
     url = 'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/supercontest-weekly-card/'  # pylint: disable=line-too-long
@@ -37,11 +36,7 @@ def fetch_lines(driver=None):  # driver is passed by decorator
         # if only the first cell is populated, it's just a date row,
         # which is concatenated for subsequent iterations until it changes
         if len(data) == 1:
-            content = cells[0].text
-            if 'WEEK' in content:
-                week = int(content.split()[-1])  # it looks like WEEK 4
-            else:
-                date = content  # reuse for next rows until overwritten with new date
+            date = cells[0].text  # reuse for next rows until overwritten with new date
         # if the row has 4 values, it's a line - extract the info
         elif len(data) == 4:
             line = [cell.text for cell in cells]
@@ -60,7 +55,7 @@ def fetch_lines(driver=None):  # driver is passed by decorator
         else:
             continue
 
-    return lines, week
+    return lines
 
 
 def instantiate_rows_for_matchups(season, week, lines):
@@ -118,10 +113,5 @@ def commit_lines(season, week):
         season (int)
         week (int)
     """
-    lines, week_from_westgate = fetch_lines()
-    if week != week_from_westgate:
-        sys.stderr.write(
-            'You are requesting lines for week {} but westgate is returning '
-            'lines for week {}.\n'.format(week, week_from_westgate))
-        return
+    lines = fetch_lines()
     _commit_lines(season=season, week=week, lines=lines)

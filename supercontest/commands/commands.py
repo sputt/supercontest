@@ -26,8 +26,7 @@ class CommitLinesCommand(Command):
         Option('--season', '-s', dest='season', required=True, type=int,
                help=('The season to commit lines for')),
         Option('--week', '-w', dest='week', required=True, type=int,
-               help=('Defines the week you expect, which is confirmed '
-                     'against the week that Westgate returns lines for')),
+               help=('Defines the week to commit lines for')),
     )
     def run(self, season, week):
         commit_lines(season=season, week=week)

@@ -45,7 +45,7 @@ class Matchup(db.Model):
         F/FO = game is over
         1/2/3/4 = quarter
     """
-    __seq__ = db.Sequence('matchup_id_seq', start=263)
+    __seq__ = db.Sequence('matchup_id_seq', start=264)
     id = db.Column(db.Integer, __seq__, server_default=__seq__.next_value(), primary_key=True)
     season = db.Column(db.Integer, nullable=False)
     week = db.Column(db.Integer, nullable=False)

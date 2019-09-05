@@ -69,8 +69,10 @@ def matchups():
     # fetches and commits scores every time the site is visited/refreshed.
     # It's not the slowest thing in the world, and is ok for now. It is
     # restricted to Thursday/Sunday/Monday, because those are the only
-    # days scores would change.
-    if g.is_current_week and is_today(['Thursday', 'Sunday', 'Monday']):
+    # days scores would change, as well as Wednesday because we want to
+    # commit scores when we fetch lines.
+    if g.is_current_week and is_today(['Wednesday',
+                                       'Thursday', 'Sunday', 'Monday']):
         commit_scores(season=g.season, week=g.week)  # pylint: disable=no-member
     _matchups = db.session.query(Matchup).filter_by(  # pylint: disable=no-member
         season=g.season, week=g.week).all()
