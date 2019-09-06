@@ -57,7 +57,7 @@ def commit_winners_and_points(season, week):
 def commit_pick_points(season, week):
     picks = db.session.query(Pick).filter_by(season=season, week=week).all()  # pylint: disable=no-member
     winners = [result.winner for result in db.session.query(  # pylint: disable=no-member
-        Matchup.winner).filter_by(season=season, week=week).all()]
+        Matchup.winner).filter_by(season=season, week=week).all() if result.winner]
     for pick in picks:
         if pick.team in winners:  # direct match
             pick.points = 1.0
@@ -70,7 +70,10 @@ def commit_pick_points(season, week):
 
 
 def commit_match_winners(season, week):
-    matchups = db.session.query(Matchup).filter_by(season=season, week=week).all()  # pylint: disable=no-member
+    matchups = db.session.query(Matchup).filter(  # pylint: disable=no-member
+            Matchup.season == season,
+            Matchup.week == week,
+            Matchup.status != 'P').all()
     for matchup in matchups:
         delta = matchup.favored_team_score - matchup.underdog_team_score
         if delta > matchup.line:
