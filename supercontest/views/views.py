@@ -172,6 +172,12 @@ def feedback():
     return render_template('feedback.html')
 
 
+@main_blueprint.route('/rules')
+@login_required
+def rules():
+    return render_template('rules.html')
+
+
 @main_blueprint.route('/pick', methods=['POST'])
 @login_required
 def pick():

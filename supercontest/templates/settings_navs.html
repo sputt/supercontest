@@ -6,6 +6,11 @@
   <div class="row justify-content-center">
     <ul class="nav nav-tabs">
       <div class="col-auto text-center"><li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main.home') }}">
+          Home
+        </a>
+      </li></div>
+      <div class="col-auto text-center"><li class="nav-item">
         <a class="nav-link" href="{{ url_for('user.edit_user_profile') }}">
           {{ current_user.first_name or current_user.email }}
         </a>
@@ -23,6 +28,11 @@
       <div class="col text-center"><li class="nav-item">
         <a id="nav_feedback" class="nav-link" href="{{ url_for('main.feedback') }}">
           Feedback
+        </a>
+      </li></div>
+      <div class="col text-center"><li class="nav-item">
+        <a id="nav_rules" class="nav-link" href="{{ url_for('main.rules') }}">
+          Rules
         </a>
       </li></div>
     </ul>

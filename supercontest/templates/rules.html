@@ -1,0 +1,16 @@
+{% extends "settings_navs.html" %}
+
+{% block settings_navs_content %}
+
+<script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
+
+<div class="container my-3">
+  <div class="row">
+    <div class="col">
+      <zero-md src="{{ url_for('static', filename='RULES.md') }}"></zero-md>
+    </div>
+  </div>
+</div> 
+
+{% endblock %}
