@@ -171,8 +171,10 @@ def graph():
     # or emails for display, so let's do that now.
     display_map = get_id_name_map()
     data = [
-        plotly.graph_objs.Scatter(x=[0]+list(results[user[0]].keys()),
-                                  y=list(accumulate([0]+list(results[user[0]].values()))),
+        plotly.graph_objs.Scatter(x=[0]+list(sorted(results[user[0]].keys())),
+                                  y=list(accumulate([0]+[item[1]
+                                         for item in sorted(results[user[0]].items(),
+                                                            key=lambda kv: kv[0])])),
                                   name=display_map[user[0]],
                                   visible=(True if current_user.id == user[0] else 'legendonly'))
         for user in totals  # user[0] is id, used as key for results dict
