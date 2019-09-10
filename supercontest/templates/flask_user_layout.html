@@ -1,75 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ user_manager.USER_APP_NAME }}</title>
+{% extends "adspace.html" %}
 
-    <!-- Bootstrap -->
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+{% block adspace_content %}
 
-    <!-- In-lining styles to avoid needing a separate .css file -->
-    <style>
-        hr { border-color: #cccccc; margin: 0; }
-        .no-margins { margin: 0px; }
-        .with-margins { margin: 10px; }
-        .col-centered { float: none; margin: 0 auto; }
-    </style>
+{% block extra_css %}
+{% endblock %}
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"></script>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
-    <![endif]-->
+{% block body %}
 
-    {# *** Allow sub-templates to insert extra html to the head section *** #}
-    {% block extra_css %}{% endblock %}
-  </head>
-
-
-<body>
-    {% block body %}
-    <div id="header-div" class="clearfix with-margins">
-        <div class="text-center"><a href="/"><h1 class="no-margins">{{ user_manager.USER_APP_NAME }}</h1></a></div>
+<div class="row justify-content-center">
+    <div class="col-sm-5 col-md-4 col-lg-3">
+        <div id="main-div">
+            {% block main %}
+                {% block content %}
+                {% endblock %}
+            {% endblock %}
+        </div>
     </div>
-    <hr class="no-margins"/>
+</div>
 
-    <div id="main-div" class="with-margins">
-    {# One-time system messages called Flash messages #}
-    {% block flash_messages %}
-        {%- with messages = get_flashed_messages(with_categories=true) -%}
-            {% if messages %}
-                {% for category, message in messages %}
-                    {% if category=='error' %}
-                        {% set category='danger' %}
-                    {% endif %}
-                    <div class="alert alert-{{category}}">{{ message|safe }}</div>
-                {% endfor %}
-            {% endif %}
-        {%- endwith %}
-    {% endblock %}
+{% endblock %}
 
-    {% block main %}
-        {% block content %}{% endblock %}
-    {% endblock %}
-    </div>
+{% block extra_js %}
+{% endblock %}
 
-    <br/>
-    <hr class="no-margins"/>
-    <div id="footer-div" class="clearfix with-margins">
-        <div class="text-center">&copy; 2019 SBSC</div>
-    </div>
-    {% endblock %}
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-    <!-- Bootstrap -->
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-
-    {# *** Allow sub-templates to insert extra html to the bottom of the body *** #}
-    {% block extra_js %}{% endblock %}
-
-  </body>
-</html>
+{% endblock %}

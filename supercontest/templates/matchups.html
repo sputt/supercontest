@@ -2,52 +2,48 @@
 
 {% block week_navs_content %}
 
-<div class="container my-3">
-  <div class="row justify-content-center">
-    <div class="col">
-      <div class="table-responsive">
-        <table class="table table-sm table-bordered table-striped table-hover text-center">
-          <thead class="thead-dark">
-            <tr>
-              <th scope="col">Time (pacific)</th>
-              <th scope="col">Line</th>
-              <th scope="col">Favorite</th>
-              <th scope="col">Score</th>
-              <th scope="col">Underdog</th>
-              <th scope="col">Score</th>
-              <th scope="col">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for matchup in matchups %}
-            <tr class="matchup">
-              <td class="datetime">{{ matchup.datetime.strftime('%a %I:%m %p') }}</td>
-              <td class="line">{{ matchup.line }}</td>
-              <td class="favoredTeam">{{ matchup.favored_team }}</td>
-              <td class="favoredTeamScore">{{ matchup.favored_team_score }}</td>
-              <td class="underdogTeam">{{ matchup.underdog_team }}</td>
-              <td class="underdogTeamScore">{{ matchup.underdog_team_score }}</td>
-              <td class="status">{{ matchup.status }}</td>
-              <td class="winner" style="display: none;">{{ matchup.winner }}</td>
-              <td class="homeTeam" style="display: none;">{{ matchup.home_team }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-
-        <div id="submitButtonDiv" class="text-center" style="display:none;">
-          <button id="submitButton" class="btn btn-primary">Submit Picks</button>
-          <div class="form-check mt-2">
-            <input id="myCheck" class="form-check-input" type="checkbox">
-            <label class="form-check-label" for="myCheck">
-              I am playing this week under protest
-            </label>
-          </div>
+<div class="row justify-content-center mt-3">
+    <div class="col-sm-12 col-md-10 col-lg-8">
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered table-striped table-hover text-center">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Time (pacific)</th>
+                        <th scope="col">Line</th>
+                        <th scope="col">Favorite</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Underdog</th>
+                        <th scope="col">Score</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for matchup in matchups %}
+                    <tr class="matchup">
+                        <td class="datetime">{{ matchup.datetime.strftime('%a %I:%m %p') }}</td>
+                        <td class="line">{{ matchup.line }}</td>
+                        <td class="favoredTeam">{{ matchup.favored_team }}</td>
+                        <td class="favoredTeamScore">{{ matchup.favored_team_score }}</td>
+                        <td class="underdogTeam">{{ matchup.underdog_team }}</td>
+                        <td class="underdogTeamScore">{{ matchup.underdog_team_score }}</td>
+                        <td class="status">{{ matchup.status }}</td>
+                        <td class="winner" style="display: none;">{{ matchup.winner }}</td>
+                        <td class="homeTeam" style="display: none;">{{ matchup.home_team }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div id="submitButtonDiv" class="text-center" style="display:none;">
+                <button id="submitButton" class="btn btn-primary">Submit Picks</button>
+                <div class="form-check mt-2">
+                    <input id="myCheck" class="form-check-input" type="checkbox">
+                    <label class="form-check-label" for="myCheck">
+                        I am playing this week under protest
+                    </label>
+                </div>
+            </div>
         </div>
-
-      </div>
     </div>
-  </div>
 </div>
 
 <script>const picks = {{ (picks or [])|tojson }};</script>

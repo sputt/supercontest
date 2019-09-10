@@ -5,12 +5,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@webcomponents/webcomponentsjs@2/webcomponents-loader.min.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@1/src/zero-md.min.js"></script>
 
-<div class="container my-3">
-  <div class="row">
-    <div class="col">
-      <zero-md src="{{ url_for('static', filename='RULES.md') }}"></zero-md>
+<div class="row justify-content-center mt-3">
+    <div class="col-sm-10 col-lg-6">
+        <zero-md src="{{ url_for('static', filename='RULES.md') }}"></zero-md>
     </div>
-  </div>
-</div> 
+</div>
 
 {% endblock %}

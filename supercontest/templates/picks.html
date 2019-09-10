@@ -2,39 +2,37 @@
 
 {% block week_navs_content %}
 
-<div class="container mt-3">
-  <div class="row justify-content-center">
-    <div class="col">
-      <div class="table-responsive" id="tableDiv">
-        <table class="table table-sm table-bordered table-striped table-hover text-center">
-          <thead class="thead-dark">
-            <tr>
-              <th scope="col">User</th>
-              {% for matchup in matchups %}
-                <th scope="col">{{ matchup.favored_team }}</th>
-                <th scope="col">{{ matchup.underdog_team }}</th>
-              {% endfor %}
-            </tr>
-          </thead>
-          <tbody>
-            {% for user_id in user_ids %}
-              {% if user_id|int == current_user.id and user_ids|length > 1 %}
-              <tr style="border: 2px solid;">
-              {% else %}
-              <tr>
-              {% endif %}
-                <td>{{ display_map[user_id|int] }}</td>
-                {% for matchup in matchups %}
-                  <td id={{ user_id + matchup.favored_team }}></td>
-                  <td id={{ user_id + matchup.underdog_team }}></td>
-                {% endfor %}
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+<div class="row justify-content-center mt-3">
+    <div class="col-sm-12 col-lg-11">
+        <div class="table-responsive" id="tableDiv">
+            <table class="table table-sm table-bordered table-striped table-hover text-center">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">User</th>
+                        {% for matchup in matchups %}
+                        <th scope="col">{{ matchup.favored_team }}</th>
+                        <th scope="col">{{ matchup.underdog_team }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user_id in user_ids %}
+                    {% if user_id|int == current_user.id and user_ids|length > 1 %}
+                    <tr style="border: 2px solid;">
+                    {% else %}
+                    <tr>
+                    {% endif %}
+                        <td>{{ display_map[user_id|int] }}</td>
+                        {% for matchup in matchups %}
+                        <td id={{ user_id + matchup.favored_team }}></td>
+                        <td id={{ user_id + matchup.underdog_team }}></td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
-  </div>
 </div>
 
 {% if message %}

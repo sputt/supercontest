@@ -1,8 +1,10 @@
 {% extends 'flask_user/_authorized_base.html' %}
 
 {% block content %}
+
 {% from "flask_user/_macros.html" import render_field, render_submit_field %}
-<h1>{%trans%}Manage Emails{%endtrans%}</h1>
+
+<h3>{%trans%}Manage Emails{%endtrans%}</h3>
 
 <table class="table">
 <tr><th>Email</th><th>Status</th><th>Actions</th></tr>

@@ -5,7 +5,13 @@
 <div class="jumbotron jumbotron-fluid mb-0" style="height: 150px; background: url({{ url_for('static', filename='img/niners.svg') }}); background-size: contain; background-repeat: repeat-x;">
 </div>
 
-{% block adspace_content %}
-{% endblock %}
+<div class="container-fluid mt-3">
+    <div class="row justify-content-center">
+        <div class="col">
+            {% block adspace_content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
 
 {% endblock %}

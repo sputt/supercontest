@@ -2,24 +2,22 @@
 
 {% block settings_navs_content %}
 
-<div class="container-fluid mt-1">
-  <div class="row justify-content-center">
+<div class="row justify-content-center mt-2">
     <ul class="nav nav-tabs">
-      {% for season in g.available_seasons %}
-        <div class="col text-center"><li class="nav-item">
-          <a id="nav_season{{ season }}" class="nav-link" href="{{ url_for(request.url_rule.endpoint, season=season) }}">{{ season }}</a>
-        </li></div>
-      {% endfor %}
+        {% for season in g.available_seasons %}
+            <div class="col text-center"><li class="nav-item">
+                <a id="nav_season{{ season }}" class="nav-link" href="{{ url_for(request.url_rule.endpoint, season=season) }}">{{ season }}</a>
+            </li></div>
+        {% endfor %}
     </ul>
-  </div>
 </div>
 
 {% block season_navs_content %}
 {% endblock %}
 
 <script>
-  const season = {{ g.season }};
-  const available_seasons = {{ g.available_seasons }};
+    const season = {{ g.season }};
+    const available_seasons = {{ g.available_seasons }};
 </script>
 
 {% endblock %}

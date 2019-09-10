@@ -1,6 +1,7 @@
 {% extends "flask_user_layout.html" %}
 
 {% block extra_css %}
+
 <style>
     /* Create full height content */
     html, body, #centered-block {
@@ -18,19 +19,21 @@
         justify-content: center;
     }
 </style>
+
 {% endblock %}
 
 {% block content %}
+
 <div id="centered-block">
-    <a class="btn btn-primary"
-        href="{{ url_for('user.login') }}">Sign in</a>
+    <a class="btn btn-primary" href="{{ url_for('user.login') }}">Sign in</a>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
+
 {# Load Auth0 javascript library #}
 <script src="https://cdn.auth0.com/js/lock/10.18.0/lock.min.js"></script>
-
 <script>
 {# Create and show Auth0 login widget called Auth0Lock when the document has finished loading #}
 $(document).ready(function() {
@@ -67,5 +70,5 @@ $(document).ready(function() {
     });
 });
 </script>
-{% endblock %}
 
+{% endblock %}
