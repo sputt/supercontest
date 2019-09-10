@@ -11,10 +11,11 @@ $('a[id^="nav_"]').each(function () {
     }
 });
 
-// If by this point none of the tabs matched, you're probably in
-// the main subview (eg seasons -> matchups -> weeks), so highlight
-// the 'Home' nav which is meant for this.
-const nonHomeToplevelEndpoints = ['rules', 'graphql', 'feedback', 'edit_user_profile'];
-if (!routePaths.some(path => nonHomeToplevelEndpoints.indexOf(path) >= 0)) {
+// If by this point none of the tabs matched, you're either in
+// the main subview (eg seasons -> matchups -> weeks), or one
+// of the flask_user templates. Check and highlight that.
+if (window.location.pathname.includes('season')) {
     $('#nav_home').attr('class', 'nav-link active');
+} else if (!routePaths.some(path => ['rules', 'graphql', 'feedback'].indexOf(path) >= 0)) {
+    $('#nav_profile').attr('class', 'nav-link active');
 }
