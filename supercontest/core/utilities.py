@@ -67,44 +67,6 @@ def add_user(email, password, **kwargs):
     db.session.commit()  # pylint: disable=no-member
 
 
-def get_team_abv(team):
-    _map = {
-        'CARDINALS': 'ARI',
-        'FALCONS': 'ATL',
-        'RAVENS': 'BAL',
-        'BILLS': 'BUF',
-        'PANTHERS': 'CAR',
-        'BEARS': 'CHI',
-        'BENGALS': 'CIN',
-        'BROWNS': 'CLE',
-        'COWBOYS': 'DAL',
-        'BRONCOS': 'DEN',
-        'LIONS': 'DET',
-        'PACKERS': 'GB',
-        'TEXANS': 'HOU',
-        'COLTS': 'IND',
-        'JAGUARS': 'JAX',
-        'CHIEFS': 'KC',
-        'CHARGERS': 'LAC',
-        'RAMS': 'LAR',
-        'DOLPHINS': 'MIA',
-        'VIKINGS': 'MIN',
-        'PATRIOTS': 'NEP',
-        'SAINTS': 'NO',
-        'GIANTS': 'NYG',
-        'JETS': 'NYJ',
-        'RAIDERS': 'OAK',
-        'EAGLES': 'PHI',
-        'STEELERS': 'PIT',
-        'SEAHAWKS': 'SEA',
-        '49ERS': 'SF',
-        'BUCCANEERS': 'TB',
-        'TITANS': 'TEN',
-        'REDSKINS': 'WAS'
-    }
-    return _map.get(team, team)
-
-
 def commit_users_from_excel(path):
     workbook = xlrd.open_workbook(path)
     sheet = workbook.sheet_by_name('Main')
@@ -173,3 +135,41 @@ def is_today(allowable_days):
     today_int = datetime.datetime.today().weekday()
     today_name = calendar.day_name[today_int]
     return today_name in allowable_days
+
+
+def get_team_abv(team):
+    _map = {
+        'CARDINALS': 'ARI',
+        'FALCONS': 'ATL',
+        'RAVENS': 'BAL',
+        'BILLS': 'BUF',
+        'PANTHERS': 'CAR',
+        'BEARS': 'CHI',
+        'BENGALS': 'CIN',
+        'BROWNS': 'CLE',
+        'COWBOYS': 'DAL',
+        'BRONCOS': 'DEN',
+        'LIONS': 'DET',
+        'PACKERS': 'GB',
+        'TEXANS': 'HOU',
+        'COLTS': 'IND',
+        'JAGUARS': 'JAX',
+        'CHIEFS': 'KC',
+        'CHARGERS': 'LAC',
+        'RAMS': 'LAR',
+        'DOLPHINS': 'MIA',
+        'VIKINGS': 'MIN',
+        'PATRIOTS': 'NE',
+        'SAINTS': 'NO',
+        'GIANTS': 'NYG',
+        'JETS': 'NYJ',
+        'RAIDERS': 'OAK',
+        'EAGLES': 'PHI',
+        'STEELERS': 'PIT',
+        'SEAHAWKS': 'SEA',
+        '49ERS': 'SF',
+        'BUCCANEERS': 'TB',
+        'TITANS': 'TEN',
+        'REDSKINS': 'WAS',
+    }
+    return _map.get(team, team)

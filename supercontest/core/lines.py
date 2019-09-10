@@ -1,7 +1,5 @@
 """Logic for fetching the lines and committing them to the database.
 """
-import sys
-
 from supercontest.models import Matchup
 from supercontest.core.utilities import with_webdriver
 from supercontest import db

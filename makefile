@@ -1,5 +1,6 @@
 SRC=$(HOME)/code/supercontest
 VENV=$(SRC)/.venv
+APP_DEV_CONTAINER=supercontest-app-dev
 DB_CONTAINER=supercontest-database
 DB_USER=supercontest
 DB_NAME=supercontest
@@ -28,6 +29,12 @@ build-start-prod:
 .PHONY: explore-local-db
 explore-local-db:
 	docker-compose exec $(DB_CONTAINER) psql -U $(DB_USER) -d $(DB_NAME)
+
+# This requires an existing container running the dev app, enters a
+# python context with access to the db via sqlalchemy to test queries.
+.PHONY: shell
+shell:
+	docker-compose exec $(APP_DEV_CONTAINER) python manage.py shell
 
 # Backup requires our db container to already be running.
 .PHONY: backup-local-db-to-local

@@ -67,12 +67,12 @@ def commit_picks(user, season, week, teams, email=False, verify=True):  # pylint
             # checks for this.
             if not all([team in old_pick_teams for team in invalid_teams]):
                 raise InvalidPicks(
-                        'A pick is being attempted on a game that has '
-                        'already started, and for a pick that the user '
-                        'did NOT already place. This is likely a '
-                        'malicious attempt, since the frontend should '
-                        'screen for this.'
-                        )
+                    'A pick is being attempted on a game that has '
+                    'already started, and for a pick that the user '
+                    'did NOT already place. This is likely a '
+                    'malicious attempt, since the frontend should '
+                    'screen for this.'
+                )
             # If the user has already picked this team, and the game has
             # already started, then they're just resubmitting (likely with
             # other non-thursday picks). Pass it on to be deleted and

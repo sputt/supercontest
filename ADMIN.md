@@ -176,7 +176,14 @@ Once in, actually fetch and commit the new lines:
 python manage.py commit_lines --season <XXXX> --week <X>
 ```
 
-Then backup the database, to lock in the scores and results of last week.
+Open the app in a browser to verify if it worked. This is already important
+because all of the main tabs will run `update_results()`, which commits
+scores, current winners (coverers), and resultant points for each pick. You
+technically don't have to, because there is a 99.99% chance that at least
+one user will open the app at one point during the whole week, but might
+as well be safe.
+
+Then backup the database, to lock in everything since last week.
 Run this on your laptop. It will automatically create a unique filename with timestamp.
 ```bash
 make backup-remote-db-to-local
@@ -184,8 +191,9 @@ make backup-remote-db-to-local
 
 #### Sunday morning as early as possible
 
-Run this whenever is most convenient after Saturday pick lockdown. This
-simply captures the fresh picks from this week. It, again, should be run from
+Run this whenever is most convenient after Saturday pick lockdown, before games
+start. This simply captures the fresh picks from this week. It can be referenced 
+later to check if anyone cheated for any week. It, again, should be run from
 your laptop, and automatically creates a unique name from the timestamp.
 ```bash
 make backup-remote-db-to-local

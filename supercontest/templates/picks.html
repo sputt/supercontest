@@ -11,18 +11,22 @@
             <tr>
               <th scope="col">User</th>
               {% for matchup in matchups %}
-                <th scope="col">{{ matchup[0] }}</th>
-                <th scope="col">{{ matchup[1] }}</th>
+                <th scope="col">{{ matchup.favored_team }}</th>
+                <th scope="col">{{ matchup.underdog_team }}</th>
               {% endfor %}
             </tr>
           </thead>
           <tbody>
             {% for user_id in user_ids %}
+              {% if user_id|int == current_user.id and user_ids|length > 1 %}
+              <tr style="border: 2px solid;">
+              {% else %}
               <tr>
+              {% endif %}
                 <td>{{ display_map[user_id|int] }}</td>
                 {% for matchup in matchups %}
-                  <td id={{ user_id + matchup[0] }}></td>
-                  <td id={{ user_id + matchup[1] }}></td>
+                  <td id={{ user_id + matchup.favored_team }}></td>
+                  <td id={{ user_id + matchup.underdog_team }}></td>
                 {% endfor %}
               </tr>
             {% endfor %}
@@ -33,7 +37,12 @@
   </div>
 </div>
 
-<script>const all_picks = {{ (all_picks or [])|tojson }}</script>
+{% if message %}
+<p class="text-center mt-3">{{ message|safe }}</p>
+{% endif %}
+
+<script>const picks = {{ (picks or [])|tojson }}</script>
+<script>const statusMap = {{ status_map|safe }}</script>
 <script src="{{ url_for('static', filename='js/picks.js') }}"></script>
 
 {% endblock %}

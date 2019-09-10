@@ -21,17 +21,15 @@
           <tbody>
             {% for matchup in matchups %}
             <tr class="matchup">
-              <td class="datetime">{{ matchup.datetime }}</td>
+              <td class="datetime">{{ matchup.datetime.strftime('%a %I:%m %p') }}</td>
               <td class="line">{{ matchup.line }}</td>
-              <td class="favoredTeam">
-                {{ matchup.favored_team + ('*' if matchup.home_team == matchup.favored_team else '') }}
-              </td>
+              <td class="favoredTeam">{{ matchup.favored_team }}</td>
               <td class="favoredTeamScore">{{ matchup.favored_team_score }}</td>
-              <td class="underdogTeam">
-                {{ matchup.underdog_team + ('*' if matchup.home_team == matchup.underdog_team else '') }}
-              </td>
+              <td class="underdogTeam">{{ matchup.underdog_team }}</td>
               <td class="underdogTeamScore">{{ matchup.underdog_team_score }}</td>
               <td class="status">{{ matchup.status }}</td>
+              <td class="winner" style="display: none;">{{ matchup.winner }}</td>
+              <td class="homeTeam" style="display: none;">{{ matchup.home_team }}</td>
             </tr>
             {% endfor %}
           </tbody>

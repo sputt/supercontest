@@ -6,7 +6,7 @@ from flask import url_for
 
 from supercontest import get_app, db
 from supercontest.models import User, Matchup, Pick
-from supercontest.core.utilities import add_user, get_webdriver, get_team_abv
+from supercontest.core.utilities import add_user, get_webdriver
 from supercontest.core.lines import _commit_lines
 from supercontest.core.scores import _commit_scores
 from supercontest.core.picks import commit_picks
@@ -116,7 +116,7 @@ class AppTests(LiveServerTestCase):
         }
         # Define picks and frontend element IDs.
         picks = [u'STEELERS', u'RAIDERS', u'RAMS']
-        pick_ids = [self.creds.get('email').replace('@', '').replace('.', '') + get_team_abv(team)
+        pick_ids = [self.creds.get('email').replace('@', '').replace('.', '') + team
                     for team in picks]
         # Login and verify you have no picks first.
         self.login()

@@ -11,22 +11,26 @@
             <tr>
               <th scope="col">Rank</th>
               <th scope="col">User</th>
-              {% for week in weeks %}
-              <th scope="col">{{ week }}</th>
+              {% for week in range(1, 18) %}
+                <th scope="col">{{ week }}</th>
               {% endfor %}
               <th scope="col">Total</th>
             </tr>
           </thead>
           <tbody>
             {% for user_id, total in totals %}
-            <tr>
-              <th scope="row">{{ loop.index }}</td>
-              <td>{{ display_map[user_id] }}</td>
-              {% for week in weeks %}
-              <td class="weekScore">{{ results[user_id].get(week, 0.0) }}</td>
-              {% endfor %}
-    	      <th scope="row">{{ total }}</td>
-            </tr>
+              {% if user_id == current_user.id %}
+              <tr class="table-active">
+              {% else %}
+              <tr>
+              {% endif %}
+                <th scope="row">{{ loop.index }}</td>
+                <td>{{ display_map[user_id] }}</td>
+                {% for week in range(1, 18) %}
+                  <td class="weekScore">{{ results[user_id].get(week, 0.0) }}</td>
+                {% endfor %}
+      	      <th scope="row">{{ total }}</td>
+              </tr>
             {% endfor %}
           </tbody>
         </table>
@@ -35,6 +39,7 @@
   </div>
 </div>
 
+<script>const colorWeek = {{ color_week }}</script>
 <script src="{{ url_for('static', filename='js/leaderboard.js') }}"></script>
 
 {% endblock %}
