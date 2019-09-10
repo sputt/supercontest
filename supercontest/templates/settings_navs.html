@@ -30,9 +30,15 @@
             </a>
         </li></div>
         <div class="col text-center"><li class="nav-item">
-            <a class="nav-link" href="{{ url_for('user.logout') }}">
-                Logout
-            </a>
+            {% if call_or_get(current_user.is_authenticated) %}
+                <a id="nav_logout" class="nav-link" href="{{ url_for('user.logout') }}">
+                    Logout
+                </a>
+            {% else %}
+                <a id="nav_login" class="nav-link" href="{{ url_for('user.login') }}">
+                    Login
+                </a>
+            {% endif %}
         </li></div>
     </ul>
 </div>
