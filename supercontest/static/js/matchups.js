@@ -15,9 +15,9 @@ $('tr.matchup').each(function() {
     } else if (underdogTeamName === homeTeam) {
         underdogTeam.append('*')
     } else {
-        console.log(`The home team (${homeTeam}) is neither the ` +
-                    `favored team (${favoredTeamName}) nor the ` +
-                    `underdog team (${underdogTeamName}).`);
+        console.warn(`The home team (${homeTeam}) is neither the ` +
+                     `favored team (${favoredTeamName}) nor the ` +
+                     `underdog team (${underdogTeamName}).`);
     }
 });
 

@@ -1,7 +1,6 @@
 $('td.weekScore').each(function() {
     const score = parseFloat($(this).text());
     const week = $(this).closest('table').find('th').eq($(this).index()).text();
-    console.log(week);
     if (week <= colorWeek) {
         if (score == 5.0) {
             $(this).css('color', 'forestgreen');

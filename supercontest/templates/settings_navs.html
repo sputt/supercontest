@@ -6,18 +6,13 @@
   <div class="row justify-content-center">
     <ul class="nav nav-tabs">
       <div class="col-auto text-center"><li class="nav-item">
-        <a class="nav-link" href="{{ url_for('main.home') }}">
+        <a id="nav_home" class="nav-link" href="{{ url_for('main.home') }}">
           Home
         </a>
       </li></div>
-      <div class="col-auto text-center"><li class="nav-item">
-        <a class="nav-link" href="{{ url_for('user.edit_user_profile') }}">
-          {{ current_user.first_name or current_user.email }}
-        </a>
-      </li></div>
       <div class="col text-center"><li class="nav-item">
-        <a class="nav-link" href="{{ url_for('user.logout') }}">
-          Logout
+        <a id="nav_rules" class="nav-link" href="{{ url_for('main.rules') }}">
+          Rules
         </a>
       </li></div>
       <div class="col text-center"><li class="nav-item">
@@ -29,10 +24,15 @@
         <a id="nav_feedback" class="nav-link" href="{{ url_for('main.feedback') }}">
           Feedback
         </a>
+      </i></div>
+      <div class="col-auto text-center"><li class="nav-item">
+        <a id="nav_edit_user_profile" class="nav-link" href="{{ url_for('user.edit_user_profile') }}">
+          {{ current_user.first_name or current_user.email }}
+        </a>
       </li></div>
       <div class="col text-center"><li class="nav-item">
-        <a id="nav_rules" class="nav-link" href="{{ url_for('main.rules') }}">
-          Rules
+        <a class="nav-link" href="{{ url_for('user.logout') }}">
+          Logout
         </a>
       </li></div>
     </ul>

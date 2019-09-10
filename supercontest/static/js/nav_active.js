@@ -10,3 +10,11 @@ $('a[id^="nav_"]').each(function () {
         $(this).attr('class', 'nav-link');
     }
 });
+
+// If by this point none of the tabs matched, you're probably in
+// the main subview (eg seasons -> matchups -> weeks), so highlight
+// the 'Home' nav which is meant for this.
+const nonHomeToplevelEndpoints = ['rules', 'graphql', 'feedback', 'edit_user_profile'];
+if (!routePaths.some(path => nonHomeToplevelEndpoints.indexOf(path) >= 0)) {
+    $('#nav_home').attr('class', 'nav-link active');
+}
