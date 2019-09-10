@@ -5,7 +5,7 @@
 {% from "flask_user/_macros.html" import render_field, render_checkbox_field, render_submit_field %}
 
 <div class="row">
-    <div class="col-sm-6">
+    <div class="col-sm-5 col-md-4 col-lg-3">
         <h3>{%trans%}Sign In{%endtrans%}</h3>
         {# ** Login form ** #}
         <form action="{{ url_for('user.login') }}" method="POST" class="form" role="form">
@@ -30,7 +30,7 @@
             </p>
         {% endif %}
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-5 col-md-4 col-lg-3">
         <h3>{%trans%}Register{%endtrans%}</h3>
         {# ** Register form ** #}
         <form action="{{ url_for('user.register') }}" method="POST" novalidate formnovalidate class="form" role="form">

@@ -90,7 +90,7 @@ into the app container and then run them as you normally would on the host.
 It will add the migration file to the volume in the container, which gets synced
 back to vcs on your host.
 ```bash
-docker-compose exec supercontest-app-[dev|prod] bash
+make enter-[dev|prod]-app
 ```
 
 To manually commit lines, do the following. This is typically done
@@ -168,7 +168,7 @@ Get into the production app container. Here is the usual way:
 ```bash
 ssh sc
 tmux attach
-docker-compose exec supercontest-app-prod bash
+make enter-prod-app
 ```
 
 Once in, actually fetch and commit the new lines:

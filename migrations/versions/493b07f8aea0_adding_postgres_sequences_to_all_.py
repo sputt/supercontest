@@ -34,11 +34,11 @@ def modify_sequence(create, table_name, start):
 
 
 def upgrade():
-    for table_name, start in tables.iteritems():
+    for table_name, start in tables.items():
         modify_sequence(create=True, table_name=table_name, start=start)
 
 
 def downgrade():
-    for table_name, start in tables.iteritems():
+    for table_name, start in tables.items():
         modify_sequence(create=False, table_name=table_name, start=start)
 
