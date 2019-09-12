@@ -62,27 +62,49 @@ def get_week(endpoint, values):  # pylint: disable=unused-argument
                              g.week == max(g.available_weeks or [0]))
 
 
+def get_sorted_matchups(season, week):
+    """Helper function to get all matchups for a week, then sort them
+    in a deterministic order for all views. Converts the date string
+    to an actual datetime object.
+
+    Args:
+        season (int): g.season
+        week (int): g.week
+
+    Returns:
+        (list): All full matchup objects, with datetime as python objects
+    """
+    _matchups = db.session.query(Matchup).filter_by(  # pylint: disable=no-member
+        season=season, week=week).all()
+    for _matchup in _matchups:
+        _matchup.datetime = dateutil_parser.parse(_matchup.datetime)
+    # Sort matchups by the datetime attribute (chronologically), then
+    # the favored_team (alphabetically).
+    sorted_matchups = sorted(_matchups,
+            key=lambda _matchup: (_matchup.datetime, _matchup.favored_team))
+    return sorted_matchups
+
+
 @season_week_blueprint.route('/season<season>/week<week>/matchups')
 @login_required
 def matchups():
     if g.is_current_week:
         update_results(season=g.season, week=g.week)
-    # The template uses all of the info in the matchup table.
-    _matchups = db.session.query(Matchup).filter_by(  # pylint: disable=no-member
-        season=g.season, week=g.week).all()
-    # Convert the datetime strings to actual datetime objects
-    for _matchup in _matchups:
-        _matchup.datetime = dateutil_parser.parse(_matchup.datetime)
-    # Sort matchups by the datetime attribute.
-    sorted_matchups = sorted(_matchups, key=lambda _matchup: _matchup.datetime)
+    _matchups = get_sorted_matchups(season=g.season, week=g.week)
     # Get the picks to overlay. We only need the team names. Since we have
     # to highlight picks by name anyway, we just use a comparison to
     # matchup.winner rather than using pick.points to colorize.
     _picks = [pick.team for pick in db.session.query(Pick.team).filter_by(  # pylint: disable=no-member
         season=g.season, week=g.week, user_id=current_user.id).all()]
+    if is_today(PICK_DAYS) and g.is_current_week:
+        msg = ('Make your picks by clicking on the teams below, '
+               'then click submit at the bottom.')
+    else:
+        msg = ''
     return render_template('matchups.html',
-                           matchups=sorted_matchups,
-                           picks=_picks)
+                           matchups=_matchups,
+                           picks=_picks,
+                           message=msg)
 
 
 @season_week_blueprint.route('/season<season>/week<week>/picks')
@@ -90,10 +112,7 @@ def matchups():
 def picks():
     if g.is_current_week:
         update_results(season=g.season, week=g.week)
-    # The template only uses matchup.favored_team and matchup.underdog_team
-    # for the column headers, then status for the lookup.
-    _matchups = db.session.query(Matchup).filter_by(  # pylint: disable=no-member
-        season=g.season, week=g.week).all()
+    _matchups = get_sorted_matchups(season=g.season, week=g.week)
     # Extract the status into a simple lookup so that picks can know how to
     # color the unstarted games. While iterating, replace the full team names
     # with their abbreviations.
@@ -107,16 +126,15 @@ def picks():
     # If picks aren't locked down yet, you're only going to report the info
     # for the active user.
     # This route uses pick.points to color the cells, not matchup.winner.
-    only_me = is_today(PICK_DAYS) and g.is_current_week
-    if only_me:
+    if is_today(PICK_DAYS) and g.is_current_week:
         user_ids = [str(current_user.id)]
         sorted_user_ids = user_ids
         _picks = [(str(pick.user_id), get_team_abv(pick.team), pick.points)
                   for pick in db.session.query(Pick).filter_by(  # pylint: disable=no-member
                       season=g.season, week=g.week, user_id=current_user.id).all()]
-        msg = ('Other user picks are hidden until lockdown on Saturday night '
-               'at midnight.<br>You may continue to modify your own picks for '
-               'this week on the <a href={}>{}</a> tab until then.'.format(
+        msg = ('To make or modify your picks, go to the <a href={}>{}</a> tab.<br>'
+               'You may do this as much as you want until lockdown on Saturday night '
+               'at midnight.<br>Everyone\'s picks will publish here at that time.'.format(
                    url_for('season_week.matchups'), 'Matchups'))
     else:
         user_ids = [str(user.id) for user in db.session.query(User.id).all()]  # pylint: disable=no-member
@@ -147,13 +165,15 @@ def leaderboard():
         color_week = max_week - 1
     else:
         color_week = max_week
+    max_points = color_week*5  # for total percentage display
     results, totals = get_results(g.season)
     display_map = get_id_name_map()
     return render_template('leaderboard.html',
                            results=results,
                            totals=totals,
                            color_week=color_week,
-                           display_map=display_map)
+                           display_map=display_map,
+                           max_points=max_points)
 
 
 @season_week_blueprint.route('/season<season>/graph')

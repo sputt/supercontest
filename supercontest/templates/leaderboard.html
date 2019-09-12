@@ -14,6 +14,7 @@
                         <th scope="col">{{ week }}</th>
                         {% endfor %}
                         <th scope="col">Total</th>
+                        <th scope="col">%</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -29,6 +30,7 @@
                         <td class="weekScore">{{ results[user_id].get(week, 0.0) }}</td>
                         {% endfor %}
                         <th scope="row">{{ total }}</td>
+                        <th scope="row">{{ total/max_points*100 }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -2,10 +2,29 @@
 
 {% block week_navs_content %}
 
+{% if message %}
+<p class="text-center mt-3">{{ message|safe }}</p>
+{% endif %}
+
 <div class="row justify-content-center mt-3">
     <div class="col-sm-12 col-md-10 col-lg-8">
         <div class="table-responsive" style="white-space: nowrap;">
             <table class="table table-sm table-bordered table-striped table-hover text-center">
+                <colgroup>
+                    <col>
+                    <col>
+                    {% if message %}
+                    <col style="border: 2px solid;">
+                    <col>
+                    <col style="border: 2px solid;">
+                    {% else %}
+                    <col>
+                    <col>
+                    <col>
+                    {% endif %}
+                    <col>
+                    <col>
+                </colgroup>
                 <thead class="thead-dark">
                     <tr>
                         <th scope="col">Time (pacific)</th>
