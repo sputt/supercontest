@@ -110,6 +110,7 @@ def picks():
     only_me = is_today(PICK_DAYS) and g.is_current_week
     if only_me:
         user_ids = [str(current_user.id)]
+        sorted_user_ids = user_ids
         _picks = [(str(pick.user_id), get_team_abv(pick.team), pick.points)
                   for pick in db.session.query(Pick).filter_by(  # pylint: disable=no-member
                       season=g.season, week=g.week, user_id=current_user.id).all()]

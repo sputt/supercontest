@@ -164,6 +164,18 @@ which my laptop is not guaranteed to be.
 Check Westgate to ensure the new lines for this week have been posted.
 Ensure they have before continuing.
 
+Backup the prod database as a precaution, before changing anything.
+Run this on your laptop. It will automatically create a unique filename with timestamp.
+```bash
+make backup-remote-db-to-local
+```
+
+Sometimes the selenium webdriver needs a kick. Just restart the app to be
+sure:
+```bash
+docker-compose restart supercontest-app-prod
+```
+
 Get into the production app container. Here is the usual way:
 ```bash
 ssh sc
@@ -171,7 +183,8 @@ tmux attach
 make enter-prod-app
 ```
 
-Once in, actually fetch and commit the new lines:
+Once in, actually fetch and commit the new lines. Be careful to put
+the correct season and week:
 ```bash
 python manage.py commit_lines --season <XXXX> --week <X>
 ```
