@@ -30,7 +30,8 @@
                         <td class="weekScore">{{ results[user_id].get(week, 0.0) }}</td>
                         {% endfor %}
                         <th scope="row">{{ total }}</td>
-                        <th scope="row">{{ total/max_points*100 }}</td>
+			{% set percent = total / max_points * 100 %}
+                        <th scope="row">{{ '%0.1f' % percent }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
