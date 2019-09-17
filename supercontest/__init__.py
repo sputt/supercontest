@@ -75,6 +75,10 @@ def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):
 
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter  # pylint: disable=no-member
 
+    # Make the function for displaying dates available to the templates
+    from supercontest.core.utilities import convert_date
+    app.jinja_env.globals['convert_date'] = convert_date  # pylint: disable=no-member
+
     @app.context_processor
     def context_processor():  # pylint: disable=unused-variable
         return dict(user_manager=user_manager)

@@ -13,23 +13,23 @@
                 <thead class="thead-dark">
                     <tr>
                         <th scope="col">User</th>
-                        {% for matchup in matchups %}
-                        <th scope="col">{{ matchup.favored_team }}</th>
-                        <th scope="col">{{ matchup.underdog_team }}</th>
+                        {% for matchup in sorted_matchups %}
+                        <th scope="col">{{ team_abv_map[matchup.favored_team] }}</th>
+                        <th scope="col">{{ team_abv_map[matchup.underdog_team] }}</th>
                         {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for user_id in user_ids %}
-                    {% if user_id|int == current_user.id and user_ids|length > 1 %}
+                    {% for data in sorted_picks %}
+                    {% if data[0] == current_user.id and sorted_picks|length > 1 %}
                     <tr style="border: 2px solid;">
                     {% else %}
                     <tr>
                     {% endif %}
-                        <td>{{ display_map[user_id|int] }}</td>
-                        {% for matchup in matchups %}
-                        <td id={{ user_id + matchup.favored_team }}></td>
-                        <td id={{ user_id + matchup.underdog_team }}></td>
+                        <td>{{ id_name_map[data[0]] }}</td>
+                        {% for matchup in sorted_matchups %}
+                        <td id={{ data[0]|string + matchup.favored_team }}></td>
+                        <td id={{ data[0]|string + matchup.underdog_team }}></td>
                         {% endfor %}
                     </tr>
                     {% endfor %}
@@ -39,8 +39,9 @@
     </div>
 </div>
 
-<script>const picks = {{ (picks or [])|tojson }}</script>
+<script>const sorted_picks = {{ sorted_picks|tojson }}</script>
 <script>const statusMap = {{ status_map|safe }}</script>
+<script>const pointsMap = {{ points_map|safe }}</script>
 <script src="{{ url_for('static', filename='js/picks.js') }}"></script>
 
 {% endblock %}

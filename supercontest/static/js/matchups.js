@@ -33,7 +33,7 @@ function colorPicks() {
             const underdogTeamScore = parseFloat($(this).find('td.underdogTeamScore').text());
             const line = parseFloat($(this).find('td.line').text());
             const gameStatus = $(this).find('td.status').text();
-            const winner = $(this).find('td.winner').text();
+            const coverer = $(this).find('td.coverer').text();
             const homeTeam = $(this).find('td.homeTeam').text();
             if (gameStatus == 'P') {
                 if (picks.includes(favoredTeamName)) {
@@ -44,13 +44,13 @@ function colorPicks() {
                     underdogTeam.addClass('table-primary');
                 }
             } else {
-                if (favoredTeamName === winner) {
+                if (favoredTeamName === coverer) {
                     if (picks.includes(favoredTeamName)) {
                         favoredTeam.addClass('table-success');
                     } else if (picks.includes(underdogTeamName)) {
                         underdogTeam.addClass('table-danger');
                     }
-                } else if (underdogTeamName === winner) {
+                } else if (underdogTeamName === coverer) {
                     if (picks.includes(underdogTeamName)) {
                         underdogTeam.addClass('table-success');
                     } else if (picks.includes(favoredTeamName)) {

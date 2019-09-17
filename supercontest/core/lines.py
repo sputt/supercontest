@@ -1,8 +1,7 @@
-"""Logic for fetching the lines and committing them to the database.
+"""Logic for fetching the lines.
 """
-from supercontest.models import Matchup
 from supercontest.core.utilities import with_webdriver
-from supercontest import db
+from supercontest.dbsession import commits, queries
 
 
 # pylint: disable=too-many-locals
@@ -52,55 +51,7 @@ def fetch_lines(driver=None):  # driver is passed by decorator
         # sometimes westgate will return empty rows in the table - ignore them
         else:
             continue
-
     return lines
-
-
-def instantiate_rows_for_matchups(season, week, lines):
-    """This function strips the asterisks (if any) from the team names
-    so that they're pure before committing to the table. It adds that
-    respective team to the home_team column.
-
-    Args:
-        season (int)
-        week (int)
-        lines (list): from fetch_lines() return, [FAV, UNDERDOG, DATETIME, LINE]
-
-    Returns:
-        matchups (list): Each is a database row object for the Matchup table
-    """
-    matchups = []
-    for line in lines:
-        favored_team = line[0]
-        underdog_team = line[1]
-        if '*' in favored_team:
-            favored_team = favored_team.replace('*', '')
-            home_team = favored_team
-        elif '*' in underdog_team:
-            underdog_team = underdog_team.replace('*', '')
-            home_team = underdog_team
-        else:
-            home_team = None
-        matchup = Matchup(season=season,
-                          week=week,
-                          favored_team=favored_team,
-                          underdog_team=underdog_team,
-                          datetime=line[2],
-                          line=float(line[3]),
-                          home_team=home_team)
-        matchups.append(matchup)
-
-    return matchups
-
-
-def _commit_lines(season, week, lines):
-    """This is always done before commit_scores(). This function
-    creates the rows for the matchups and adds the lines, then
-    commit_scores() updates them later as the games are played.
-    """
-    matchups = instantiate_rows_for_matchups(season=season, week=week, lines=lines)
-    db.session.add_all(matchups)  # pylint: disable=no-member
-    db.session.commit()  # pylint: disable=no-member
 
 
 def commit_lines(season, week):
@@ -112,4 +63,5 @@ def commit_lines(season, week):
         week (int)
     """
     lines = fetch_lines()
-    _commit_lines(season=season, week=week, lines=lines)
+    week_id = queries.get_week_id(season=season, week=week)
+    commits._commit_lines(week_id=week_id, lines=lines)  # pylint: disable=protected-access

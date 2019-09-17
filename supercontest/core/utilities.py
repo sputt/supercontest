@@ -5,15 +5,13 @@ import datetime
 import calendar
 import requests
 import bs4
-import xlrd
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from decorator import decorator
-from flask import current_app
 from flask_mail import Message
+from dateutil import parser as dateutil_parser
 
-from supercontest import mail, db
-from supercontest.models import User, Pick
+from supercontest import mail
 
 
 def get_soup_from_url(url):
@@ -23,7 +21,6 @@ def get_soup_from_url(url):
     resp = requests.get(url)
     html = resp.text
     soup = bs4.BeautifulSoup(html, 'html.parser')
-
     return soup
 
 
@@ -57,76 +54,6 @@ def send_mail(subject, body, recipient):
     mail.send(msg)
 
 
-def add_user(email, password, **kwargs):
-    user = User(email=email,
-                password=current_app.user_manager.password_manager.hash_password(password),
-                active=True,
-                email_confirmed_at=datetime.datetime.utcnow(),
-                **kwargs)
-    db.session.add(user)  # pylint: disable=no-member
-    db.session.commit()  # pylint: disable=no-member
-
-
-def commit_users_from_excel(path):
-    workbook = xlrd.open_workbook(path)
-    sheet = workbook.sheet_by_name('Main')
-    for row_index in range(1, sheet.nrows):  # skip first row of headers
-        # replace unicode with right single quote
-        name = sheet.cell_value(row_index, 0).replace(u'\u2019', "'")
-        email = sheet.cell_value(row_index, 2)
-        print('Registering "{}" with "{}"'.format(name, email))
-        add_user(email=email, password='sbsc19', first_name=name)  # nosec
-
-
-def commit_picks_from_excel(path, season):
-    workbook = xlrd.open_workbook(path)
-    for week in range(1, 18):  # this goes 1-17
-        print('Week {}'.format(week))
-        sheet = workbook.sheet_by_name('week{}picks'.format(week))
-        for row_index in range(1, sheet.nrows):  # skip first row of headers
-            # cut the last two cols, question and count mostly
-            cut_last_cols = 1 if week in [8, 9, 10] else 2
-            row_values = sheet.row_values(row_index, end_colx=sheet.ncols-cut_last_cols)
-            # first col is user, replace unicode with right single quote
-            user = row_values.pop(0).replace(u'\u2019', "'")
-            # ignore empty strings and take the first five. This is the only
-            # place which has a discrepancy with Petty's spreadsheet. Taking
-            # the first or last five did not match scores. He was taking some
-            # random collection of them and I don't have his script to check.
-            # Therefore, weeks where people had >5 picks MIGHT be off by a
-            # point or two.
-            picks = [pick for pick in row_values if pick][:5]
-            user_id = db.session.query(User.id).filter_by(first_name=user).first()[0]  # pylint: disable=no-member
-            # Petty's spreadsheet kept people with multiple submissions
-            # (harner week 17, grdich week 13, freie week 7). The only one
-            # with a DIFFERENCE in picks was Grdich. Petty kept the first
-            # entry (assuming bc submission timestamp was most recent), so
-            # I'll keep that one.
-            if db.session.query(Pick).filter_by(  # pylint: disable=no-member
-                    season=season, week=week, user_id=user_id).all():
-                print('Duplicate pick rows detected for {}, keeping the previous'.format(user))
-            elif user_id is None:
-                print('"{}" does not match any first names in the db, '
-                      'moving to next user'.format(user))
-            else:
-                print('Committing picks for {}: {}'.format(user, picks))
-                picks = [Pick(season=season, week=week, team=pick, user_id=user_id)
-                         for pick in picks]
-                db.session.add_all(picks)  # pylint: disable=no-member
-                db.session.commit()  # pylint: disable=no-member
-
-
-def get_id_name_map():
-    """This function grabs the display name for every row in the user table,
-    returning the first or last name if populated. If not, returns the email.
-    Data is returned as a dictionary where the keys are ids and the values
-    are the names.
-    """
-    return {r.id: (' '.join([r.first_name, r.last_name]) if
-                   r.first_name or r.last_name else r.email)
-            for r in db.session.query(User).all()}  # pylint: disable=no-member
-
-
 def is_today(allowable_days):
     """Provide allowable_days as an iterable of capitalized text
     (eg ['Monday', 'Friday']) and this will return a boolean if
@@ -138,7 +65,11 @@ def is_today(allowable_days):
 
 
 def get_team_abv(team):
-    _map = {
+    return get_team_abv_map().get(team, team)
+
+
+def get_team_abv_map():
+    return {
         'CARDINALS': 'ARI',
         'FALCONS': 'ATL',
         'RAVENS': 'BAL',
@@ -172,4 +103,16 @@ def get_team_abv(team):
         'TITANS': 'TEN',
         'REDSKINS': 'WAS',
     }
-    return _map.get(team, team)
+
+
+def convert_date(date_str):
+    """Properly formats the strings for datetime in the database
+    into python datetime objects.
+
+    Args:
+        date_str (str): the string from westgate, in our db
+
+    Returns:
+        (datetime obj): the python standard datetime obj for that str
+    """
+    return dateutil_parser.parse(date_str)

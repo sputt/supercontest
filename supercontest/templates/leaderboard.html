@@ -18,19 +18,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for user_id, total in totals %}
+                    {% for user_id, total_points in season_totals %}
                     {% if user_id == current_user.id %}
                     <tr style="border: 2px solid;">
                     {% else %}
                     <tr>
                     {% endif %}
                         <th scope="row">{{ loop.index }}</td>
-                        <td>{{ display_map[user_id] }}</td>
+                        <td>{{ id_name_map[user_id] }}</td>
                         {% for week in range(1, 18) %}
-                        <td class="weekScore">{{ results[user_id].get(week, 0.0) }}</td>
+                        <td class="weekScore">{{ all_week_totals[user_id].get(week, 0.0) }}</td>
                         {% endfor %}
-                        <th scope="row">{{ total }}</td>
-			{% set percent = total / max_points * 100 %}
+                        <th scope="row">{{ total_points }}</td>
+            			{% set percent = total_points / max_points * 100 %}
                         <th scope="row">{{ '%0.1f' % percent }}</td>
                     </tr>
                     {% endfor %}

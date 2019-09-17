@@ -108,15 +108,8 @@ python manage.py commit_scores --season <XXXX> --week <X>
 
 To manually inspect the database, for example:
 ```bash
-python manage.py shell  # this injects 'db' and 'models' into context
-db.session.query(db.func.max(models.Matchup.week)).scalar()
-```
-
-To add users for testing, for example:
-```bash
-python manage.py shell
-from supercontest.core.utilities import add_user
-add_user(email='example@example.com', password='hello')
+python manage.py shell  # this injects 'db' and all the models into context
+db.session.query(db.func.max(Season.season)).scalar()
 ```
 
 After you change any part of the models, run the following.
@@ -135,6 +128,23 @@ If you have ever have an incomplete migration/upgrade prior or you want
 to develop on the model:
 ```bash
 python manage.py db stamp head
+```
+
+The matchup dates and times are kept in the db in the same string format that
+Westgate returns. To convert this to a python datetime object, or reformat it
+back to whatever new string display you want:
+```python
+from dateutil import parser as dateutil_parser
+datetime_obj = dateutil_parser.parse(datetime_str)
+new_datetime_str = datetime_obj.strftime('%a %I:%m %p')  # eg, "Sun 10:05 AM"
+```
+
+An example query with an implicit inner join:
+```sql
+select seasons.season, weeks.week from seasons, weeks where seasons.id = weeks.season_id order by season, week;
+```
+```python
+db.session.query(Season.season, Week.week).filter(Season.id == Week.season_id).order_by(Season.season, Week.week).all()
 ```
 
 # Debugging
@@ -189,12 +199,7 @@ the correct season and week:
 python manage.py commit_lines --season <XXXX> --week <X>
 ```
 
-Open the app in a browser to verify if it worked. This is already important
-because all of the main tabs will run `update_results()`, which commits
-scores, current winners (coverers), and resultant points for each pick. You
-technically don't have to, because there is a 99.99% chance that at least
-one user will open the app at one point during the whole week, but might
-as well be safe.
+Open the app in a browser to verify if it worked.
 
 Then backup the database, to lock in everything since last week.
 Run this on your laptop. It will automatically create a unique filename with timestamp.

@@ -1,9 +1,4 @@
-from sqlalchemy import func
-
-from supercontest import db
-from supercontest.models import Pick, Matchup, User
-from supercontest.core.utilities import is_today
-from supercontest.core.scores import commit_scores
+from supercontest.dbsession import queries
 
 # The scores update Th, Sun, Mon, and then add Wednesday
 # because we want to fetch scores on Wednesdays after the lines
@@ -11,81 +6,136 @@ from supercontest.core.scores import commit_scores
 RESULTS_DAYS = ['Wednesday', 'Thursday', 'Sunday', 'Monday']
 
 
-def update_results(season, week):
-    """Helper function for all the view that require current scores
-    and current results (teams who covered, points for each pick).
-    You typically only want to call this if is_current_week=True.
-
-    Args:
-        season (int): g.season, from the flask global object or elsewhere
-        week (int): g.week, from the flask global object or elswehere
-    """
-    if is_today(RESULTS_DAYS):
-        commit_scores(season=season, week=week)
-    # No matter the day, calculate the current winners to color picks.
-    commit_winners_and_points(season=season, week=week)
-
-
-def get_results(season):
-    """Helper function for all the views that do the summing of
-    user results for display. Basically just returns a formatted
-    copy of the entire Pick.points column, grouped by week and user.
+def get_week_teams(season, week, user_id=None):
+    """Helper function for the picks view. Returns the picked teams and
+    for all users for this week. For active pick days, where only the
+    current user is shown, his/her ID may be passed here.
 
     Args:
         season (int)
+        week (int)
+        user_id (int): If passed, this will only return data for that user
+
+    Returns:
+        (dict): {user_id: [team1, team2,...], user_id...}
     """
-    # Get weekly scores grouped by user. Could do the User and Pick queries
-    # in one, but we need to cast to easy Python dict format anyway.
-    user_ids = [result.id for result in db.session.query(User.id).all()]  # pylint: disable=no-member
-    results = {}  # {user_id: {week: score, week: score ... }
-    for user_id in user_ids:
-        scores_by_week = db.session.query(  # pylint:disable=no-member
-            Pick.week, func.sum(Pick.points)).filter(
-                Pick.season == season,
-                Pick.user_id == user_id).group_by(Pick.week).all()
-        results[user_id] = {item[0]: item[1] for item in scores_by_week}
-    totals = {}  # [(user_id, points), (user_id, points) ... ] (sorted)
-    for user, scores in results.items():
-        totals[user] = sum(scores.values())
-    sorted_totals = [(k, totals[k]) for k in sorted(totals, key=totals.get, reverse=True)]
-    return results, sorted_totals
-
-
-def commit_winners_and_points(season, week):
-    """Main entry point to calculate picks against matchups and write the
-    results to the db.
-    """
-    commit_match_winners(season=season, week=week)
-    commit_pick_points(season=season, week=week)
-
-
-def commit_match_winners(season, week):
-    matchups = db.session.query(Matchup).filter(  # pylint: disable=no-member
-        Matchup.season == season,
-        Matchup.week == week,
-        Matchup.status != 'P').all()
-    for matchup in matchups:
-        delta = matchup.favored_team_score - matchup.underdog_team_score
-        if delta > matchup.line:
-            matchup.winner = matchup.favored_team
-        elif delta == matchup.line:
-            # if the line is a push, include both team names in string
-            matchup.winner = matchup.favored_team + matchup.underdog_team
-        else:
-            matchup.winner = matchup.underdog_team
-    db.session.commit()  # pylint: disable=no-member
-
-
-def commit_pick_points(season, week):
-    picks = db.session.query(Pick).filter_by(season=season, week=week).all()  # pylint: disable=no-member
-    winners = [result.winner for result in db.session.query(  # pylint: disable=no-member
-        Matchup.winner).filter_by(season=season, week=week).all() if result.winner]
+    # get_picks() respects if user_id is None.
+    picks = queries.get_picks(season=season, week=week, user_id=user_id)
+    week_totals = {}
     for pick in picks:
-        if pick.team in winners:  # direct match
-            pick.points = 1.0
-        # in a string like WINNERLOSER, for pushes
-        elif any(pick.team in winner for winner in winners):
-            pick.points = 0.5
-        else:
-            pick.points = 0
-    db.session.commit()  # pylint: disable=no-member
+        if not week_totals.get(pick.user_id):
+            week_totals[pick.user_id] = []
+        week_totals[pick.user_id].append(pick.team)
+    return week_totals
+
+
+def get_all_week_totals(season):
+    """Helper function for the leaderboard. Returns the point scores
+    for all users for all weeks.
+
+    Args:
+        season (int): the season to return all weekly totals for
+
+    Returns:
+        (dict): {user_id: {week: points, week: points...}...}
+    """
+    picks = queries.get_picks(season=season)
+    all_week_totals = {}
+    for pick in picks:
+        if not all_week_totals.get(pick.user_id):
+            all_week_totals[pick.user_id] = {}
+        if not all_week_totals[pick.user_id].get(pick.week):
+            all_week_totals[pick.user_id][pick.week] = 0
+        all_week_totals[pick.user_id][pick.week] += determine_current_pick_points(pick)
+    return all_week_totals
+
+
+def get_sorted_week_teams(week_teams, points_map):
+    """Helper function for the picks view. Returns the week's picks
+    for all users, sorted by the resultant total point scores. It does
+    not calculate these; you must provide a lookup.
+
+    Args:
+        week_teams (dict): the return dict from get_week_teams()
+        points_map (dict): {team: points, team: points...}
+
+    Returns:
+        (list): [(user_id, [teams]), (user_id, [teams])...] (sorted)
+    """
+    week_totals = {user_id: sum([points_map[team] for team in teams])
+                   for user_id, teams in week_teams.items()}
+    sorted_picks = [
+        (user_id, week_teams[user_id])
+        for user_id in sorted(week_totals, key=week_totals.get, reverse=True)
+    ]
+    return sorted_picks
+
+
+def get_season_totals(all_week_totals):
+    """Helper function for the leaderboard. Returns the total season scores
+    for all users, sorted.
+
+    Args:
+        all_week_totals (dict): the return dict from get_all_week_totals()
+
+    Returns:
+        (list): [(user_id, points), (user_id, points)...] (sorted)
+    """
+    season_totals = {user_id: sum(week_points_dict.values())
+                     for user_id, week_points_dict in all_week_totals.items()}
+    sorted_season_totals = [
+        (user_id, season_totals[user_id])
+        for user_id in sorted(season_totals, key=season_totals.get, reverse=True)
+    ]
+    return sorted_season_totals
+
+
+def determine_current_coverer(row):
+    """Takes a matchup and determines which team is currently covering.
+    If the matchup is currently a push, a string with both team names
+    concatenated is returned. Any row can be passed that has scores,
+    team names, and a line.
+
+    Args:
+        row (sqla): a row from the FullMatchups or FullPicks table
+
+    Returns:
+        (str) the name matching the team that's covering
+    """
+    delta = row.favored_team_score - row.underdog_team_score
+    if delta > row.line:
+        coverer = row.favored_team
+    elif delta == row.line:
+        # if the line is a push, include both team names in string
+        coverer = row.favored_team + row.underdog_team
+    else:
+        coverer = row.underdog_team
+    return coverer
+
+
+def determine_current_pick_points(row, team=None):
+    """Takes a pick and determines how many points it is currently earning.
+    Any row can be passed that has scores, team names, a line, and a picked
+    team. Usually, you'd just call this function with (row=pick_row), but you
+    may also call it with (row=matchup_row, team=team) and it will compare
+    the provided team against the line/scores from the matchup row, as a
+    simulated pick.
+
+    Args:
+        row (sqla): a row from the FullPicks table or FullMatchups table
+        team (str): pass a team to simulate a pick, if row is just lines
+            and scores from the matchups table
+
+    Returns:
+        (float) the points that this row is currently earning
+    """
+    coverer = determine_current_coverer(row)
+    picked_team = team or row.team
+    if picked_team == coverer:
+        points = 1.0
+    # Remember for a push, coverer is a string with both team names.
+    elif picked_team in coverer:
+        points = 0.5
+    else:
+        points = 0.0
+    return points

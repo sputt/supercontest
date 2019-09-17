@@ -1,15 +1,22 @@
 import json
 from itertools import accumulate
-from dateutil import parser as dateutil_parser
 from flask import Blueprint, render_template, request, redirect, url_for, Response, g
 from flask_user import current_user, login_required
 import plotly
 
-from supercontest import db
-from supercontest.core.picks import commit_picks, InvalidPicks, PICK_DAYS
-from supercontest.core.utilities import get_team_abv, get_id_name_map, is_today
-from supercontest.core.results import update_results, get_results
-from supercontest.models import Matchup, Pick, User
+from supercontest.dbsession import queries
+from supercontest.core.picks import PICK_DAYS, commit_picks, InvalidPicks
+from supercontest.core.scores import commit_scores
+from supercontest.core.utilities import is_today, get_team_abv_map
+from supercontest.core.results import (
+    RESULTS_DAYS,
+    determine_current_pick_points,
+    determine_current_coverer,
+    get_week_teams,
+    get_sorted_week_teams,
+    get_all_week_totals,
+    get_season_totals,
+)
 
 # This is the primary blueprint of the application. If flask supported nested
 # blueprints, I'd do one for season and one for week, but they're both here.
@@ -28,10 +35,9 @@ def define_week(endpoint, values):  # pylint: disable=unused-argument
     to that page.
     """
     if not values.get('season'):
-        values['season'] = db.session.query(db.func.max(Matchup.season)).scalar() or 0  # pylint: disable=no-member
+        values['season'] = queries.get_max_season()
     if not values.get('week') and endpoint not in only_season_endpoints:
-        values['week'] = db.session.query(db.func.max(Matchup.week)).filter_by(  # pylint: disable=no-member
-            season=values['season']).scalar() or 0
+        values['week'] = queries.get_max_week(season=values['season'])
 
 
 @season_week_blueprint.url_value_preprocessor
@@ -42,169 +48,146 @@ def get_week(endpoint, values):  # pylint: disable=unused-argument
     This also adds the useful is_current_week, which is a logical condition for
     many other actions.
     """
-    g.available_seasons = [
-        result.season
-        for result
-        in db.session.query(Matchup.season).distinct().order_by(Matchup.season).all()  # pylint: disable=no-member
-    ]
+    g.available_seasons = queries.get_sorted_seasons()
     g.season = int(values.pop('season'))
-
+    g.is_current_season = g.season == max(g.available_seasons)
     if endpoint not in only_season_endpoints:
-        g.available_weeks = [
-            result.week
-            for result
-            in db.session.query(Matchup.week).filter_by(  # pylint: disable=no-member
-                season=g.season).distinct().order_by(Matchup.week).all()
-        ]
+        g.available_weeks = queries.get_sorted_weeks(season=g.season)
         g.week = int(values.pop('week'))
-
-        g.is_current_week = (g.season == max(g.available_seasons or [0]) and
-                             g.week == max(g.available_weeks or [0]))
-
-
-def get_sorted_matchups(season, week):
-    """Helper function to get all matchups for a week, then sort them
-    in a deterministic order for all views. Converts the date string
-    to an actual datetime object.
-
-    Args:
-        season (int): g.season
-        week (int): g.week
-
-    Returns:
-        (list): All full matchup objects, with datetime as python objects
-    """
-    _matchups = db.session.query(Matchup).filter_by(  # pylint: disable=no-member
-        season=season, week=week).all()
-    for _matchup in _matchups:
-        _matchup.datetime = dateutil_parser.parse(_matchup.datetime)
-    # Sort matchups by the datetime attribute (chronologically), then
-    # the favored_team (alphabetically).
-    sorted_matchups = sorted(_matchups,
-            key=lambda _matchup: (_matchup.datetime, _matchup.favored_team))
-    return sorted_matchups
+        g.is_current_week = g.is_current_season and g.week == max(g.available_weeks)
 
 
 @season_week_blueprint.route('/season<season>/week<week>/matchups')
 @login_required
 def matchups():
-    if g.is_current_week:
-        update_results(season=g.season, week=g.week)
-    _matchups = get_sorted_matchups(season=g.season, week=g.week)
-    # Get the picks to overlay. We only need the team names. Since we have
-    # to highlight picks by name anyway, we just use a comparison to
-    # matchup.winner rather than using pick.points to colorize.
-    _picks = [pick.team for pick in db.session.query(Pick.team).filter_by(  # pylint: disable=no-member
-        season=g.season, week=g.week, user_id=current_user.id).all()]
-    if is_today(PICK_DAYS) and g.is_current_week:
+    if g.is_current_week and is_today(RESULTS_DAYS):
+        commit_scores(season=g.season, week=g.week)
+    sorted_matchups = queries.get_sorted_matchups(season=g.season, week=g.week)
+    # Get the picks to overlay. We only need the team names.
+    pick_teams = [row.team for row in queries.get_picks(season=g.season,
+                                                        week=g.week,
+                                                        user_id=current_user.id)]
+    if g.is_current_week and is_today(PICK_DAYS):
         msg = ('Make your picks by clicking on the teams below, '
                'then click submit at the bottom.')
     else:
         msg = ''
+    # Since we already need team names to highlight picks, determine which
+    # teams are covering in order to colorize.
+    cover_status = {matchup.line_id: determine_current_coverer(matchup)
+                    for matchup in sorted_matchups}
     return render_template('matchups.html',
-                           matchups=_matchups,
-                           picks=_picks,
+                           sorted_matchups=sorted_matchups,
+                           pick_teams=pick_teams,
+                           cover_status=cover_status,
                            message=msg)
 
 
 @season_week_blueprint.route('/season<season>/week<week>/picks')
 @login_required
 def picks():
-    if g.is_current_week:
-        update_results(season=g.season, week=g.week)
-    _matchups = get_sorted_matchups(season=g.season, week=g.week)
-    # Extract the status into a simple lookup so that picks can know how to
-    # color the unstarted games. While iterating, replace the full team names
-    # with their abbreviations.
-    status_map = {}
-    for _matchup in _matchups:
-        _matchup.favored_team = get_team_abv(_matchup.favored_team)
-        _matchup.underdog_team = get_team_abv(_matchup.underdog_team)
-        status_map[_matchup.favored_team] = _matchup.status
-        status_map[_matchup.underdog_team] = _matchup.status
-    display_map = get_id_name_map()
-    # If picks aren't locked down yet, you're only going to report the info
-    # for the active user.
-    # This route uses pick.points to color the cells, not matchup.winner.
-    if is_today(PICK_DAYS) and g.is_current_week:
-        user_ids = [str(current_user.id)]
-        sorted_user_ids = user_ids
-        _picks = [(str(pick.user_id), get_team_abv(pick.team), pick.points)
-                  for pick in db.session.query(Pick).filter_by(  # pylint: disable=no-member
-                      season=g.season, week=g.week, user_id=current_user.id).all()]
+    if g.is_current_week and is_today(RESULTS_DAYS):
+        commit_scores(season=g.season, week=g.week)
+    sorted_matchups = queries.get_sorted_matchups(season=g.season, week=g.week)
+    # The matchups will be the column headers in the frontend table. We now need
+    # the rows (user IDs) mapped with picked teams. If picks aren't locked down
+    # yet, you're only going to report the info for the active user.
+    if g.is_current_week and is_today(PICK_DAYS):
+        _picks = get_week_teams(season=g.season, week=g.week, user_id=current_user.id)
         msg = ('To make or modify your picks, go to the <a href={}>{}</a> tab.<br>'
                'You may do this as much as you want until lockdown on Saturday night '
                'at midnight.<br>Everyone\'s picks will publish here at that time.'.format(
                    url_for('season_week.matchups'), 'Matchups'))
     else:
-        user_ids = [str(user.id) for user in db.session.query(User.id).all()]  # pylint: disable=no-member
-        sorted_user_ids = sorted(user_ids,
-                                 key=lambda user_id: display_map[int(user_id)])
-        _picks = [(str(pick.user_id), get_team_abv(pick.team), pick.points)
-                  for pick in db.session.query(Pick).filter_by(  # pylint: disable=no-member
-                      season=g.season, week=g.week).all()]
+        _picks = get_week_teams(season=g.season, week=g.week)
         msg = ''
-    return render_template(template_name_or_list='picks.html',
-                           matchups=_matchups,
-                           picks=_picks,
-                           user_ids=sorted_user_ids,
-                           display_map=display_map,
-                           status_map=json.dumps(status_map),
+    # Now we need the status and current points in order to sort and display the
+    # picks properly.
+    status_map = {}
+    points_map = {}
+    for _matchup in sorted_matchups:
+        status_map[_matchup.favored_team] = _matchup.status
+        status_map[_matchup.underdog_team] = _matchup.status
+        points_map[_matchup.favored_team] = determine_current_pick_points(
+            row=_matchup, team=_matchup.favored_team)
+        points_map[_matchup.underdog_team] = determine_current_pick_points(
+            row=_matchup, team=_matchup.underdog_team)
+    # And then order the users by total week score for the picks view.
+    sorted_picks = get_sorted_week_teams(_picks, points_map)
+    # And lastly we want to display slightly different data than the raw.
+    id_name_map = queries.get_id_name_map()
+    team_abv_map = get_team_abv_map()
+    return render_template('picks.html',
+                           sorted_matchups=sorted_matchups,
+                           sorted_picks=sorted_picks,
+                           id_name_map=id_name_map,  # used in template
+                           team_abv_map=team_abv_map,  # used in template
+                           points_map=json.dumps(points_map),  # dumped for js use
+                           status_map=json.dumps(status_map),  # dumped for js use
                            message=msg)
 
 
 @season_week_blueprint.route('/season<season>/leaderboard')
 @login_required
 def leaderboard():
-    # If the leaderboard is being requested for the most recent season,
+    # If the lb or graph is being requested for the most recent season,
     # then fetch/calc/commit results for the most recent week of that season.
-    max_week = db.session.query(db.func.max(Matchup.week)).filter_by(  # pylint: disable=no-member
-        season=g.season).scalar()
-    if g.season == max(g.available_seasons):
-        update_results(season=g.season, week=max_week)
+    # Only color the completed weeks.
+    max_week = queries.get_max_week(season=g.season)
+    if g.is_current_season and is_today(RESULTS_DAYS):
+        commit_scores(season=g.season, week=max_week)
         color_week = max_week - 1
     else:
         color_week = max_week
+    all_week_totals = get_all_week_totals(season=g.season)  # unsorted
+    season_totals = get_season_totals(all_week_totals=all_week_totals)  # sorted
+    id_name_map = queries.get_id_name_map()
     max_points = color_week*5  # for total percentage display
-    results, totals = get_results(g.season)
-    display_map = get_id_name_map()
     return render_template('leaderboard.html',
-                           results=results,
-                           totals=totals,
+                           all_week_totals=all_week_totals,
+                           season_totals=season_totals,
                            color_week=color_week,
-                           display_map=display_map,
+                           id_name_map=id_name_map,
                            max_points=max_points)
 
 
 @season_week_blueprint.route('/season<season>/graph')
 @login_required
 def graph():
-    # If the lb graph is being requested for the most recent season,
+    # If the lb or graph is being requested for the most recent season,
     # then fetch/calc/commit results for the most recent week of that season.
-    if g.season == max(g.available_seasons):
-        max_week = db.session.query(db.func.max(Matchup.week)).filter_by(  # pylint: disable=no-member
-            season=g.season).scalar()
-        update_results(season=g.season, week=max_week)
-    results, totals = get_results(season=g.season)
-    # 'results' contains everything necessary for the line graph by itself.
-    # Structure: {user: {week: score, week: score...}
-    # `totals` has the user as ID, and we'll want to map that to actual names
-    # or emails for display, so let's do that now.
-    display_map = get_id_name_map()
-    data = [
-        plotly.graph_objs.Scatter(x=[0]+list(sorted(results[user[0]].keys())),
-                                  y=list(accumulate([0]+[item[1]
-                                         for item in sorted(results[user[0]].items(),
-                                                            key=lambda kv: kv[0])])),
-                                  name=display_map[user[0]],
-                                  visible=(True if current_user.id == user[0] else 'legendonly'))
-        for user in totals  # user[0] is id, used as key for results dict
-    ]
-    # Note that a zero week with zero points is prepended to both arrays
-    # to make the visualization better around the origin.
-    dataJSON = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)  # pylint: disable=invalid-name
+    # Only graph the completed weeks.
+    max_week = queries.get_max_week(season=g.season)
+    if g.is_current_season and is_today(RESULTS_DAYS):
+        commit_scores(season=g.season, week=max_week)
+        graph_week = max_week - 1
+    else:
+        graph_week = max_week
+    all_week_totals = get_all_week_totals(season=g.season)  # unsorted
+    season_totals = get_season_totals(all_week_totals=all_week_totals)  # sorted
+    id_name_map = queries.get_id_name_map()
+    # Iterate over the sorted season totals so the graph legend shows names
+    # in the same order as the leaderboard. If we didn't care about the sorting,
+    # we'd just need all_week_totals to accumulate.
+    data = []
+    for user_id, _ in season_totals:
+        weekly_data = all_week_totals[user_id]
+        sorted_weeks = list(sorted([week for week in weekly_data.keys()
+                                    if week <= graph_week]))
+        sorted_points = [weekly_data[week] for week in sorted_weeks]
+        is_current_user = user_id == current_user.id
+        _graph = plotly.graph_objs.Scatter(
+            # Note that a zero week with zero points is prepended to both arrays
+            # to make the visualization better around the origin.
+            x=[0]+sorted_weeks,
+            y=list(accumulate([0]+sorted_points)),
+            name=id_name_map[user_id],
+            visible=(True if is_current_user else 'legendonly')
+        )
+        data.append(_graph)
+    data_json = json.dumps(data, cls=plotly.utils.PlotlyJSONEncoder)
     # Layout (titles, axes, etc) is handled in JS.
-    return render_template('graph.html', dataJSON=dataJSON)
+    return render_template('graph.html', dataJSON=data_json)
 
 
 # The "main" blueprint is the collection of all other views, the ones that
@@ -237,7 +220,7 @@ def rules():
 @login_required
 def pick():
     try:
-        commit_picks(user=current_user,
+        commit_picks(user_id=current_user.id,
                      season=request.json.get('season'),
                      week=request.json.get('week'),
                      teams=request.json.get('picks'))
