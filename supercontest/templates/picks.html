@@ -28,8 +28,12 @@
                     {% endif %}
                         <td>{{ id_name_map[data[0]] }}</td>
                         {% for matchup in sorted_matchups %}
-                        <td id={{ data[0]|string + matchup.favored_team }}></td>
-                        <td id={{ data[0]|string + matchup.underdog_team }}></td>
+                        <td id={{ data[0]|string + matchup.favored_team }} style="color: rgb(225, 225, 225)" data-toggle="tooltip" title="+{{ matchup.line }}">
+                            {{ team_abv_map[matchup.favored_team] }}
+                        </td>
+                        <td id={{ data[0]|string + matchup.underdog_team }} style="color: rgb(225, 225, 225)" data-toggle="tooltip" title="-{{ matchup.line }}">
+                            {{ team_abv_map[matchup.underdog_team] }}
+                        </td>
                         {% endfor %}
                     </tr>
                     {% endfor %}
