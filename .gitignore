@@ -1,8 +1,10 @@
 # Supercontest stuff
 private.py
 private.conf
+dashboard.cfg
 backups/
 data/
+flask_monitoringdashboard.db
 
 # Mac stuff
 .DS_Store

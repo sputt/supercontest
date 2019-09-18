@@ -9,15 +9,23 @@ sudo apt install docker.io
 Make sure postgres/nginx/flask aren't running on the host,
 occupying the default ports that the containers will use.
 
-Create a file called supercontest/config/private.py with the following content:
+Create a file called `supercontest/config/private.py` with the following content:
 ```python
 MAIL_PASSWORD = <>  # find in my saved passwords, same as POSTGRES_PASSWORD but with single quotes
 SECRET_KEY = # run python -c "import random, string; print repr(''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(32)));"
 ```
 
-Create a file called docker/database/private.conf with the following content:
+Create a file called `docker/database/private.conf` with the following content:
 ```yml
 POSTGRES_PASSWORD=<>  # find in my saved passwords, same as MAIL_PASSWORD but without quotes
+```
+
+Create a file called `supercontest/config/dashboard.cfg` with the following content:
+```ini
+[authentication]
+USERNAME=bmahlstedt
+PASSWORD=<your supercontest password>
+SECURITY_TOKEN=<make this up>
 ```
 
 Restore an existing database (from /backups/postgres/supercontest.dump):
@@ -146,6 +154,9 @@ select seasons.season, weeks.week from seasons, weeks where seasons.id = weeks.s
 ```python
 db.session.query(Season.season, Week.week).filter(Season.id == Week.season_id).order_by(Season.season, Week.week).all()
 ```
+
+There is a monitoring dashboard available at the `/dashboard` endpoint. You
+can check traffic, requests, total times, and much more.
 
 # Debugging
 

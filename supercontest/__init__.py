@@ -5,6 +5,7 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import flask_monitoringdashboard as dashboard
 from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_user import UserManager, login_required
@@ -90,5 +91,12 @@ def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):
     # set graphiql=dev_mode instead of True.
     view = GraphQLView.as_view('graphql', schema=schema, graphiql=True)
     app.add_url_rule('/graphql', view_func=login_required(csrf_protect.exempt(view)))
+
+    # Add the dashboard.
+    this_dir = os.path.dirname(os.path.realpath(__file__))
+    fmd_cfg = os.path.join(this_dir, 'config', 'dashboard.cfg')
+    dashboard.config.init_from(file=fmd_cfg)
+    dashboard.bind(app)
+    csrf_protect.exempt(dashboard.blueprint)
 
     return app

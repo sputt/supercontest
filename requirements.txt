@@ -4,6 +4,7 @@ flask
 flask-graphql
 flask-mail
 flask-migrate
+flask_monitoringdashboard
 flask-script
 flask-sqlalchemy
 flask-user
