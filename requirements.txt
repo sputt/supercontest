@@ -1,6 +1,7 @@
 bs4
 decorator
 flask
+flask-debugtoolbar
 flask-graphql
 flask-mail
 flask-migrate

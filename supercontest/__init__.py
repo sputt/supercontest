@@ -4,6 +4,7 @@
 # but my the modules themselves.
 import os
 from flask import Flask
+from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
 import flask_monitoringdashboard as dashboard
 from flask_migrate import Migrate
@@ -18,6 +19,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
 csrf_protect = CSRFProtect()
+toolbar = DebugToolbarExtension()
 # pylint: enable=invalid-name
 
 
@@ -39,12 +41,13 @@ def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):
     """
     curdir = os.path.dirname(os.path.abspath(__file__))
 
-    dev_mode = bool(os.environ.get('SC_DEV'))  # pylint: disable=unused-variable
+    dev_mode = bool(os.environ.get('SC_DEV'))
 
     app = Flask(__name__)
     app.config.from_pyfile(os.path.join(curdir, 'config', 'public.py'))
     app.config.from_pyfile(os.path.join(curdir, 'config', 'private.py'))
     app.config.update(extra_config_settings)
+    app.config['DEBUG'] = dev_mode
 
     # The flask app reads the database configs directly, rather than being passed them
     # through the env in docker. This means runserver and other debug/dev methods
@@ -98,5 +101,8 @@ def get_app(db_name=None, db_port=None, db_host=None, extra_config_settings={}):
     dashboard.config.init_from(file=fmd_cfg)
     dashboard.bind(app)
     csrf_protect.exempt(dashboard.blueprint)
+
+    # Add the debug toolbar.
+    toolbar.init_app(app)
 
     return app

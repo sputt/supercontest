@@ -4,9 +4,6 @@
 APP_NAME = 'South Bay Supercontest'
 APP_ADDRESS = 'southbaysupercontest@gmail.com'
 
-# flask
-DEBUG = True
-
 # sqlalchemy
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_ECHO = False
