@@ -1,4 +1,4 @@
-SRC=$(HOME)/code/supercontest
+SRC=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 VENV=$(SRC)/.venv
 APP_DEV_CONTAINER=supercontest-app-dev
 APP_PROD_CONTAINER=supercontest-app-prod
@@ -71,7 +71,8 @@ restore-local-db-from-local:
 .PHONY: virtualenv
 virtualenv:
 	virtualenv $(VENV) --python=python3.7 --clear --always-copy
-	$(VENV)/bin/pip install -e $(SRC)
+	$(VENV)/bin/python -m pip install req-compile
+	$(VENV)/bin/python -m pip install -e $(SRC) -c compiled-requirements.txt
 
 .PHONY: reindex-ctags
 reindex-ctags: virtualenv
@@ -92,8 +93,21 @@ backup-remote-db-to-local:
 restore-remote-db-from-local:
 	ANSIBLE_CONFIG=~/code/supercontest/ansible/ansible.cfg ansible-playbook -i ansible/hosts ansible/restore.yml --key-file "~/.ssh/digitalocean"
 
+# Generate a constraints file from the input requirements
+compiled-requirements.txt: requirements.txt test-requirements.txt
+	req-compile --solution compiled-requirements.txt requirements.txt test-requirements.txt > compiled-requirements.txt.tmp
+	mv compiled-requirements.txt.tmp compiled-requirements.txt
+
+# Fetch all new versions from PyPI
+.PHONY: update-requirements
+update-requirements: | clear-requirements compiled-requirements.txt
+
+.PHONY: clear-requirements
+clear-requirements:
+	rm compiled-requirements.txt
+
 .PHONY: test-python
-test-python:
+test-python: update-requirements
 	tox
 
 .PHONY: test-js

@@ -10,4 +10,4 @@ RUN echo America/Los_Angeles >/etc/timezone && ln -sf /usr/share/zoneinfo/Americ
 # intentionally pointing back to vcs for our source package only).
 COPY . /sc
 WORKDIR /sc
-RUN pip install -e .
+RUN pip install -e . -c compiled-requirements.txt

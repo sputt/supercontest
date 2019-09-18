@@ -13,10 +13,10 @@ flask-wtf
 graphene
 graphene-sqlalchemy
 plotly
-psycopg2
+psycopg2-binary
 python-dateutil
 requests
 selenium
-uwsgi
+uwsgi ; sys.platform != 'win32'
 wtforms
 xlrd
