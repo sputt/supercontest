@@ -115,6 +115,19 @@ def get_id_name_map():
             for row in users}
 
 
+def get_id_email_map():
+    """Grabs the email for every row in the user table.
+
+    Returns:
+        (dict): keys are user IDs and values are emails
+    """
+    users = db.session.query(
+            User.id,
+            User.email,
+        ).all()
+    return {row.id: row.email for row in users}
+
+
 def get_lines(season, week):
     """Returns all cols from the LineWeekSeason table, without the score
     data of the matchups.

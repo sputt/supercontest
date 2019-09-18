@@ -25,7 +25,9 @@
                     <tr>
                     {% endif %}
                         <th scope="row">{{ loop.index }}</td>
-                        <td>{{ id_name_map[user_id] }}</td>
+                        <td data-toggle="tooltip" title="{{ id_email_map[user_id] }}">
+                            {{ id_name_map[user_id] }}
+                        </td>
                         {% for week in range(1, 18) %}
                         <td class="weekScore">{{ all_week_totals[user_id].get(week, 0.0) }}</td>
                         {% endfor %}

@@ -39,7 +39,7 @@
                 <tbody>
                     {% for matchup in sorted_matchups %}
                     <tr class="matchup">
-                        <td class="datetime">{{ convert_date(matchup.datetime).strftime('%a %I:%m %p') }}</td>
+                        <td class="datetime">{{ convert_date(matchup.datetime).strftime('%a %I:%M %p') }}</td>
                         <td class="line">{{ matchup.line }}</td>
                         <td class="favoredTeam">{{ matchup.favored_team }}</td>
                         <td class="favoredTeamScore">{{ matchup.favored_team_score }}</td>

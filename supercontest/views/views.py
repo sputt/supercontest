@@ -142,12 +142,14 @@ def leaderboard():
     all_week_totals = get_all_week_totals(season=g.season)  # unsorted
     season_totals = get_season_totals(all_week_totals=all_week_totals)  # sorted
     id_name_map = queries.get_id_name_map()
+    id_email_map = queries.get_id_email_map()
     max_points = color_week*5  # for total percentage display
     return render_template('leaderboard.html',
                            all_week_totals=all_week_totals,
                            season_totals=season_totals,
                            color_week=color_week,
                            id_name_map=id_name_map,
+                           id_email_map=id_email_map,
                            max_points=max_points)
 
 
